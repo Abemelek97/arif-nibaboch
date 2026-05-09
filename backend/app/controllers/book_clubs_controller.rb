@@ -4,7 +4,7 @@ class BookClubsController < ApplicationController
   before_action -> { authorize_club_owner!(@club) }, only: [ :edit, :update ]
 
   def index
-    @clubs = BookClub.all.order(created_at: :desc)
+    @clubs = BookClub.all.includes(:members).order(created_at: :desc)
   end
 
   def show

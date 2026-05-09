@@ -1,0 +1,7 @@
+<%= turbo_stream.replace dom_id(@membership) do %>
+  <%= render "book_club_members/member_row", membership: @membership, club: @book_club, is_last: false, current_user_is_admin: true %>
+<% end %>
+
+<%= turbo_stream.append "toast_triggers" do %>
+  <div data-controller="flash-toast" data-flash-toast-message-value="<%= flash.now[:notice] || flash.now[:alert] %>" data-flash-toast-type-value="<%= flash.now[:alert] ? 'error' : 'success' %>"></div>
+<% end %>

@@ -39,6 +39,6 @@ class User < ApplicationRecord
   end
 
   def name_initial
-    to_s.first.capitalize
+    to_s.strip.first.upcase || "U"
   end
 end
