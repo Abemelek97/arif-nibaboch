@@ -31,10 +31,10 @@
   <%# Card Body %>
   <div class="flex flex-1 flex-col p-4">
     <div class="flex-1">
-      <h3 class="text-book-title font-bold text-brand-navy leading-snug mb-1 line-clamp-2 group-hover:text-brand-gold transition-colors">
+      <h3 class="text-title font-bold text-primary leading-snug mb-1 line-clamp-2 group-hover:text-accent transition-colors">
         <%= link_to book.title, book, class: "focus:outline-none" %>
       </h3>
-      <p class="text-book-author text-slate-500 font-medium truncate mb-3">
+      <p class="text-small text-slate-500 font-medium truncate mb-3">
         <%= book.author.presence || 'Unknown Author' %>
       </p>
 
