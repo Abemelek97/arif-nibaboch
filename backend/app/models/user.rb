@@ -11,6 +11,10 @@ class User < ApplicationRecord
   has_many :book_read_rsvps, dependent: :destroy
   has_many :rsvp_book_reads, through: :book_read_rsvps, source: :book_read
 
+  before_validation :normalize_name
+
+  validates :name, presence: true
+
   def self.from_telegram_auth(auth)
     user = where(telegram_id: auth["id"]).first_or_initialize do |u|
       u.password = Devise.friendly_token[0, 20]
@@ -44,5 +48,11 @@ class User < ApplicationRecord
 
   def name_initial
     to_s.strip.first.upcase || "U"
+  end
+
+  private
+
+  def normalize_name
+    self.name = name.to_s.strip.presence
   end
 end
