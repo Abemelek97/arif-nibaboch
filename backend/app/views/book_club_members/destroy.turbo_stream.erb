@@ -1,0 +1,5 @@
+<%= turbo_stream.remove dom_id(@membership) %>
+
+<%= turbo_stream.append "toast_triggers" do %>
+  <div data-controller="flash-toast" data-flash-toast-message-value="<%= flash.now[:notice] || flash.now[:alert] %>" data-flash-toast-type-value="<%= flash.now[:alert] ? 'error' : 'success' %>"></div>
+<% end %>

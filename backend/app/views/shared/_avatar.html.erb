@@ -1,0 +1,18 @@
+<%
+  title ||= if user.respond_to?(:name) && user.name.present?
+              user.name
+            elsif user.respond_to?(:username) && user.username.present?
+              user.username
+            else
+              "User Avatar"
+            end
+  aria_label ||= title
+  classes ||= "w-9 h-9 bg-blue-600 text-white text-xs font-semibold ring-2 ring-white"
+%>
+<div class="rounded-full flex items-center justify-center overflow-hidden <%= classes %>" title="<%= title %>" aria-label="<%= aria_label %>">
+  <% if user.respond_to?(:avatar_url) && user.avatar_url.present? %>
+    <img src="<%= user.avatar_url %>" alt="<%= aria_label %>" class="w-full h-full object-cover">
+  <% else %>
+    <%= user.name_initial %>
+  <% end %>
+</div>

@@ -3,7 +3,9 @@
 one:
   user: one
   book_club: one
+  role: 1
 
 two:
   user: two
   book_club: two
+  role: 1

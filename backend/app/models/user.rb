@@ -37,4 +37,8 @@ class User < ApplicationRecord
   def to_s
     name.presence || username.presence || email || "Unknown"
   end
+
+  def name_initial
+    to_s.strip.first.upcase || "U"
+  end
 end

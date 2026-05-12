@@ -1,0 +1,23 @@
+<%
+  users ||= []
+  limit ||= 5
+  size_classes ||= "w-9 h-9"
+  text_size ||= "text-xs"
+  container_classes ||= "mt-4"
+  avatar_classes = "#{size_classes} ring-2 ring-white bg-blue-600 text-white #{text_size} font-semibold"
+%>
+<div class="flex items-center space-x-3 <%= container_classes %>">
+  <div class="flex items-center -space-x-2">
+    <% users.first(limit).each do |user| %>
+      <%= render "shared/avatar", user: user, classes: avatar_classes %>
+    <% end %>
+    <% if users.size > limit %>
+      <div class="rounded-full ring-2 ring-white bg-gray-100 text-gray-600 <%= text_size %> font-semibold flex items-center justify-center relative z-10 <%= size_classes %>" title="<%= pluralize(users.size - limit, 'more member') %>">
+        +<%= users.size - limit %>
+      </div>
+    <% end %>
+  </div>
+  <span class="text-sm text-gray-600 font-medium">
+    <%= pluralize(users.size, 'member') %>
+  </span>
+</div>
