@@ -22,6 +22,22 @@ export default class extends Controller {
         },
       });
 
+      if (response.status === 401 || response.status === 403) {
+        window.location.href = "/users/sign_in";
+        return;
+      }
+
+      if (response.redirected) {
+        window.location.href = response.url;
+        return;
+      }
+
+      const contentType = response.headers.get("content-type") || "";
+      if (!contentType.includes("application/json")) {
+        window.location.href = "/users/sign_in";
+        return;
+      }
+
       if (response.ok) {
         const data = await response.json();
         

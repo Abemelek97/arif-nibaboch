@@ -1,4 +1,5 @@
 class BookClubMembersController < ApplicationController
+  before_action :store_return_location!, unless: :user_signed_in?
   before_action :authenticate_user!
   before_action :set_book_club
   before_action :require_admin, only: [ :update, :destroy ]
@@ -68,5 +69,9 @@ class BookClubMembersController < ApplicationController
     unless @book_club.book_club_members.exists?(user: current_user, role: :admin)
       redirect_to @book_club, alert: "You do not have permission to do that."
     end
+  end
+
+  def store_return_location!
+    store_location_for(:user, request.referer || book_club_path(params[:book_club_id]))
   end
 end

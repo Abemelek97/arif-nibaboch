@@ -7,11 +7,11 @@ class ApplicationController < ActionController::Base
   protected
 
   def after_sign_in_path_for(resource)
-    root_path
+    stored_location_for(resource) || super
   end
 
   def after_sign_up_path_for(resource)
-    root_path
+    stored_location_for(resource) || super
   end
 
   def authorize_club_owner!(club, redirect_url: nil)
