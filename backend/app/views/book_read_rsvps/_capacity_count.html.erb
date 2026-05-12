@@ -1,0 +1,7 @@
+<p id="book_read_capacity_count" class="font-semibold text-gray-900">
+  <% if book_read.max_capacity.present? %>
+    <%= rsvp_users.size %> / <%= book_read.max_capacity %>
+  <% else %>
+    Not set
+  <% end %>
+</p>

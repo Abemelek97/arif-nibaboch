@@ -19,6 +19,10 @@ class BookReadsController < ApplicationController
     else
       @discussion_questions = @book_read.discussion_questions.revealed.order(:position)
     end
+
+    @rsvp = @book_read.book_read_rsvps.find_by(user: current_user) if user_signed_in?
+    @rsvp_users = @book_read.book_read_rsvps.going.includes(:user).map(&:user)
+    @rsvp_records = @book_read.book_read_rsvps.includes(:user).order(created_at: :asc)
   end
 
   def new
