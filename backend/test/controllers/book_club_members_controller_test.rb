@@ -89,7 +89,7 @@ class BookClubMembersControllerTest < ActionDispatch::IntegrationTest
   test "non-admin cannot update member role" do
     sign_in @user
     @book_club.book_club_members.create!(user: @user, role: :member)
-    other_user = User.create!(email: "other@example.com", password: "password")
+    other_user = User.create!(email: "other@example.com", password: "password", name: "Nini")
     other_membership = @book_club.book_club_members.create!(user: other_user, role: :member)
 
     patch book_club_member_url(@book_club, other_membership), params: { role: "admin" }
@@ -101,7 +101,7 @@ class BookClubMembersControllerTest < ActionDispatch::IntegrationTest
   test "non-admin cannot remove member" do
     sign_in @user
     @book_club.book_club_members.create!(user: @user, role: :member)
-    other_user = User.create!(email: "other@example.com", password: "password")
+    other_user = User.create!(email: "other@example.com", password: "password", name: "Lidia")
     other_membership = @book_club.book_club_members.create!(user: other_user, role: :member)
 
     assert_no_difference("BookClubMember.count") do
