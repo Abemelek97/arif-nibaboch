@@ -63,8 +63,6 @@ class BookClubDashboard < Administrate::BaseDashboard
     book_club_members_count
     book_reads
     books
-    cover_photo_attachment
-    cover_photo_blob
     description
     is_private
     members
