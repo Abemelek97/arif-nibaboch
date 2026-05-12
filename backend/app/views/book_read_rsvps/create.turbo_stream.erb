@@ -1,0 +1,3 @@
+<%= turbo_stream.replace "book_read_rsvp", partial: "book_reads/rsvp", locals: { book_club: @book_club, book_read: @book_read, rsvp: @rsvp } %>
+<%= turbo_stream.replace "book_read_rsvp_users", partial: "book_read_rsvps/rsvp_users", locals: { rsvp_users: @rsvp_users } %>
+<%= turbo_stream.replace "book_read_capacity_count", partial: "book_read_rsvps/capacity_count", locals: { book_read: @book_read, rsvp_users: @rsvp_users } %>

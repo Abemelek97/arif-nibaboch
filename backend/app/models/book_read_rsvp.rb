@@ -9,6 +9,22 @@ class BookReadRsvp < ApplicationRecord
 
   validate :capacity_available_for_going, if: :going?
 
+  def self.rsvp!(book_read:, user:, status: :going)
+    book_read.with_lock do
+      rsvp = book_read.book_read_rsvps.find_or_initialize_by(user: user)
+      desired_status = status.to_sym
+
+      if desired_status == :going && book_read.max_capacity.present?
+        going_count = book_read.book_read_rsvps.going.where.not(id: rsvp.id).count
+        desired_status = :waitlisted if going_count >= book_read.max_capacity
+      end
+
+      rsvp.status = desired_status
+      rsvp.save!
+      rsvp
+    end
+  end
+
   private
 
   def capacity_available_for_going

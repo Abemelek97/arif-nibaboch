@@ -39,8 +39,47 @@
           <div class="w-full aspect-[2/3] bg-gray-100 rounded-lg flex items-center justify-center shadow-inner border border-gray-200">
             <span class="text-gray-400 text-sm font-medium">No cover available</span>
           </div>
-        <% end %>
-      </div>
+  <% end %>
+</div>
+
+<dialog id="rsvp_dialog" class="p-0 rounded-2xl shadow-2xl backdrop:bg-gray-900/50 w-full max-w-2xl max-h-[80vh] open:flex flex-col m-auto">
+  <div class="flex justify-between items-center p-6 border-b border-gray-100 bg-white sticky top-0 z-10">
+    <h3 class="text-lg font-semibold text-gray-900">RSVPs (<%= @rsvp_records.size + 1 %>)</h3>
+    <button onclick="document.getElementById('rsvp_dialog').close()" class="text-gray-400 hover:text-gray-600 focus:outline-none transition-colors rounded-full p-1 hover:bg-gray-100">
+      <svg class="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12" />
+      </svg>
+    </button>
+  </div>
+
+  <div class="overflow-y-auto p-0 bg-white">
+    <% entries = [] %>
+    <% entries << { user: @book_read.host, status: "Host", variant: "blue" } %>
+    <% @rsvp_records.each do |rsvp| %>
+      <% next if rsvp.user_id == @book_read.host_id %>
+      <% variant = case rsvp.status
+                   when "going" then "green"
+                   when "waitlisted" then "yellow"
+                   else "gray"
+                   end %>
+      <% entries << { user: rsvp.user, status: rsvp.status.titleize, variant: variant } %>
+    <% end %>
+
+    <% body_content = capture do %>
+      <% entries.each_with_index do |entry, row_idx| %>
+        <%= render "book_read_rsvps/rsvp_row", user: entry[:user], status: entry[:status], variant: entry[:variant], is_last: row_idx == entries.size - 1 %>
+      <% end %>
+    <% end %>
+
+    <%= render "shared/table/table",
+               columns: ["Person", "Status"],
+               body_content: body_content,
+               hoverable: true,
+               sticky_header: true,
+               bordered: false,
+               container: false %>
+  </div>
+</dialog>
 
       <div class="w-full md:w-2/3 flex flex-col">
         <div class="flex justify-between items-start mb-2">
@@ -52,13 +91,15 @@
         <% if @book_read.book.present? %>
           <p class="text-xl text-gray-600 mb-3">By <%= @book_read.book.author %></p>
         <% end %>
-        <div class="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-2 mb-6">
-          <div class="flex items-center gap-2 text-xs text-blue-900">
-            <%= render "shared/avatar", user: @book_read.host, classes: "w-6 h-6 ring-2 ring-white bg-blue-600 text-white text-[9px] font-semibold" %>
-            <span>Hosted by: <span class="font-semibold"><%= @book_read.host.to_s %></span></span>
+        <button onclick="document.getElementById('rsvp_dialog').showModal()" class="w-full text-left hover:opacity-80 transition-opacity focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500 rounded-md">
+          <div class="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-2 mb-6">
+            <div class="flex items-center gap-2 text-xs text-blue-900">
+              <%= render "shared/avatar", user: @book_read.host, classes: "w-6 h-6 ring-2 ring-white bg-blue-600 text-white text-[9px] font-semibold" %>
+              <span>Hosted by: <span class="font-semibold"><%= @book_read.host.to_s %></span></span>
+            </div>
+            <%= render "book_read_rsvps/rsvp_users", rsvp_users: @rsvp_users %>
           </div>
-          <%= render "book_read_rsvps/rsvp_users", rsvp_users: @rsvp_users %>
-        </div>
+        </button>
 
         <div class="bg-blue-50/50 rounded-xl p-6 mb-8 border border-blue-100">
           <h3 class="text-xs font-semibold text-blue-800 uppercase tracking-wider mb-4">Meetup Details</h3>

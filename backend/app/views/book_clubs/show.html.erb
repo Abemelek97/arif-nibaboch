@@ -26,7 +26,10 @@
             </span>
           </div>
           <button onclick="document.getElementById('members_dialog').showModal()" class="text-left mt-4 hover:opacity-80 transition-opacity focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500 rounded-md block">
-            <%= render "shared/avatar_group", users: @club.members, limit: 5, container_classes: "cursor-pointer" %>
+            <div class="flex items-center gap-2">
+              <%= render "shared/avatar_group", users: @club.members, limit: 5, container_classes: "cursor-pointer" %>
+              <span class="text-sm text-gray-600 font-medium"><%= pluralize(@club.members.size, "member") %></span>
+            </div>
           </button>
         </div>
         
