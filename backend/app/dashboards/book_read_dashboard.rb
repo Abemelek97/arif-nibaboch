@@ -12,6 +12,7 @@ class BookReadDashboard < Administrate::BaseDashboard
     book: Field::BelongsTo,
     poll: Field::HasOne,
     book_club: Field::BelongsTo,
+    host: Field::BelongsTo,
     discussion_questions: Field::HasMany,
     meetup_location: Field::String,
     meetup_time: Field::DateTime,
@@ -29,6 +30,7 @@ class BookReadDashboard < Administrate::BaseDashboard
     book
     poll
     book_club
+    host
     discussion_questions
   ].freeze
 
@@ -39,6 +41,7 @@ class BookReadDashboard < Administrate::BaseDashboard
     book
     poll
     book_club
+    host
     discussion_questions
     meetup_location
     meetup_time
@@ -53,6 +56,7 @@ class BookReadDashboard < Administrate::BaseDashboard
     book
     poll
     book_club
+    host
     discussion_questions
     meetup_location
     meetup_time
