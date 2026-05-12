@@ -10,12 +10,13 @@ class BookReadDashboard < Administrate::BaseDashboard
   ATTRIBUTE_TYPES = {
     id: Field::Number,
     book: Field::BelongsTo,
+    poll: Field::HasOne,
     book_club: Field::BelongsTo,
     discussion_questions: Field::HasMany,
     meetup_location: Field::String,
     meetup_time: Field::DateTime,
     created_at: Field::DateTime,
-    updated_at: Field::DateTime,
+    updated_at: Field::DateTime
   }.freeze
 
   # COLLECTION_ATTRIBUTES
@@ -26,6 +27,7 @@ class BookReadDashboard < Administrate::BaseDashboard
   COLLECTION_ATTRIBUTES = %i[
     id
     book
+    poll
     book_club
     discussion_questions
   ].freeze
@@ -35,6 +37,7 @@ class BookReadDashboard < Administrate::BaseDashboard
   SHOW_PAGE_ATTRIBUTES = %i[
     id
     book
+    poll
     book_club
     discussion_questions
     meetup_location
@@ -48,6 +51,7 @@ class BookReadDashboard < Administrate::BaseDashboard
   # on the model's form (`new` and `edit`) pages.
   FORM_ATTRIBUTES = %i[
     book
+    poll
     book_club
     discussion_questions
     meetup_location
