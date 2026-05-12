@@ -31,7 +31,7 @@ class BookReadRsvpTest < ActiveSupport::TestCase
     BookReadRsvp.create!(book_read: @book_read, user: users(:one), status: :going)
     BookReadRsvp.create!(book_read: @book_read, user: users(:two), status: :going)
 
-    rsvp = BookReadRsvp.new(book_read: @book_read, user: @user, status: :going)
+    rsvp = BookReadRsvp.new(book_read: @book_read, user: users(:three), status: :going)
     assert_not rsvp.valid?
     assert_includes rsvp.errors.full_messages, "This session is full"
   end
