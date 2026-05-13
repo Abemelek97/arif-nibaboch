@@ -29,30 +29,8 @@
   --color-border: #E2E8F0;
   
 }
-
-/* Brand utility classes using the theme variables */
-:root {
-  /* ensure variables are available globally */
-}
-
-.bg-primary { background-color: var(--color-primary) !important; }
-.bg-accent { background-color: var(--color-accent) !important; }
-.bg-background { background-color: var(--color-background) !important; }
-
-.text-primary { color: var(--color-primary) !important; }
-.text-accent { color: var(--color-accent) !important; }
-.text-background { color: var(--color-background) !important; }
-  
-.border-primary { border-color: var(--color-primary) !important; }
-.border-accent { border-color: var(--color-accent) !important; }
-
-.bg-app-primary { background-color: var(--color-primary) !important; }
-.bg-app-primary:hover { background-color: color-mix(in srgb, var(--color-primary) 80%, black 20%); }
-
-.font-serif { font-family: var(--font-serif) !important; }
-.font-sans { font-family: var(--font-sans) !important; }
-
 /* Buttons (primary / secondary) - hierarchical */
+
 .btn-primary { @apply inline-flex items-center px-4 py-2 border border-transparent text-sm font-medium rounded-lg shadow-sm text-white; background-color: var(--color-primary); }
 .btn-primary:hover { background-color: color-mix(in srgb, var(--color-primary) 85%, black 15%); }
 
