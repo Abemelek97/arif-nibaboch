@@ -1,5 +1,5 @@
 <%= link_to book_club_book_read_path(read.book_club, read), class: "block bg-surface rounded-lg shadow-sm border border-border hover:border-primary transition-colors p-6 flex flex-col sm:flex-row items-start sm:items-center gap-6 group" do %>
-  <% if read.book.cover_image.present? %>
+  <% if read.book&.cover_image.present? %>
     <div class="w-16 h-24 shrink-0 shadow-sm rounded overflow-hidden">
       <%= image_tag read.book.cover_image, class: "w-full h-full object-cover" %>
     </div>
