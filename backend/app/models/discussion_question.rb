@@ -1,5 +1,6 @@
 class DiscussionQuestion < ApplicationRecord
   belongs_to :book_read
+  belongs_to :user, optional: true
   has_many :question_translations, dependent: :destroy
 
   # Use ZH-HANT for Traditional Chinese in DeepL, and ZH for Simplified

@@ -288,7 +288,7 @@
   <div class="bg-surface p-8 rounded-lg shadow-sm border border-border">
     <h2 class="title title-lg text-content font-bold">Discussion Questions</h2>
 
-    <% if user_signed_in? && @book_club.owner == current_user %>
+    <% if user_signed_in? && (@book_club.owner == current_user || @book_read.can_post_discussion_question?(current_user)) %>
       <div class="mb-6 flex flex-col">
         <%= render partial: "discussion_questions/form",
         locals: {
@@ -297,9 +297,9 @@
           discussion_question: DiscussionQuestion.new,
         } %>
       </div>
-    <% else %>
-      <%= turbo_stream_from @book_read, :discussion_questions %>
     <% end %>
+
+    <%= turbo_stream_from @book_read, :discussion_questions %>
 
     <div id="discussion_questions_list" class="space-y-5">
       <% @discussion_questions.where.not(id: nil).each do |question| %>

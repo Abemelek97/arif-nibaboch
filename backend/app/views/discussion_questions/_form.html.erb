@@ -1,5 +1,5 @@
 <div id="new_discussion_question_form" class="mb-8">
-  <% if user_signed_in? && book_club.owner == current_user %>
+  <% if user_signed_in? && (@book_club.owner == current_user || @book_read.can_post_discussion_question?(current_user))%>
     <div class="bg-background rounded-xl p-5 border border-border shadow-sm transition-all focus-within:shadow-md focus-within:border-primary">
       <h3 class="text-sm font-semibold text-content mb-3 flex items-center">
         <svg class="w-4 h-4 mr-1.5 text-primary" fill="none" stroke="currentColor" viewBox="0 0 24 24">

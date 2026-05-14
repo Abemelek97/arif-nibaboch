@@ -17,6 +17,12 @@ class BookRead < ApplicationRecord
 
   validate :has_book_or_poll
 
+  def can_post_discussion_question?(user)
+    return false if user.blank?
+
+    rsvp_users.exists?(id: user.id)
+  end
+
   private
 
   def has_book_or_poll
