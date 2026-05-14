@@ -1,10 +1,10 @@
 class DiscussionQuestionsController < ApplicationController
   before_action :authenticate_user!
   before_action :set_book_club_and_read
-  before_action -> { authorize_club_owner!(@book_club, redirect_url: book_club_book_read_path(@book_club, @book_read)) }, only: [ :create, :update ]
+  before_action -> { authorize_discussion_question_permission }, only: [ :create, :update ]
 
   def create
-    @discussion_question = @book_read.discussion_questions.build(discussion_question_params)
+    @discussion_question = @book_read.discussion_questions.build(discussion_question_params.merge(user: current_user))
 
     respond_to do |format|
       if @discussion_question.save
@@ -46,5 +46,12 @@ class DiscussionQuestionsController < ApplicationController
 
   def discussion_question_update_params
     params.require(:discussion_question).permit(:content, :status)
+  end
+
+  def authorize_discussion_question_permission
+    has_rsvp = @book_read.rsvp_users.exists?(id: current_user.id)
+    return if has_rsvp
+
+    authorize_club_owner!(@book_club, redirect_url: book_club_book_read_path(@book_club, @book_read))
   end
 end
