@@ -23,7 +23,11 @@ class BookReadsController < ApplicationController
         .order(:position)
     end
 
-    draft_content = session.delete(:discussion_question_draft)
+    draft_content = if user_signed_in?
+      session.delete(:discussion_question_draft)
+    else
+      session[:discussion_question_draft]
+    end
     @new_discussion_question = DiscussionQuestion.new(content: draft_content)
     @rsvp = @book_read.book_read_rsvps.find_by(user: current_user) if user_signed_in?
     @rsvp_users = @book_read.book_read_rsvps.going.includes(:user).map(&:user)
