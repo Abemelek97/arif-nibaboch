@@ -19,7 +19,7 @@ export default class extends Controller {
       window.toast(this.messageValue, { type: this.typeValue });
       this.element.remove();
     } else if (this.retryCount >= this.maxRetries) {
-      consoole.warn("Toast controller not available after maximum retries");
+      console.warn("Toast controller not available after maximum retries");
       this.element.remove();
     } else {
       this.retryCount++;
