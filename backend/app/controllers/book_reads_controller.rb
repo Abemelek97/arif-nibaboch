@@ -14,10 +14,11 @@ class BookReadsController < ApplicationController
   end
 
   def show
+    discussion_questions = @book_read.discussion_questions.includes(:question_translations)
     if user_signed_in? && @book_club.owner == current_user
-      @discussion_questions = @book_read.discussion_questions.order(:position)
+      @discussion_questions = discussion_questions.order(:position)
     else
-      @discussion_questions = @book_read.discussion_questions
+      @discussion_questions = discussion_questions
         .revealed
         .or(@book_read.discussion_questions.where(user: current_user))
         .order(:position)

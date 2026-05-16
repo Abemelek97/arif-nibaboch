@@ -15,6 +15,12 @@ class TranslateDiscussionQuestionJob < ApplicationJob
     if translated_text.present?
       translation_record = question.question_translations.find_or_initialize_by(language_code: target_lang)
       translation_record.update(content: translated_text)
+
+      if [ "ZH", "ZH-HANT" ].include?(target_lang)
+        pinyin_content = Pinyin.t(translated_text, tonemarks: true)
+        pinyin_record = question.question_translations.find_or_initialize_by(language_code: "PINYIN")
+        pinyin_record.update(content: pinyin_content)
+      end
     end
   end
 end
