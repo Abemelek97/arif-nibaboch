@@ -63,7 +63,7 @@ jobs:
         run: kamal proxy reboot -y
 
       - name: Kamal Deploy
-        run: kamal deploy
+        run: kamal deploy --force
 
       - name: Kamal Clean
         run: kamal prune all
