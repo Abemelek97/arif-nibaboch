@@ -59,8 +59,9 @@ jobs:
       - name: Install Kamal
         run: gem install kamal
 
-      - name: Kamal Proxy Reboot
-        run: kamal proxy reboot -y
+
+      - name: Release Kamal lock
+        run: kamal lock release || true
 
       - name: Kamal Deploy
         run: kamal deploy
