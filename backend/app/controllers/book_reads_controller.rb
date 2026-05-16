@@ -18,10 +18,11 @@ class BookReadsController < ApplicationController
     if user_signed_in? && @book_club.owner == current_user
       @discussion_questions = discussion_questions.order(:position)
     else
-      @discussion_questions = discussion_questions
-        .revealed
-        .or(discussion_questions.where(user: current_user))
-        .order(:position)
+      @discussion_questions = discussion_questions.revealed
+      if user_signed_in?
+        @discussion_questions = @discussion_questions.or(discussion_questions.where(user: current_user))
+      end
+      @discussion_questions = @discussion_questions.order(:position)
     end
 
     draft_content = if user_signed_in?
