@@ -67,3 +67,9 @@ jobs:
 
       - name: Kamal Clean
         run: kamal prune all
+
+      - name: Prune old runner diagnostic logs
+        if: always()
+        run: |
+          echo "Checking for runner logs older than 7 days..."
+          find /Users/netale/actions-runner/_diag/ -name "*.log" -mtime +7 -delete
