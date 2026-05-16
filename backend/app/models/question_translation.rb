@@ -11,6 +11,17 @@ class QuestionTranslation < ApplicationRecord
     message: "translation already exists for this language"
   }
 
+  LANGUAGE_NAMES = {
+    "ZH-HANT" => "Chinese (Traditional)",
+    "ZH" => "Chinese (Simplified)",
+    "PINYIN" => "Pinyin",
+    "EN" => "English"
+  }.freeze
+
+  def language_name
+    LANGUAGE_NAMES[language_code] || language_code
+  end
+
   private
 
   def normalize_language_code
