@@ -5,4 +5,13 @@ class PollVote < ApplicationRecord
   has_one :poll, through: :poll_option
 
   validates :user_id, uniqueness: { scope: :poll_option_id, message: "has already voted for this option" }
+  validate :poll_must_be_active
+
+  private
+
+  def poll_must_be_active
+    return if poll.nil? || poll.active?
+
+    errors.add(:poll, "has ended")
+  end
 end
