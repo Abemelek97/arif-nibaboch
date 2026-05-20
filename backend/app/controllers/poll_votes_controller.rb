@@ -14,7 +14,13 @@ class PollVotesController < ApplicationController
       return respond_with_error
     end
 
-    options = @poll_options.select { |option| poll_option_ids.include?(option.id.to_s) }
+    selected_ids = poll_option_ids.uniq
+    options = @poll_options.select { |option| selected_ids.include?(option.id.to_s) }
+
+    if options.size != selected_ids.size
+      @error_message = "One or more selected options are invalid."
+      respond_with_error
+    end
 
     begin
       PollVote.transaction do
@@ -45,6 +51,7 @@ class PollVotesController < ApplicationController
 
   def set_poll
     @poll = @book_read.poll
+    raise ActiveRecord::RecordNotFound, "Poll not found for this book read" if @poll.nil
   end
 
   def respond_with_error

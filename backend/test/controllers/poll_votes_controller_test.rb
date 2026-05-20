@@ -23,6 +23,17 @@ class PollVotesControllerTest < ActionDispatch::IntegrationTest
     assert_match /turbo-stream action="replace" target="poll_voting"/, @response.body
   end
 
+
+  test "should not create votes for with invalid ids" do
+    assert_difference("PollVote.count", 0) do
+      post book_club_book_read_poll_votes_url(@book_club, @book_read), params: {
+        poll_option_ids: [ 404 ]
+      }, as: :turbo_stream
+    end
+
+    assert_response :unprocessable_entity
+  end
+
   test "rejects votes when poll has ended" do
     expired_poll = Poll.find(polls(:two).id)
     book_read = expired_poll.book_read
