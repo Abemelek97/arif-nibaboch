@@ -1,0 +1,3 @@
+<%= turbo_stream.replace "poll_voting" do %>
+  <%= render "polls/vote_results", poll: @poll %>
+<% end %>

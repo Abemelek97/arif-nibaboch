@@ -87,6 +87,8 @@ class DiscussionQuestionsControllerTest < ActionDispatch::IntegrationTest
   test "should redirect unauthenticated users to sign in and preserve draft" do
     sign_out @user
     content = "Can we talk about the ending?"
+    @book_read.poll = nil
+    @book_read.save
 
     assert_no_difference("DiscussionQuestion.count") do
       post book_club_book_read_discussion_questions_url(@book_club, @book_read), params: {

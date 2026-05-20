@@ -55,6 +55,7 @@ Rails.application.routes.draw do
     resources :book_reads do
       resource :rsvp, controller: "book_read_rsvps", only: [ :create, :update ]
       resources :discussion_questions, only: [ :create, :update ]
+      resources :poll_votes, only: [ :create ]
     end
   end
 
