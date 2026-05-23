@@ -46,6 +46,7 @@ jobs:
       LOGTAIL_SOURCE_TOKEN: ${{ secrets.LOGTAIL_SOURCE_TOKEN }}
       LOGTAIL_INGESTING_HOST: ${{ secrets.LOGTAIL_INGESTING_HOST }}
       DEEPL_AUTH_KEY: ${{ secrets.DEEPL_AUTH_KEY }}
+      GOOGLE_BOOKS_API_KEY: ${{ secrets.GOOGLE_BOOKS_API_KEY }}
 
     permissions:
       contents: read
