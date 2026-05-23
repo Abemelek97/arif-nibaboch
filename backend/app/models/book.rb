@@ -10,7 +10,7 @@ class Book < ApplicationRecord
   has_many :book_clubs, through: :book_reads
 
   after_create_commit  :create_in_book_fts
-  after_create_commit  :create_telegram_discussion
+  # after_create_commit  :create_telegram_discussion
   after_update_commit  :update_in_book_fts
   after_destroy_commit :remove_from_book_fts
 
