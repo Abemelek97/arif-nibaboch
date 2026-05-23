@@ -21,4 +21,16 @@ class BookLookupTest < ActiveSupport::TestCase
     assert_equal "Dune", result[:title]
     assert_nil result[:author]
   end
+
+  test "find returns first google books result" do
+    result = BookLookup::Result.new(title: "Dune", author: "Frank Herbert")
+    provider = Minitest::Mock.new
+    provider.expect(:search, [ result ])
+
+    BookLookup::Providers::GoogleBooks.stub(:new, provider) do
+      assert_equal result, BookLookup.find(title: "Dune", author: "Frank Herbert")
+    end
+
+    provider.verify
+  end
 end
