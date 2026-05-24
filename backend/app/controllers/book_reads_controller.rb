@@ -69,7 +69,7 @@ class BookReadsController < ApplicationController
 
   def finalize
     @poll = @book_read.poll
-    redirect_to book_club_book_read_path(@book_club, @book_read), alert: "No poll to finalize." unless @poll
+    return redirect_to book_club_book_read_path(@book_club, @book_read), alert: "No poll to finalize." unless @poll
 
     @winning_options = @poll.winning_options
     @suggested_option = @winning_options.sample
@@ -77,6 +77,7 @@ class BookReadsController < ApplicationController
 
   def select_book
     @poll = @book_read.poll
+    return redirect_to(book_club_book_read_path(@book_club, @book_read), alert: "No poll to finalize.") unless @poll
     poll_option = @poll.poll_options.find(params[:poll_option_id])
 
     if @book_read.update(book: poll_option.book)

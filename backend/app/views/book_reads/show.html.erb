@@ -270,8 +270,8 @@
         </div>
         
         <div class="flex items-center gap-3">
-          <% is_authorized_to_finalize = user_signed_in? && (@book_read.host == current_user || @book_club.owner == current_user || @book_club.book_club_members.exists?(user: current_user, role: :admin)) %>
-          <% if !finalized && is_authorized_to_finalize %>
+          <% is_authorized_to_finalize = user_signed_in? && @book_club.owner == current_user %>
+          <% if !finalized && !poll_active && is_authorized_to_finalize %>
             <%= link_to "Finalize Poll",
             finalize_book_club_book_read_path(@book_club, @book_read),
             class:
