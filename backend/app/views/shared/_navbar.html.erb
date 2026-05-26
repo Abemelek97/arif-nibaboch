@@ -15,7 +15,7 @@
       <div class="ml-10 space-x-4 flex items-center">
         <% if user_signed_in? %>
           <div class="hidden sm:flex items-center gap-3">
-             <span class="text-sm text-content-subtle">Welcome, <strong><%= current_user.username.presence || current_user.email.split('@').first %></strong></span>
+             <span class="text-sm text-content-subtle">Welcome, <strong><%= current_user.to_s %></strong></span>
           </div>
         <% else %>
           <div class="hidden sm:flex items-center gap-3">

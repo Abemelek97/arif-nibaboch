@@ -165,7 +165,7 @@
               </div>
               <div class="flex-1 min-w-0">
                 <div class="flex items-center gap-2 mb-1">
-                  <span class="text-sm font-semibold text-content"><%= review.user.name.presence || review.user.username.presence || review.user.email.split('@').first %></span>
+                  <span class="text-sm font-semibold text-content"><%= review.user.to_s %></span>
                   <span class="text-xs text-content-muted"><%= time_ago_in_words(review.created_at) %> ago</span>
                 </div>
                 <div class="text-sm text-content leading-relaxed">

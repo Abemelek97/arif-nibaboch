@@ -11,6 +11,7 @@ class UserDashboard < Administrate::BaseDashboard
     admin: Field::Boolean,
     id: Field::Number,
     email: Field::String,
+    anonymized_email: Field::String,
     encrypted_password: Field::String,
     line_id: Field::String,
     name: Field::String,
@@ -34,8 +35,7 @@ class UserDashboard < Administrate::BaseDashboard
   # Feel free to add, remove, or rearrange items.
   COLLECTION_ATTRIBUTES = %i[
     id
-    email
-    encrypted_password
+    anonymized_email
     line_id
   ].freeze
 
@@ -43,8 +43,7 @@ class UserDashboard < Administrate::BaseDashboard
   # an array of attributes that will be displayed on the model's show page.
   SHOW_PAGE_ATTRIBUTES = %i[
     id
-    email
-    encrypted_password
+    anonymized_email
     line_id
     name
     owned_book_clubs

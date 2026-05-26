@@ -13,9 +13,9 @@
       <div class="flex flex-col sm:flex-row sm:items-start justify-between gap-4 mb-8">
         <div>
           <h1 class="title title-lg text-content font-bold">
-            <%= current_user.name.presence || current_user.email.split('@').first.capitalize %>
+            <%= current_user.to_s %>
           </h1>
-          <p class="text-content-subtle font-medium"><%= current_user.email %></p>
+          <p class="text-content-subtle font-medium"><%= current_user.anonymized_email %></p>
           <div class="flex items-center gap-2 mt-2">
             <span class="inline-flex items-center rounded-full bg-background px-2.5 py-0.5 text-xs font-medium text-primary ring-1 ring-inset ring-primary/20">
               Member

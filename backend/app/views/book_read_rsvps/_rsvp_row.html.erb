@@ -9,7 +9,7 @@
       </div>
       <div class="ml-4">
         <div class="text-sm font-medium text-content"><%= user.name.presence || user.username.presence || "No Name Provided" %></div>
-        <div class="text-sm text-content-subtle"><%= user.email %></div>
+        <div class="text-sm text-content-subtle"><%= user.anonymized_email %></div>
       </div>
     </div>
   </td>

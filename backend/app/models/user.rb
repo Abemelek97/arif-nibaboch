@@ -43,11 +43,25 @@ class User < ApplicationRecord
   end
 
   def to_s
-    name.presence || username.presence || email || "Unknown"
+    name.presence || username.presence || anonymized_email || "Unknown"
+  end
+
+  def anonymized_email
+    return nil if email.blank?
+    user_part, domain_part = email.split("@")
+    return email if domain_part.blank?
+
+    if user_part.length <= 1
+      "*@#{domain_part}"
+    elsif user_part.length == 2
+      "#{user_part[0]}*@#{domain_part}"
+    else
+      "#{user_part[0]}***#{user_part[-1]}@#{domain_part}"
+    end
   end
 
   def name_initial
-    to_s.strip.first.upcase || "U"
+    (name.presence || username.presence || "U").strip.first.upcase
   end
 
   private

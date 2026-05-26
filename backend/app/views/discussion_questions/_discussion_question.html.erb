@@ -4,7 +4,7 @@
       <% if discussion_question.user.present? %>
         <%= render "shared/avatar", user: discussion_question.user, classes: "w-10 h-10 ring-2 ring-surface bg-primary text-primary-contrast text-sm font-semibold" %>
         <div class="min-w-0">
-          <p class="text-sm font-semibold text-content truncate"><%= discussion_question.user.name.presence || discussion_question.user.username.presence || discussion_question.user.email.split("@").first %></p>
+          <p class="text-sm font-semibold text-content truncate"><%= discussion_question.user.to_s %></p>
           <p class="text-xs text-content-subtle"><%= time_ago_in_words(discussion_question.created_at) %> ago</p>
         </div>
       <% else %>
