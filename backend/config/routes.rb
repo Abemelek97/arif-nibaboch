@@ -33,7 +33,6 @@ Rails.application.routes.draw do
 
   get "/line_login/authorize", to: "line_login#authorize", as: :line_login_authorize
   get "/line_login/callback", to: "line_login#callback", as: :line_login_callback
-  get "dashboard", to: "dashboard#index"
 
 
   # Render dynamic PWA files from app/views/pwa/* (remember to link manifest in application.html.erb)
@@ -54,8 +53,7 @@ Rails.application.routes.draw do
   end
 
   resources :book_clubs do
-    resource :membership, controller: "book_club_members", only: [ :create, :destroy ]
-    resources :members, controller: "book_club_members", only: [ :update, :destroy ]
+    resource :membership, controller: "book_club_members", only: [ :create]
     resources :book_reads do
       resource :rsvp, controller: "book_read_rsvps", only: [ :create, :update ]
       resources :discussion_questions, only: [ :create, :update, :destroy ]
