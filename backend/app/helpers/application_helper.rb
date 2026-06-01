@@ -1,4 +1,8 @@
 module ApplicationHelper
+  def app_name
+    Rails.configuration.x.app_name
+  end
+
   def flash_classes(type)
     case type.to_sym
     when :notice, :success
