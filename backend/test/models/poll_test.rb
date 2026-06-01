@@ -74,7 +74,7 @@ class PollTest < ActiveSupport::TestCase
     assert_equal 2, poll.winning_options.size
 
     # One more for option1
-    user4 = User.create!(email: "user4@example.com", password: "password", name: "User 4")
+    user4 = User.create!(email: "user4@example.com", password: "password", name: "User 4", confirmed_at: Time.current)
     PollVote.create!(poll_option: option1, user: user4)
     assert_equal [ option1 ], poll.winning_options
   end

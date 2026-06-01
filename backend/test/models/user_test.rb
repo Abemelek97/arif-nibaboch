@@ -17,7 +17,8 @@ class UserTest < ActiveSupport::TestCase
       line_id: "U_existing_line",
       name: "Old Name",
       email: "U_existing_line@line.com",
-      password: Devise.friendly_token[0, 20]
+      password: Devise.friendly_token[0, 20],
+      confirmed_at: Time.current
     )
 
     profile = { "userId" => "U_existing_line", "displayName" => "New Name" }
