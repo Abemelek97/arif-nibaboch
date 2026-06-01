@@ -30,5 +30,7 @@ module BackendWithContainer
     # variables. Used by Action Mailer for generating absolute URLs in emails.
     config.x.domain = ENV.fetch("APP_DOMAIN", "localhost:3000")
     config.x.protocol = ENV.fetch("APP_PROTOCOL", "http")
+    # The domain used for the 'from' address in emails. Default to the domain without port.
+    config.x.mail_from_domain = ENV.fetch("APP_MAIL_FROM_DOMAIN", config.x.domain.split(":").first)
   end
 end
