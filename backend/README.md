@@ -32,13 +32,7 @@ This is the backend Rails application for the Turbo Rails + React Native starter
    bundle install
    ```
 
-2. **Install JavaScript dependencies**
-
-   ```bash
-   yarn install
-   ```
-
-3. **Set up the database**
+2. **Set up the database**
 
    ```bash
    # Create database
@@ -51,14 +45,14 @@ This is the backend Rails application for the Turbo Rails + React Native starter
    rails db:seed
    ```
 
-4. **Start the development server**
+3. **Start the development server**
 
    ```bash
    # Start Rails server with Tailwind CSS watcher
    bin/dev
    ```
 
-5. **Access the application**
+4. **Access the application**
 
    Open your browser and navigate to: `http://localhost:3000`
 
