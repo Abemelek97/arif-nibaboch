@@ -1,0 +1,11 @@
+<%= turbo_stream.remove @discussion_question %>
+
+<% if @visible_questions.empty? %>
+  <%= turbo_stream.update "no_discussion_questions_wrapper" do %>
+    <%= render partial: "discussion_questions/no_questions" %>
+  <% end %>
+<% end %>
+
+<%= turbo_stream.append "toast_triggers" do %>
+  <div data-controller="flash-toast" data-flash-toast-message-value="Question deleted successfully." data-flash-toast-type-value="success"></div>
+<% end %>

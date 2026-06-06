@@ -35,7 +35,7 @@ class DiscussionQuestionsControllerTest < ActionDispatch::IntegrationTest
     assert_response :success
     assert_equal "text/vnd.turbo-stream.html", @response.media_type
     assert_match /turbo-stream action="append" target="discussion_questions_list"/, @response.body
-    assert_match /turbo-stream action="remove" target="no_discussion_questions"/, @response.body
+    assert_match /turbo-stream action="update" target="no_discussion_questions_wrapper"/, @response.body
     assert DiscussionQuestion.last.draft?
   end
 
@@ -106,5 +106,99 @@ class DiscussionQuestionsControllerTest < ActionDispatch::IntegrationTest
     get book_club_book_read_path(@book_club, @book_read)
     assert_response :success
     assert_includes @response.body, content
+  end
+
+  test "should delete a discussion question" do
+    question = discussion_questions(:one)
+    assert_difference("DiscussionQuestion.count", -1) do
+      delete book_club_book_read_discussion_question_path(@book_club, @book_read, question)
+    end
+
+    assert_redirected_to book_club_book_read_path(@book_club, @book_read)
+    assert_equal "Question deleted successfully.", flash[:notice]
+  end
+
+  test "should delete a discussion question via turbo stream and restore placeholder if last one" do
+    # Ensure there is only one question for this book read that is visible
+    @book_read.discussion_questions.destroy_all
+    question = @book_read.discussion_questions.create!(user: @user, content: "Only question")
+
+    assert_difference("DiscussionQuestion.count", -1) do
+      delete book_club_book_read_discussion_question_path(@book_club, @book_read, question), as: :turbo_stream
+    end
+
+    assert_response :success
+    assert_match /turbo-stream action="remove" target="discussion_question_#{question.id}"/, @response.body
+    assert_match /turbo-stream action="update" target="no_discussion_questions_wrapper"/, @response.body
+    assert_match /No discussion so far/, @response.body
+  end
+
+  test "should not delete discussion question if not author or admin" do
+    sign_out @user
+    other_user = users(:two) # not author of question :one
+    sign_in other_user
+
+    question = discussion_questions(:one)
+    assert_no_difference("DiscussionQuestion.count") do
+      delete book_club_book_read_discussion_question_path(@book_club, @book_read, question)
+    end
+
+    assert_redirected_to book_club_book_read_path(@book_club, @book_read)
+    assert_equal "You are not authorized to perform this action.", flash[:alert]
+  end
+
+  test "author can delete their own discussion question" do
+    # Sign in as user two, who authored question two
+    sign_out @user
+    author = users(:two)
+    sign_in author
+    question = discussion_questions(:two)
+
+    assert_difference("DiscussionQuestion.count", -1) do
+      delete book_club_book_read_discussion_question_path(book_clubs(:two), book_reads(:two), question)
+    end
+
+    assert_redirected_to book_club_book_read_path(book_clubs(:two), book_reads(:two))
+    assert_equal "Question deleted successfully.", flash[:notice]
+  end
+
+  test "author cannot update status of their own discussion question if not owner or admin" do
+    sign_out @user
+    author = users(:two) # Not admin, not owner of club one
+    sign_in author
+
+    # Manually create a question for user two in book_read one (owned by user one)
+    question = @book_read.discussion_questions.create!(user: author, content: "Author's question")
+
+    assert_equal "draft", question.status
+
+    patch book_club_book_read_discussion_question_path(@book_club, @book_read, question), params: {
+      discussion_question: {
+        content: "Updated content",
+        status: "approved"
+      }
+    }
+
+    assert_redirected_to book_club_book_read_path(@book_club, @book_read)
+    question.reload
+    assert_equal "Updated content", question.content
+    assert_equal "draft", question.status # Status should NOT change
+  end
+
+  test "club owner can update status of any discussion question" do
+    # @user is the owner of @book_club
+    author = users(:two)
+    question = @book_read.discussion_questions.create!(user: author, content: "Author's question")
+
+    assert_equal "draft", question.status
+
+    patch book_club_book_read_discussion_question_path(@book_club, @book_read, question), params: {
+      discussion_question: {
+        status: "approved"
+      }
+    }
+
+    assert_redirected_to book_club_book_read_path(@book_club, @book_read)
+    assert_equal "approved", question.reload.status
   end
 end

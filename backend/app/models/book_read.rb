@@ -23,6 +23,17 @@ class BookRead < ApplicationRecord
     rsvp_users.exists?(id: user.id)
   end
 
+  def visible_discussion_questions_for(user)
+    questions = discussion_questions.includes(:question_translations)
+    if user&.admin? || book_club.owner == user || book_club.book_club_members.exists?(user: user, role: :admin)
+      questions.order(:position)
+    else
+      visible = questions.revealed
+      visible = visible.or(questions.where(user: user)) if user
+      visible.order(:position)
+    end
+  end
+
   private
 
   def has_book_or_poll

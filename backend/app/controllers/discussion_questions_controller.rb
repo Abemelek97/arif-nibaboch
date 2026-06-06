@@ -2,7 +2,9 @@ class DiscussionQuestionsController < ApplicationController
   prepend_before_action :store_discussion_question_draft, only: [ :create ]
   before_action :authenticate_user!
   before_action :set_book_club_and_read
-  before_action -> { authorize_discussion_question_permission }, only: [ :create, :update ]
+  before_action :set_discussion_question, only: [ :update, :destroy ]
+  before_action :authorize_discussion_question_permission, only: [ :create ]
+  before_action :authorize_discussion_question_modification, only: [ :update, :destroy ]
 
   def create
     @discussion_question = @book_read.discussion_questions.build(discussion_question_params.merge(user: current_user))
@@ -21,9 +23,13 @@ class DiscussionQuestionsController < ApplicationController
   end
 
   def update
-    @discussion_question = @book_read.discussion_questions.find(params[:id])
+    update_params = if @book_club.owner == current_user || @book_club.book_club_members.exists?(user: current_user, role: :admin)
+                      discussion_question_update_params
+    else
+                      discussion_question_params
+    end
 
-    if @discussion_question.update(discussion_question_update_params)
+    if @discussion_question.update(update_params)
       respond_to do |format|
         format.turbo_stream { render turbo_stream: turbo_stream.replace(@discussion_question, partial: "discussion_questions/discussion_question", locals: { discussion_question: @discussion_question }) }
         format.html { redirect_to book_club_book_read_path(@book_club, @book_read), notice: "Question updated successfully." }
@@ -36,7 +42,21 @@ class DiscussionQuestionsController < ApplicationController
     end
   end
 
+  def destroy
+    @discussion_question.destroy
+    @visible_questions = @book_read.visible_discussion_questions_for(current_user)
+
+    respond_to do |format|
+      format.turbo_stream
+      format.html { redirect_to book_club_book_read_path(@book_club, @book_read), notice: "Question deleted successfully." }
+    end
+  end
+
   private
+
+  def set_discussion_question
+    @discussion_question = @book_read.discussion_questions.find(params[:id])
+  end
 
   def set_book_club_and_read
     @book_club = BookClub.find(params[:book_club_id])
@@ -62,6 +82,14 @@ class DiscussionQuestionsController < ApplicationController
     has_rsvp = @book_read.rsvp_users.exists?(id: current_user.id)
     return if has_rsvp
 
+    authorize_club_owner!(@book_club, redirect_url: book_club_book_read_path(@book_club, @book_read))
+  end
+
+  def authorize_discussion_question_modification
+    # Allow if user is the author
+    return if @discussion_question.user == current_user
+
+    # Allow if user is club owner or admin
     authorize_club_owner!(@book_club, redirect_url: book_club_book_read_path(@book_club, @book_read))
   end
 end
