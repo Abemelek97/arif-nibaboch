@@ -23,7 +23,13 @@ class DiscussionQuestionsController < ApplicationController
   end
 
   def update
-    if @discussion_question.update(discussion_question_update_params)
+    update_params = if @book_club.owner == current_user || @book_club.book_club_members.exists?(user: current_user, role: :admin)
+                      discussion_question_update_params
+    else
+                      discussion_question_params
+    end
+
+    if @discussion_question.update(update_params)
       respond_to do |format|
         format.turbo_stream { render turbo_stream: turbo_stream.replace(@discussion_question, partial: "discussion_questions/discussion_question", locals: { discussion_question: @discussion_question }) }
         format.html { redirect_to book_club_book_read_path(@book_club, @book_read), notice: "Question updated successfully." }
@@ -38,9 +44,10 @@ class DiscussionQuestionsController < ApplicationController
 
   def destroy
     @discussion_question.destroy
+    @visible_questions = @book_read.visible_discussion_questions_for(current_user)
 
     respond_to do |format|
-      format.turbo_stream { render turbo_stream: turbo_stream.remove(@discussion_question) }
+      format.turbo_stream
       format.html { redirect_to book_club_book_read_path(@book_club, @book_read), notice: "Question deleted successfully." }
     end
   end

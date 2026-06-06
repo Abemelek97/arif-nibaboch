@@ -2,7 +2,7 @@
   <%= render partial: "discussion_questions/discussion_question", locals: { discussion_question: @discussion_question } %>
 <% end %>
 
-<%= turbo_stream.remove "no_discussion_questions" %>
+<%= turbo_stream.update "no_discussion_questions_wrapper", "" %>
 
 <%= turbo_stream.replace "new_discussion_question_form" do %>
   <%= render partial: "discussion_questions/form", locals: { book_club: @book_club, book_read: @book_read, discussion_question: DiscussionQuestion.new } %>
