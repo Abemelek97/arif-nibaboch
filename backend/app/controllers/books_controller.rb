@@ -1,5 +1,5 @@
 class BooksController < ApplicationController
-  before_action :set_book, only: %i[show edit ]
+  before_action :set_book, only: %i[ show ]
 
   def index
     @tags = Tag.all.limit(10).order(:name)
@@ -30,8 +30,6 @@ class BooksController < ApplicationController
   def new
     @book = Book.new
   end
-
-  def edit; end
 
   def create
     @book = Book.new(book_params)
