@@ -36,7 +36,7 @@ class BooksController < ApplicationController
   def create
     @book = Book.new(book_params)
     if @book.save
-      redirect_to @book, notice: "Book was successfully created."
+      redirect_to @book
     else
       render :new, status: :unprocessable_entity
     end
@@ -54,11 +54,22 @@ class BooksController < ApplicationController
     @book.destroy
     redirect_to books_url, notice: "Book was successfully destroyed."
   end
-
   def search
     query = params[:query]
     @books = if query.present?
-               Book.full_text_search(query).limit(10)
+               local_results = Book.full_text_search(query).limit(10).to_a
+
+               if local_results.size < 5
+                 lookup_results = BookLookup.find_many(title: query, author: query) || []
+                 external_books = lookup_results.map { |res| map_lookup_result_to_book(res) }
+
+                 combined = (local_results + external_books).uniq do |book|
+                   [ book.title.to_s.downcase.strip, book.author.to_s.downcase.strip ]
+                 end
+                 combined.first(10)
+               else
+                 local_results
+               end
     else
                []
     end
@@ -71,7 +82,8 @@ class BooksController < ApplicationController
             id: book.id,
             title: book.title,
             author: book.author,
-            cover_url: book.cover_image.presence
+            cover_url: book.cover_image,
+            persisted: book.persisted?
           }
         }
       end
@@ -80,11 +92,31 @@ class BooksController < ApplicationController
 
   private
 
+  def map_lookup_result_to_book(result)
+    puts "The result is: #{result}"
+    Book.new(
+      title: result.title,
+      author: result.author.presence || "Unknown Author",
+      cover_image: result.cover_image,
+      isbn: result.isbn,
+      publisher: result.publisher,
+      published_at: result.published_at,
+      description: result.description,
+      page_count: result.page_count,
+      language: result.language,
+      source: result.source
+    )
+  end
+
   def set_book
     @book = Book.find(params[:id])
   end
 
   def book_params
-    params.require(:book).permit(:title, :author, :description, :published_at)
+    params.require(:book).permit(
+      :title, :author, :description, :published_at, :language,
+      :cover_image, :publisher, :isbn, :source, :source_url,
+      :title_en, :title_romanized, :author_romanized, :page_count
+    )
   end
 end
