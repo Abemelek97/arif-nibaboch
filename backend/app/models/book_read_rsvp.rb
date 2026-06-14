@@ -30,7 +30,7 @@ class BookReadRsvp < ApplicationRecord
   private
 
   def send_rsvp_email
-    UserMailer.with(rsvp: self).rsvp_confirmation.deliver_later
+    UserMailer.with(rsvp: self, time_zone: Time.zone.name).rsvp_confirmation.deliver_later
   end
 
   def capacity_available_for_going

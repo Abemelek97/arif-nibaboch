@@ -2,12 +2,25 @@
 <html>
   <head>
     <meta http-equiv="Content-Type" content="text/html; charset=utf-8">
-    <style>
-      /* Email styles need to be inline */
-    </style>
+    <%# premailer-rails will find this and inline the styles %>
+    <%= stylesheet_link_tag "mailer", data: { turbo_track: "reload" } %>
   </head>
 
-  <body>
-    <%= yield %>
+  <body class="bg-background font-sans m-0 p-0 antialiased">
+    <div class="container-email my-10 bg-surface rounded-radius-card overflow-hidden shadow-card border border-border">
+      <div class="bg-primary p-10 text-center">
+        <h1 class="text-white m-0 text-2xl font-extrabold tracking-tight">
+          <%= Rails.configuration.x.app_name %>
+        </h1>
+      </div>
+      
+      <div class="p-10 text-content">
+        <%= yield %>
+      </div>
+      
+      <div class="p-6 text-center text-xs text-content-muted bg-background border-t border-border">
+        &copy; <%= Time.now.year %> <%= Rails.configuration.x.app_name %>. All rights reserved.
+      </div>
+    </div>
   </body>
 </html>

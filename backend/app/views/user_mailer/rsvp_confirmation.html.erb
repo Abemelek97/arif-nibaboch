@@ -1,12 +1,59 @@
-<h1>RSVP Confirmation</h1>
-<p>Hi <%= @user.name %>,</p>
-<p>You have successfully RSVP'd for the upcoming book read session:</p>
+<h2 class="mt-0 text-content text-2xl font-extrabold">RSVP Confirmed!</h2>
+<p class="text-content-subtle leading-relaxed text-base">Hi <%= @user.name %>,</p>
+<p class="text-content-subtle leading-relaxed text-base">
+  You're all set! You have successfully RSVP'd for the upcoming reading session in <strong><%= @book_read.book_club.name %></strong>.
+</p>
 
-<ul>
-  <li><strong>Book:</strong> <%= @book_read.book&.title || "Discussion" %></li>
-  <li><strong>Time:</strong> <%= @book_read.meetup_time.strftime("%A, %B %d at %I:%M %p %Z") %></li>
-  <li><strong>Location:</strong> <%= @book_read.meetup_location %></li>
-  <li><strong>Club:</strong> <%= @book_read.book_club.name %></li>
-</ul>
+<div class="book-card p-6 mt-6 bg-surface border border-border rounded-radius-card">
+  <table border="0" cellpadding="0" cellspacing="0" width="100%">
+    <tr>
+      <td width="100" valign="top" class="pr-6">
+        <% if @book_read.book&.cover_image.present? %>
+          <img src="<%= @book_read.book.cover_image %>" class="w-[100px] h-[150px] object-cover rounded-lg shadow-sm">
+        <% else %>
+          <div class="w-[100px] h-[150px] bg-background border border-border rounded-lg flex items-center justify-center text-center p-2">
+            <span class="text-content-muted text-[10px] font-bold uppercase tracking-wider">No Cover</span>
+          </div>
+        <% end %>
+      </td>
+      <td valign="top">
+        <div class="flex flex-col">
+          <h3 class="text-xl font-extrabold text-content m-0 leading-tight">
+            <%= @book_read.book&.title || "Reading Session" %>
+          </h3>
+          <p class="text-sm text-content-subtle mt-1 mb-4">
+            by <%= @book_read.book&.author || "Various Authors" %>
+          </p>
+          <p class="text-sm text-content-muted leading-relaxed m-0">
+            <%= truncate(@book_read.book&.description, length: 140) %>
+          </p>
+        </div>
+      </td>
+    </tr>
+  </table>
+</div>
 
-<p>A calendar invite is attached to this email. We look forward to seeing you there!</p>
+<div class="my-8 space-y-3">
+  <div class="flex text-base">
+    <span class="w-[100px] text-content-muted font-bold text-[11px] uppercase tracking-widest pt-1">When</span>
+    <span class="text-content font-semibold"><%= @book_read.meetup_time.in_time_zone(@time_zone).strftime("%A, %B %d at %I:%M %p %Z") %></span>
+  </div>
+  <div class="flex text-base">
+    <span class="w-[100px] text-content-muted font-bold text-[11px] uppercase tracking-widest pt-1">Where</span>
+    <span class="text-content font-semibold"><%= @book_read.meetup_location %></span>
+  </div>
+  <div class="flex text-base">
+    <span class="w-[100px] text-content-muted font-bold text-[11px] uppercase tracking-widest pt-1">Host</span>
+    <span class="text-content font-semibold"><%= @book_read.host.name %></span>
+  </div>
+</div>
+
+<div class="text-center mt-10">
+  <%= link_to "View Session Details", 
+      book_club_book_read_url(@book_read.book_club, @book_read), 
+      class: "inline-block bg-primary text-primary-contrast px-8 py-4 rounded-xl text-base font-bold no-underline shadow-sm" %>
+</div>
+
+<p class="mt-10 text-xs text-content-muted text-center italic">
+  A calendar invite has been attached to this email.
+</p>
