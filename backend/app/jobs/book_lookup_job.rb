@@ -14,7 +14,6 @@ class BookLookupJob < ApplicationJob
       record.update(attributes.compact_blank)
       record
     else
-      puts "#attribes: #{attributes}"
       Book.create!(attributes)
     end
   end
