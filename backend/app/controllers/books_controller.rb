@@ -1,5 +1,5 @@
 class BooksController < ApplicationController
-  before_action :set_book, only: %i[show edit update destroy]
+  before_action :set_book, only: %i[ show ]
 
   def index
     @tags = Tag.all.limit(10).order(:name)
@@ -31,8 +31,6 @@ class BooksController < ApplicationController
     @book = Book.new
   end
 
-  def edit; end
-
   def create
     @book = Book.new(book_params)
     respond_to do |format|
@@ -46,18 +44,6 @@ class BooksController < ApplicationController
     end
   end
 
-  def update
-    if @book.update(book_params)
-      redirect_to @book, notice: "Book was successfully updated."
-    else
-      render :edit, status: :unprocessable_entity
-    end
-  end
-
-  def destroy
-    @book.destroy
-    redirect_to books_url, notice: "Book was successfully destroyed."
-  end
   def search
     query = params[:query]
     @books = if query.present?
