@@ -35,10 +35,14 @@ class BooksController < ApplicationController
 
   def create
     @book = Book.new(book_params)
-    if @book.save
-      redirect_to @book
-    else
-      render :new, status: :unprocessable_entity
+    respond_to do |format|
+      if @book.save
+        format.html { redirect_to @book }
+        format.json { render json: @book, status: :created }
+      else
+        format.html { render :new, status: :unprocessable_entity }
+        format.json { render json: @book.errors, status: :unprocessable_entity }
+      end
     end
   end
 
@@ -83,7 +87,9 @@ class BooksController < ApplicationController
             title: book.title,
             author: book.author,
             cover_url: book.cover_image,
-            persisted: book.persisted?
+            persisted: book.persisted?,
+            # Include attributes for unpersisted books so they can be saved
+            attributes: book.persisted? ? {} : book.attributes.except("id", "created_at", "updated_at")
           }
         }
       end
