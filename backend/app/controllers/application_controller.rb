@@ -5,7 +5,21 @@ class ApplicationController < ActionController::Base
   around_action :set_time_zone
   helper_method :user_device_language
 
+  before_action :set_locale
+
   protected
+
+ def set_locale
+  if I18n.available_locales.map(&:to_s).include?(params[:locale])
+    I18n.locale = params[:locale]
+  else
+    I18n.locale = I18n.default_locale
+  end
+end
+  
+  def default_url_options
+    { lang: I18n.locale }
+  end
 
   def set_time_zone(&block)
     time_zone = cookies[:user_time_zone] || Time.zone.name
@@ -25,7 +39,10 @@ class ApplicationController < ActionController::Base
       redirect_to (redirect_url || book_club_path(club)), alert: "You are not authorized to perform this action."
     end
   end
-
+  def configure_permitted_parameters
+    devise_parameter_sanitizer.permit(:sign_up, keys: [:name, :language])
+    devise_parameter_sanitizer.permit(:account_update, keys: [:name, :avatar, :language])
+  end
   private
 
   def user_device_language

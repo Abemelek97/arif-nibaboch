@@ -28,4 +28,8 @@
 #       enabled: "ON"
 
 en:
-  hello: "Hello world"
+  hello: "Hello"
+  sign_in: "Sign In"
+  sign_up: "Sign Up"
+  discover_books: "Discover your Next Favorite Book"
+
