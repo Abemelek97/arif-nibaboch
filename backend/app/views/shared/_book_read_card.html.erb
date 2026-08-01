@@ -1,58 +1,44 @@
-<div class="card card-side bg-base-100 shadow-sm">
+<div class="card card-side bg-surface shadow-sm border border-border">
   <figure class="w-32 self-stretch flex-shrink-0 overflow-hidden">
     <img
       src="<%= book.cover_image %>"
       alt="<%= book.title %>"
-      class="
-        h-full w-full object-cover object-center group-hover:scale-105
-        transition-transform duration-500
-      "
+      class="h-full w-full object-cover object-center group-hover:scale-105 transition-transform duration-500"
     >
   </figure>
 
-  <div class="card-body">
-    <div class="card-title">
+  <div class="card-body p-4 sm:p-5">
+    <%# Club Name - Theme Accent Upper Label %>
+    <div class="text-xs font-bold uppercase tracking-wider text-accent truncate mb-0.5">
       <%= club&.name || "Book Club" %>
     </div>
-    <h2 class="card-title">
-      <%= link_to book.title, book, class: "focus:outline-none" %>
+
+    <%# Book Title - Theme Content Header %>
+    <h2 class="title title-sm font-bold text-content leading-tight">
+      <%= link_to book.title, book, class: "hover:text-accent transition-colors focus:outline-none" %>
     </h2>
-    <p>
-      <%= book.author.presence || "Unknown Author" %>
+
+    <%# Author - Theme Content Subtle %>
+    <p class="text-xs sm:text-sm text-content-subtle mt-0.5">
+      by <%= book.author.presence || "Unknown Author" %>
     </p>
-    <div
-      class="
-        mt-[9px] flex items-center gap-1.5 text-[12.5px] font-medium text-[#2A2520]
-      "
-    >
-      <svg width="14" height="14" viewBox="0 0 24 24" fill="none">
-        <rect
-          x="3"
-          y="5"
-          width="18"
-          height="16"
-          rx="3"
-          stroke="#B6603C"
-          stroke-width="1.7"
-        ></rect>
-        <path
-          d="M3 9h18M8 3v4M16 3v4"
-          stroke="#B6603C"
-          stroke-width="1.7"
-          stroke-linecap="round"
-        ></path>
+
+    <%# Meetup Date - Theme Content Subtle %>
+    <div class="mt-3 flex items-center gap-1.5 text-xs font-medium text-content-subtle">
+      <svg class="w-3.5 h-3.5 text-accent shrink-0" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+        <rect x="3" y="5" width="18" height="16" rx="3" stroke="currentColor" stroke-width="1.7"></rect>
+        <path d="M3 9h18M8 3v4M16 3v4" stroke="currentColor" stroke-width="1.7" stroke-linecap="round"></path>
       </svg>
       <span>
         <%= book_read.meetup_time&.strftime("%b %d, %Y at %l:%M %p") %>
       </span>
     </div>
+
+    <%# RSVP Button %>
     <div class="mt-4 flex items-center gap-2 w-full">
-      <%# RSVP Button %>
       <button
         data-disable-with="Joining..."
-        class="
-          w-full btn btn-primary disabled:opacity-50 disabled:cursor-not-allowed
-        "
+        class="w-full btn btn-primary btn-sm sm:btn-md disabled:opacity-50 disabled:cursor-not-allowed"
         type="submit"
       >
         RSVP
@@ -60,3 +46,5 @@
     </div>
   </div>
 </div>
+
+
