@@ -1,15 +1,17 @@
 <div class="max-w-4xl mx-auto space-y-12">
   <%= turbo_frame_tag "discover_book_clubs", src: discover_book_clubs_path, loading: :lazy do %>
-    <%= render "home/discover_book_clubs_skeleton" %>  
+    <%= render "home/discover_book_clubs_skeleton" %>
   <% end %>
 </div>
 <%= turbo_frame_tag  "upcoming_book_reads", src: upcoming_book_reads_path, loading: :lazy do %>
-    <%= render "home/upcoming_book_reads_skeleton" %>
+  <%= render "home/upcoming_book_reads_skeleton" %>
 <% end %>
+
 <nav
   class="
     fixed bottom-0 left-0 z-50 w-full h-16 bg-surface border-t border-border
     sm:hidden pb-safe
+  "
 >
   <div
     class="

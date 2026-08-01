@@ -1,0 +1,37 @@
+<% club ||= book_read.book_club %>
+<% rsvp ||= (user_signed_in? ? book_read.book_read_rsvps.find_by(user: current_user) : nil) %>
+<% is_going = rsvp&.going? || rsvp&.waitlisted? %>
+
+<%= turbo_frame_tag dom_id(book_read, :card_rsvp), class: "w-full" do %>
+  <div class="card-actions justify-self-end w-full mt-4">
+    <% if user_signed_in? %>
+      <% if is_going %>
+        <%= button_to book_club_book_read_rsvp_path(club, book_read),
+            method: :patch,
+            params: { book_read_rsvp: { status: :cancelled } },
+            form: { onclick: "event.stopPropagation();", class: "w-full" },
+            class: "w-full btn btn-outline cursor-pointer disabled:opacity-50 disabled:cursor-not-allowed",
+            data: { disable_with: "Updating...", turbo_confirm: "Cancel your RSVP?" } do %>
+          <%= rsvp.waitlisted? ? "Waitlisted" : "RSVP'd" %>
+        <% end %>
+      <% else %>
+        <%= button_to book_club_book_read_rsvp_path(club, book_read),
+            method: :post,
+            params: { book_read_rsvp: { status: :going } },
+            form: { onclick: "event.stopPropagation();", class: "w-full" },
+            class: "w-full btn btn-primary cursor-pointer disabled:opacity-50 disabled:cursor-not-allowed",
+            data: { disable_with: "Joining..." } do %>
+          RSVP
+        <% end %>
+      <% end %>
+    <% else %>
+      <%= button_to new_user_session_path,
+          method: :get,
+          form: { onclick: "event.stopPropagation();", class: "w-full", data: { turbo_frame: "_top" } },
+          class: "w-full btn btn-primary cursor-pointer disabled:opacity-50 disabled:cursor-not-allowed text-center" do %>
+        RSVP
+      <% end %>
+    <% end %>
+  </div>
+<% end %>
+
