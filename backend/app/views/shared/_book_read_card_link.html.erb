@@ -1,10 +1,16 @@
 <% club ||= book_read.book_club %>
 <% show_club_name = local_assigns.fetch(:show_club_name, true) %>
 
-<%= link_to book_club_book_read_path(club, book_read), data: { turbo_frame: "_top" }, class: "block group" do %>
+<div class="relative">
   <%= render "shared/book_read_card",
-      book_read: book_read,
-      book: book_read.book,
-      club: club,
-      show_club_name: show_club_name %>
-<% end %>
+  book_read: book_read,
+  book: book_read.book,
+  club: club,
+  show_club_name: show_club_name %>
+  <%= link_to book_club_book_read_path(club, book_read),
+       data: { turbo_frame: "_top" },
+       class: "absolute inset-0 z-10",
+       aria: { label: "View reading session" } do %>
+    <span class="sr-only">View reading session</span>
+  <% end %>
+</div>
