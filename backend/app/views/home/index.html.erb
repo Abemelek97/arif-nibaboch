@@ -3,14 +3,13 @@
     <%= render "home/discover_book_clubs_skeleton" %>  
   <% end %>
 </div>
-  <% (1..15).each do |i|%>
-    <%= render "shared/book_read_card" %>
-  <% end %>
+<%= turbo_frame_tag  "upcoming_book_reads", src: upcoming_book_reads_path, loading: :lazy do %>
+    <%= render "home/upcoming_book_reads_skeleton" %>
+<% end %>
 <nav
   class="
     fixed bottom-0 left-0 z-50 w-full h-16 bg-surface border-t border-border
     sm:hidden pb-safe
-  "
 >
   <div
     class="
