@@ -46,10 +46,16 @@ zh-TW:
   tbd: "待定"
   discussion_session: "討論會"
   discover_book_clubs: "發現讀書會"
+  upcoming_reads: "即將進行的閱讀"
   join_club: "加入"
   joined_club: "已加入"
   joining_club: "正在加入..."
   leaving_club: "正在退出..."
+  cancel_rsvp_confirm: "確定要取消報名嗎？"
+  cancel_rsvp: "取消報名"
+  rsvpd: "已報名"
+  waitlisted: "候補中"
+  updating_rsvp: "更新中..."
   member_count:
     other: "%{count} 個成員"
 

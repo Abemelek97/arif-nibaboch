@@ -9,7 +9,7 @@ class BookReadsController < ApplicationController
     if @tab == "past"
       @reads = @book_club.book_reads.includes(:book).where("meetup_time < ?", Time.current).order(meetup_time: :desc)
     else
-      @reads = @book_club.book_reads.includes(:book).where("meetup_time >= ?", Time.current).order(meetup_time: :desc)
+      @reads = @book_club.book_reads.includes(:book).where("meetup_time >= ?", Time.current).order(meetup_time: :asc)
     end
   end
 

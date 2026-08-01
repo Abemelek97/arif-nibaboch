@@ -3,6 +3,9 @@
     <%= render "home/discover_book_clubs_skeleton" %>
   <% end %>
 </div>
+<%= turbo_frame_tag  "upcoming_book_reads", src: upcoming_book_reads_path, loading: :lazy do %>
+  <%= render "home/upcoming_book_reads_skeleton" %>
+<% end %>
 
 <nav
   class="

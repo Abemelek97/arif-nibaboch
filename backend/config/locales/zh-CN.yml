@@ -46,10 +46,16 @@ zh-CN:
   tbd: "待定"
   discussion_session: "讨论会"
   discover_book_clubs: "发现读书会"
+  upcoming_reads: "即将进行的阅读"
   join_club: "加入"
   joined_club: "已加入"
   joining_club: "正在加入..."
   leaving_club: "正在退出..."
+  cancel_rsvp_confirm: "确定要取消报名吗？"
+  cancel_rsvp: "取消报名"
+  rsvpd: "已报名"
+  waitlisted: "候补中"
+  updating_rsvp: "更新中..."
   member_count:
     other: "%{count} 个成员"
 
