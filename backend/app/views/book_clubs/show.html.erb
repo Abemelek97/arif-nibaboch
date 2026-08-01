@@ -33,7 +33,16 @@
     <div class="p-8">
       <div class="flex justify-between items-start">
         <div>
-          <h1 class="title title-lg text-content font-bold mb-2"><%= @club.name %></h1>
+          <div class="flex items-center gap-3 mb-2">
+            <% if @club.photo.attached? %>
+              <%= image_tag @club.photo, alt: "", class: "w-10 h-10 aspect-square rounded-full object-cover ring-2 ring-accent/20 shrink-0" %>
+            <% else %>
+              <div aria-hidden="true" class="w-10 h-10 rounded-full bg-accent/15 text-accent font-bold text-base flex items-center justify-center shrink-0">
+                <%= @club.name_initial %>
+              </div>
+            <% end %>
+            <h1 class="title title-lg text-content font-bold"><%= @club.name %></h1>
+          </div>
           <div class="flex items-center space-x-4 mb-6">
             <span
               class="

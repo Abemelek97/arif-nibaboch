@@ -1,0 +1,70 @@
+<%#
+# Show BookClub Admin View
+%>
+
+<header class="main-content__header">
+  <h1 class="main-content__page-title">
+    <%= page.page_title %>
+  </h1>
+
+  <div>
+    <%= link_to(
+      t("administrate.actions.edit_resource", name: page.page_title),
+      [:edit, namespace, page.resource],
+      class: "button",
+    ) %>
+    <%= link_to(
+      t("administrate.actions.destroy"),
+      [namespace, page.resource],
+      class: "button button--danger",
+      method: :delete,
+      data: { confirm: t("administrate.actions.confirm") }
+    ) %>
+  </div>
+</header>
+
+<section class="main-content__body">
+  <dl>
+    <% page.attributes.each do |title, attributes| %>
+      <fieldset class="<%= "fieldset--#{title.parameterize}" if title.present? %>">
+        <% if title.present? %>
+          <legend><h2><%= title %></h2></legend>
+        <% end %>
+
+        <% attributes.each do |attribute| %>
+          <dt class="attribute-label" id="<%= attribute.name %>">
+          <%= t(
+            "helpers.label.#{page.resource_name}.#{attribute.name}",
+            default: attribute.name.titleize,
+          ) %>
+          </dt>
+
+          <dd class="attribute-data attribute-data--<%= attribute.html_class %>"
+              ><%= render_field attribute, page: page %></dd>
+        <% end %>
+      </fieldset>
+    <% end %>
+
+    <fieldset>
+      <legend><h2>Attachments</h2></legend>
+
+      <dt class="attribute-label">Club Avatar Photo</dt>
+      <dd class="attribute-data">
+        <% if page.resource.photo.attached? %>
+          <%= image_tag page.resource.photo, alt: "", style: "width: 64px; height: 64px; border-radius: 9999px; object-fit: cover;" %>
+        <% else %>
+          <span style="color: #666;">No avatar photo attached</span>
+        <% end %>
+      </dd>
+
+      <dt class="attribute-label" style="margin-top: 1rem;">Cover Photo</dt>
+      <dd class="attribute-data">
+        <% if page.resource.cover_photo.attached? %>
+          <%= image_tag page.resource.cover_photo, alt: "", style: "height: 100px; width: 200px; border-radius: 4px; object-fit: cover;" %>
+        <% else %>
+          <span style="color: #666;">No cover photo attached</span>
+        <% end %>
+      </dd>
+    </fieldset>
+  </dl>
+</section>
