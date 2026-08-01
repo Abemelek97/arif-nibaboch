@@ -17,8 +17,8 @@ end %>
               params: { book_read_rsvp: { status: :cancelled } },
               form: { onclick: "event.stopPropagation();", class: "w-full" },
               class: "w-full btn btn-outline cursor-pointer disabled:opacity-50 disabled:cursor-not-allowed",
-              data: { disable_with: "Updating...", turbo_confirm: "Cancel your RSVP?" } do %>
-            <%= rsvp.waitlisted? ? "Waitlisted" : "RSVP'd" %>
+              data: { disable_with: t("updating_rsvp"), turbo_confirm: t("cancel_rsvp_confirm") } do %>
+            <%= rsvp.waitlisted? ? t("waitlisted") : t("rsvpd") %>
           <% end %>
         <% else %>
           <%= button_to book_club_book_read_rsvp_path(club, book_read),
@@ -26,7 +26,7 @@ end %>
               params: { book_read_rsvp: { status: :going } },
               form: { onclick: "event.stopPropagation();", class: "w-full" },
               class: "w-full btn btn-primary cursor-pointer disabled:opacity-50 disabled:cursor-not-allowed",
-              data: { disable_with: "Joining..." } do %>
+              data: { disable_with: t("joining_club") } do %>
             RSVP
           <% end %>
         <% end %>

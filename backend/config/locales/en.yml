@@ -80,6 +80,11 @@ en:
   joined_club: "Joined"
   joining_club: "Joining..."
   leaving_club: "Leaving..."
+  cancel_rsvp_confirm: "Cancel your RSVP?"
+  cancel_rsvp: "Cancel RSVP"
+  rsvpd: "RSVP'd"
+  waitlisted: "Waitlisted"
+  updating_rsvp: "Updating..."
   member_count:
     one: "1 member"
     other: "%{count} members"

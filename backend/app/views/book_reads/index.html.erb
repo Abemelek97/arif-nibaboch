@@ -26,7 +26,7 @@
   <% if @reads.any? %>
     <div class="space-y-4">
       <% @reads.each do |read| %>
-        <%= render partial: "book_reads/card", locals: { read: read } %>
+        <%= render "shared/book_read_card_link", book_read: read, club: @book_club, show_club_name: false %>
       <% end %>
     </div>
   <% else %>

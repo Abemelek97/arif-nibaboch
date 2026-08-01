@@ -8,12 +8,7 @@
 
     <div class="flex flex-col gap-3">
       <% @upcoming_book_reads.each do |book_read| %>
-        <%= link_to book_club_book_read_path(book_read.book_club, book_read), data: { turbo_frame: "_top" }, class: "block group" do %>
-          <%= render "shared/book_read_card",
-              book: book_read.book,
-              club: book_read.book_club,
-              book_read: book_read %>
-        <% end %>
+        <%= render "shared/book_read_card_link", book_read: book_read %>
       <% end %>
     </div>
   </div>

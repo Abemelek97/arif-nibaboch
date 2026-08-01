@@ -114,7 +114,7 @@
   </div>
 
   <% if @current_read %>
-    <%= render partial: "book_reads/card", locals: { read: @current_read } %>
+    <%= render "shared/book_read_card_link", book_read: @current_read, club: @club, show_club_name: false %>
   <% else %>
     <div
       class="

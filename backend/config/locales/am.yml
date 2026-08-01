@@ -51,6 +51,11 @@ am:
   joined_club: "ተቀላቅለዋል"
   joining_club: "በመቀላቀል ላይ..."
   leaving_club: "በመልቀቅ ላይ..."
+  cancel_rsvp_confirm: "ምዝገባዎን መሰረዝ ይፈልጋሉ?"
+  cancel_rsvp: "ምዝገባ ይሰርዙ"
+  rsvpd: "ተመዝግበዋል"
+  waitlisted: "በተጠባባቂ ላይ"
+  updating_rsvp: "በማዘመን ላይ..."
   member_count:
     one: "1 አባል"
     other: "%{count} አባላት"
