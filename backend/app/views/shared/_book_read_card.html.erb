@@ -27,10 +27,19 @@
   </figure>
 
   <div class="card-body p-4 sm:p-5 min-w-0">
-    <%# Club Name - Theme Accent Upper Label (optional) %>
+    <%# Club Header - Circular Avatar + Accent Name %>
     <% if show_club_name %>
-      <div class="text-xs font-bold uppercase tracking-wider text-accent truncate mb-0.5">
-        <%= club&.name || "Book Club" %>
+      <div class="flex items-center gap-2 mb-1.5 min-w-0">
+        <% if club&.photo&.attached? %>
+          <%= image_tag club.photo, class: "w-7 h-7 aspect-square rounded-full object-cover shrink-0 ring-1 ring-border shadow-xs" %>
+        <% else %>
+          <div class="w-7 h-7 rounded-full bg-accent/15 text-accent font-bold text-xs flex items-center justify-center shrink-0">
+            <%= club&.name_initial || "B" %>
+          </div>
+        <% end %>
+        <span class="text-xs font-bold uppercase tracking-wider text-accent truncate">
+          <%= club&.name || "Book Club" %>
+        </span>
       </div>
     <% end %>
 

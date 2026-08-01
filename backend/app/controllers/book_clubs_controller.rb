@@ -69,7 +69,7 @@ class BookClubsController < ApplicationController
   end
 
   def club_params
-    params.require(:book_club).permit(:name, :description, :is_private, :cover_photo)
+    params.require(:book_club).permit(:name, :description, :is_private, :cover_photo, :photo)
   end
 
   def set_book_club

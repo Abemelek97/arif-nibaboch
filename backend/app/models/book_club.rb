@@ -2,6 +2,11 @@ class BookClub < ApplicationRecord
   belongs_to :owner, class_name: "User", optional: true
 
   has_one_attached :cover_photo
+  has_one_attached :photo
+
+  def name_initial
+    name.presence&.strip&.first&.upcase || "B"
+  end
 
   has_many :book_reads, dependent: :destroy
   has_many :books, through: :book_reads
