@@ -1,0 +1,59 @@
+<%= form_for([namespace, page.resource], html: { class: "form", multipart: true }) do |f| %>
+  <% if page.resource.errors.any? %>
+    <div id="error_explanation">
+      <h2>
+        <%= t(
+          "administrate.actions.errors",
+          pluralized_errors: pluralize(page.resource.errors.count, t("administrate.controller.error")),
+          resource_name: page.resource_name,
+        ) %>
+      </h2>
+
+      <ul>
+        <% page.resource.errors.full_messages.each do |message| %>
+          <li class="flash-error"><%= message %></li>
+        <% end %>
+      </ul>
+    </div>
+  <% end %>
+
+  <% page.attributes(action_name).each do |title, attributes| -%>
+    <% attributes.each do |attribute| -%>
+      <div class="field-unit field-unit--<%= attribute.html_class %> field-unit--<%= attribute.attribute %>">
+        <%= render_field attribute, f: f %>
+      </div>
+    <% end -%>
+  <% end -%>
+
+  <div class="field-unit field-unit--file">
+    <div class="field-unit__label">
+      <%= f.label :photo, "Club Avatar Photo" %>
+    </div>
+    <div class="field-unit__field">
+      <% if page.resource.persisted? && page.resource.photo.attached? %>
+        <div style="margin-bottom: 8px;">
+          <%= image_tag page.resource.photo, alt: "", style: "width: 48px; height: 48px; border-radius: 9999px; object-fit: cover;" %>
+        </div>
+      <% end %>
+      <%= f.file_field :photo %>
+    </div>
+  </div>
+
+  <div class="field-unit field-unit--file">
+    <div class="field-unit__label">
+      <%= f.label :cover_photo, "Cover Photo" %>
+    </div>
+    <div class="field-unit__field">
+      <% if page.resource.persisted? && page.resource.cover_photo.attached? %>
+        <div style="margin-bottom: 8px;">
+          <%= image_tag page.resource.cover_photo, alt: "", style: "height: 60px; width: 120px; border-radius: 4px; object-fit: cover;" %>
+        </div>
+      <% end %>
+      <%= f.file_field :cover_photo %>
+    </div>
+  </div>
+
+  <div class="form-actions">
+    <%= f.submit %>
+  </div>
+<% end %>

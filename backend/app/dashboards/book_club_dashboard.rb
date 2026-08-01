@@ -13,8 +13,6 @@ class BookClubDashboard < Administrate::BaseDashboard
     book_club_members_count: Field::Number,
     book_reads: Field::HasMany,
     books: Field::HasMany,
-    cover_photo_attachment: Field::HasOne,
-    cover_photo_blob: Field::HasOne,
     description: Field::Text,
     is_private: Field::Boolean,
     members: Field::HasMany,
@@ -31,26 +29,21 @@ class BookClubDashboard < Administrate::BaseDashboard
   # Feel free to add, remove, or rearrange items.
   COLLECTION_ATTRIBUTES = %i[
     id
-    book_club_members
+    name
+    owner
     book_club_members_count
-    book_reads
   ].freeze
 
   # SHOW_PAGE_ATTRIBUTES
   # an array of attributes that will be displayed on the model's show page.
   SHOW_PAGE_ATTRIBUTES = %i[
     id
-    book_club_members
-    book_club_members_count
-    book_reads
-    books
-    cover_photo_attachment
-    cover_photo_blob
+    name
     description
     is_private
-    members
-    name
     owner
+    book_club_members
+    book_reads
     created_at
     updated_at
   ].freeze

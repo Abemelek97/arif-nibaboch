@@ -35,9 +35,9 @@
         <div>
           <div class="flex items-center gap-3 mb-2">
             <% if @club.photo.attached? %>
-              <%= image_tag @club.photo, class: "w-10 h-10 aspect-square rounded-full object-cover ring-2 ring-accent/20 shrink-0" %>
+              <%= image_tag @club.photo, alt: "", class: "w-10 h-10 aspect-square rounded-full object-cover ring-2 ring-accent/20 shrink-0" %>
             <% else %>
-              <div class="w-10 h-10 rounded-full bg-accent/15 text-accent font-bold text-base flex items-center justify-center shrink-0">
+              <div aria-hidden="true" class="w-10 h-10 rounded-full bg-accent/15 text-accent font-bold text-base flex items-center justify-center shrink-0">
                 <%= @club.name_initial %>
               </div>
             <% end %>
