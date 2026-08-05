@@ -100,41 +100,53 @@
           </div>
         </div>
 
-        <div class="space-y-1">
-          <%= poll_form.label :end_date, "Voting Ends On", class: "block text-sm font-medium text-content-subtle" %>
-          <%= poll_form.datetime_field :end_date, 
-              class: "block w-full rounded-md border-border bg-background py-2 px-3 text-sm text-content focus:bg-surface focus:border-primary transition-all outline-none" %>
-        </div>
+        <%= render "components/date_picker",
+          form: poll_form,
+          field_type: :datetime_local,
+          name: :end_date,
+          label: "Voting Ends On",
+          error: poll_form.object.errors[:end_date] %>
       <% end %>
     </div>
   </div>
 
   <%# Shared Fields %>
   <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
-    <div class="space-y-1">
-      <%= form.label :max_capacity, class: "block text-sm font-medium text-content-subtle" %>
-      <%= form.number_field :max_capacity,
-          min: 2,
-          placeholder: "e.g., 12",
-          class: "block w-full rounded-md border-border bg-background py-2 px-3 text-sm text-content focus:bg-surface focus:border-primary transition-all outline-none" %>
-    </div>
+    <%= render "components/input",
+      form: form,
+      field_type: :number,
+      name: :max_capacity,
+      label: "Max Capacity",
+      placeholder: "e.g., 12",
+      error: @book_read.errors[:max_capacity] %>
 
-    <div class="space-y-1">
-      <%= form.label :meetup_time, class: "block text-sm font-medium text-content-subtle" %>
-      <%= form.datetime_field :meetup_time, 
-          class: "block w-full rounded-md border-border bg-background py-2 px-3 text-sm text-content focus:bg-surface focus:border-primary transition-all outline-none" %>
-    </div>
+    <%= render "components/date_picker",
+      form: form,
+      field_type: :datetime_local,
+      name: :meetup_time,
+      label: "Meetup Time",
+      error: @book_read.errors[:meetup_time] %>
 
-    <div class="space-y-1">
-      <%= form.label :meetup_location, class: "block text-sm font-medium text-content-subtle" %>
-      <%= form.text_field :meetup_location, 
-          placeholder: "e.g., Starbucks",
-          class: "block w-full rounded-md border-border bg-background py-2 px-3 text-sm text-content focus:bg-surface focus:border-primary transition-all outline-none" %>
-    </div>
+    <%= render "components/input",
+      form: form,
+      name: :meetup_location,
+      label: "Meetup Location",
+      placeholder: "e.g., Starbucks",
+      classes: "sm:col-span-2",
+      error: @book_read.errors[:meetup_location] %>
   </div>
 
-  <div class="flex items-center justify-end gap-3 pt-6 border-t border-border">
-    <%= link_to "Cancel", book_club_path(@book_club), class: "px-4 py-2 text-sm font-medium text-content-subtle" %>
-    <%= form.submit "Schedule Read", class: "px-6 py-2 bg-primary text-primary-contrast text-sm font-bold rounded-md hover:bg-primary cursor-pointer" %>
+  <div class="flex flex-col-reverse sm:flex-row items-center justify-end gap-3 pt-6 border-t border-border">
+    <%= render "components/button",
+      label: "Cancel",
+      type: "link",
+      url: book_club_path(@book_club),
+      variant: "ghost",
+      classes: "w-full sm:w-auto text-content-subtle hover:text-content" %>
+    <%= render "components/button",
+      label: "Schedule Read",
+      type: "submit",
+      variant: "primary",
+      classes: "w-full sm:w-auto" %>
   </div>
 <% end %>

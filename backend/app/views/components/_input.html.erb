@@ -44,7 +44,7 @@
   input_id = id.presence || (form ? "#{form.object_name}_#{name}" : "field_#{name}")
 
   input_box_classes = [
-    "input input-bordered flex items-center gap-2 w-full",
+    "input input-bordered flex items-center gap-2 w-full focus-within:outline-none focus-within:border-primary focus-within:ring-2 focus-within:ring-primary/20 transition-all",
     (error.present? ? "input-error" : ""),
     input_classes
   ].reject(&:empty?).join(" ")
@@ -64,7 +64,6 @@
     input_options[:data][:password_target] = "input"
   end
 
-  # Build raw attribute strings for non-form input tags
   raw_attrs = []
   raw_attrs << "id=\"#{ERB::Util.html_escape(input_id)}\"" if input_id.present?
   raw_attrs << "value=\"#{ERB::Util.html_escape(value)}\"" if value.present?
@@ -83,7 +82,7 @@
 
 <fieldset class="fieldset w-full <%= classes %>" <% if toggle_password %> data-controller="password" <% end %>>
   <% if label.present? %>
-    <legend class="fieldset-legend font-medium text-sm text-content flex items-center justify-between w-full">
+    <legend class="fieldset-legend font-medium text-sm text-content flex items-center justify-between w-full mb-1">
       <label for="<%= input_id %>" class="flex items-center justify-between w-full cursor-pointer">
         <span><%= label %></span>
         <% if required %>
@@ -102,9 +101,9 @@
       <% end %>
 
       <% if form.present? %>
-        <%= form.send(:"#{field_type}_field", name, input_options.merge(class: "grow bg-transparent border-0 focus:outline-none focus:ring-0 p-0 text-base sm:text-sm")) %>
+        <%= form.send(:"#{field_type}_field", name, input_options.merge(class: "grow bg-transparent border-none outline-none focus:outline-none focus:ring-0 ring-0 shadow-none p-0 text-base sm:text-sm")) %>
       <% else %>
-        <input type="<%= field_type %>" name="<%= name %>" <%= raw_attr_str.html_safe %> class="grow bg-transparent border-0 focus:outline-none focus:ring-0 p-0 text-base sm:text-sm" />
+        <input type="<%= field_type %>" name="<%= name %>" <%= raw_attr_str.html_safe %> class="grow bg-transparent border-none outline-none focus:outline-none focus:ring-0 ring-0 shadow-none p-0 text-base sm:text-sm" />
       <% end %>
 
       <% if toggle_password %>
@@ -124,7 +123,7 @@
   <% else %>
     <%
       single_input_classes = [
-        "input input-bordered w-full text-base sm:text-sm",
+        "input input-bordered w-full text-base sm:text-sm focus:outline-none focus:border-primary focus:ring-2 focus:ring-primary/20 transition-all",
         (error.present? ? "input-error" : ""),
         input_classes
       ].reject(&:empty?).join(" ")
@@ -138,11 +137,11 @@
   <% end %>
 
   <% if hint.present? %>
-    <p class="fieldset-label text-xs text-content-muted"><%= hint %></p>
+    <p class="fieldset-label text-xs text-content-muted mt-1"><%= hint %></p>
   <% end %>
 
   <% if error.present? %>
-    <p class="fieldset-label text-xs text-error font-medium">
+    <p class="fieldset-label text-xs text-error font-medium mt-1">
       <%= error.is_a?(Array) ? error.join(", ") : error %>
     </p>
   <% end %>

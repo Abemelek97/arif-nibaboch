@@ -1,0 +1,87 @@
+<%#
+  DaisyUI File Input Component with Fieldset & Fieldset Legend
+  (https://daisyui.com/components/file-input/)
+  Locals:
+    - form: FormBuilder object (e.g. f) or nil
+    - name: Symbol/String (attribute name, required)
+    - label: String (label text) or nil / false
+    - required: Boolean
+    - accept: String (e.g. "image/*")
+    - hint: String (help text)
+    - error: String / Array (error message)
+    - classes: String (wrapper extra classes)
+    - file_classes: String (file element extra classes)
+    - data: Hash
+    - id: String
+%>
+
+<%
+  form ||= nil
+  name ||= :file
+  label = nil if local_assigns[:label] == false
+  label ||= name.to_s.humanize unless local_assigns[:label] == false
+  required = !!local_assigns[:required]
+  accept ||= nil
+  hint ||= nil
+  error ||= nil
+  classes ||= ""
+  file_classes ||= ""
+  data ||= {}
+  id ||= nil
+
+  input_id = id.presence || (form ? "#{form.object_name}_#{name}" : "field_#{name}")
+
+  box_classes = [
+    "file-input file-input-bordered file-input-primary w-full text-base sm:text-sm cursor-pointer",
+    (error.present? ? "file-input-error" : ""),
+    file_classes
+  ].reject(&:empty?).join(" ")
+
+  input_options = {
+    accept: accept.presence,
+    id: input_id,
+    data: data.dup
+  }.compact
+  input_options[:required] = true if required
+
+  raw_attrs = []
+  raw_attrs << "id=\"#{ERB::Util.html_escape(input_id)}\"" if input_id.present?
+  raw_attrs << "accept=\"#{ERB::Util.html_escape(accept)}\"" if accept.present?
+  raw_attrs << "required" if required
+
+  if input_options[:data].present?
+    input_options[:data].each do |dk, dv|
+      raw_attrs << "data-#{dk.to_s.dasherize}=\"#{ERB::Util.html_escape(dv)}\""
+    end
+  end
+  raw_attr_str = raw_attrs.join(" ")
+%>
+
+<fieldset class="fieldset w-full <%= classes %>">
+  <% if label.present? %>
+    <legend class="fieldset-legend font-medium text-sm text-content flex items-center justify-between w-full">
+      <label for="<%= input_id %>" class="flex items-center justify-between w-full cursor-pointer">
+        <span><%= label %></span>
+        <% if required %>
+          <span class="text-xs text-error font-normal">*Required</span>
+        <% end %>
+      </label>
+    </legend>
+  <% end %>
+
+  <% if form.present? %>
+    <%= form.file_field name, input_options.merge(class: box_classes) %>
+  <% else %>
+    <input type="file" name="<%= name %>" <%= raw_attr_str.html_safe %> class="<%= box_classes %>" />
+  <% end %>
+
+  <% if hint.present? %>
+    <p class="fieldset-label text-xs text-content-muted"><%= hint %></p>
+  <% end %>
+
+  <% if error.present? %>
+    <p class="fieldset-label text-xs text-error font-medium">
+      <%= error.is_a?(Array) ? error.join(", ") : error %>
+    </p>
+  <% end %>
+</fieldset>
