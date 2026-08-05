@@ -70,7 +70,7 @@
     <% end %>
   <% end %>
 <% else %>
-  <button type="<%= type %>" class="<%= btn_classes %>" <%= "disabled" if disabled %> <%= "id='#{id}'" if id.present? %> <% data.each do |k, v| %> data-<%= k.to_s.dasherize %>="<%= v %>" <% end %>>
+  <button type="<%= type %>" class="<%= btn_classes %>" <%= "disabled" if disabled %><% if id.present? %> id="<%= id %>"<% end %><% data.each do |k, v| %> data-<%= k.to_s.dasherize %>="<%= v %>"<% end %>>
     <% if icon.present? && icon_position == "left" %>
       <span class="inline-flex items-center"><%= icon.html_safe %></span>
     <% end %>

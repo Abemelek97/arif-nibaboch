@@ -5,6 +5,7 @@ zh-CN:
   titles:
     home: "首页"
     library: "图书馆"
+    books: "图书"
     book_clubs: "读书俱乐部"
     create_book_club: "创建读书俱乐部"
     edit_book_club: "编辑 %{name}"
@@ -12,7 +13,7 @@ zh-CN:
     sign_in: "登录"
     sign_up: "注册"
     forgot_password: "忘记密码"
-    resend_confirmation: "重发确认邮件"
+    resend_confirmation: "重新发送确认邮件"
     account_settings: "账户设置"
     change_password: "修改密码"
     schedule_book_read: "安排阅读活动"

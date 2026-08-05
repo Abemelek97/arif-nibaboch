@@ -5,6 +5,7 @@ am:
   titles:
     home: "መነሻ ገጽ"
     library: "ቤተ መፃህፍት"
+    books: "መጻሕፍት"
     book_clubs: "የመጽሐፍ ክለቦች"
     create_book_club: "የመጽሐፍ ክለብ ፍጠር"
     edit_book_club: "%{name} አርትዕ"
