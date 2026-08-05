@@ -1,0 +1,142 @@
+<%#
+  DaisyUI Input Component with Fieldset & Fieldset Legend
+  (https://daisyui.com/components/input/#with-fieldset-and-fieldset-legend)
+  Locals:
+    - form: FormBuilder object (e.g. f) or nil
+    - field_type: Symbol/String (:email, :password, :text, :url, :number, etc., default: :text)
+    - name: Symbol/String (attribute name, required)
+    - label: String (label text) or nil / false
+    - placeholder: String
+    - value: String
+    - autofocus: Boolean
+    - autocomplete: String
+    - required: Boolean
+    - hint: String (help text)
+    - error: String / Array (error message)
+    - icon: String / HTML (prefix icon SVG)
+    - toggle_password: Boolean (adds password toggle button)
+    - classes: String (wrapper extra classes)
+    - input_classes: String (input element extra classes)
+    - data: Hash (data attributes for input)
+    - id: String
+%>
+
+<%
+  form ||= nil
+  field_type ||= :text
+  name ||= :text
+  label = nil if local_assigns[:label] == false
+  label ||= name.to_s.humanize unless local_assigns[:label] == false
+  placeholder ||= ""
+  value ||= nil
+  autofocus ||= false
+  autocomplete ||= nil
+  required ||= false
+  hint ||= nil
+  error ||= nil
+  icon ||= nil
+  toggle_password = (field_type.to_sym == :password && local_assigns[:toggle_password] != false)
+  classes ||= ""
+  input_classes ||= ""
+  data ||= {}
+  id ||= nil
+
+  input_box_classes = [
+    "input input-bordered flex items-center gap-2 w-full",
+    (error.present? ? "input-error" : ""),
+    input_classes
+  ].reject(&:empty?).join(" ")
+%>
+
+<fieldset class="fieldset w-full <%= classes %>" <% if toggle_password %> data-controller="password" <% end %>>
+  <% if label.present? %>
+    <legend class="fieldset-legend font-medium text-sm text-content flex items-center justify-between w-full">
+      <span><%= label %></span>
+      <% if required %>
+        <span class="text-xs text-error font-normal">*Required</span>
+      <% end %>
+    </legend>
+  <% end %>
+
+  <% if icon.present? || toggle_password %>
+    <label class="<%= input_box_classes %>">
+      <% if icon.present? %>
+        <span class="opacity-70 flex items-center shrink-0">
+          <%= icon.html_safe %>
+        </span>
+      <% end %>
+
+      <%
+        input_options = {
+          placeholder: placeholder,
+          autofocus: autofocus,
+          autocomplete: autocomplete,
+          required: required,
+          class: "grow bg-transparent border-0 focus:outline-none focus:ring-0 p-0 text-base sm:text-sm",
+          data: data.dup,
+          id: id
+        }.compact
+        input_options[:value] = value if value.present?
+        if toggle_password
+          input_options[:data] ||= {}
+          input_options[:data][:password_target] = "input"
+        end
+      %>
+
+      <% if form.present? %>
+        <%= form.send(:"#{field_type}_field", name, input_options) %>
+      <% else %>
+        <input type="<%= field_type %>" name="<%= name %>" <%= "value='#{value}'" if value.present? %> <% input_options.each do |k, v| next if k == :class; if k == :data; v.each { |dk, dv| %> data-<%= dk.to_s.dasherize %>="<%= dv %>" <% }; else %> <%= k %>="<%= v %>" <% end; end %> class="<%= input_options[:class] %>" />
+      <% end %>
+
+      <% if toggle_password %>
+        <button type="button"
+                class="opacity-70 hover:opacity-100 transition-opacity p-1 cursor-pointer flex items-center shrink-0"
+                data-action="click->password#toggle"
+                aria-label="Toggle password visibility">
+          <span data-password-target="toggleIcon">
+            <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="1.5">
+              <path stroke-linecap="round" stroke-linejoin="round" d="M2.036 12.322a1.012 1.012 0 010-.639C3.423 7.51 7.36 4.5 12 4.5c4.638 0 8.573 3.007 9.963 7.178.07.207.07.431 0 .639C20.577 16.49 16.64 19.5 12 19.5c-4.638 0-8.573-3.007-9.963-7.178z" />
+              <path stroke-linecap="round" stroke-linejoin="round" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z" />
+            </svg>
+          </span>
+        </button>
+      <% end %>
+    </label>
+  <% else %>
+    <%
+      single_input_classes = [
+        "input input-bordered w-full text-base sm:text-sm",
+        (error.present? ? "input-error" : ""),
+        input_classes
+      ].reject(&:empty?).join(" ")
+
+      input_options = {
+        placeholder: placeholder,
+        autofocus: autofocus,
+        autocomplete: autocomplete,
+        required: required,
+        class: single_input_classes,
+        data: data.dup,
+        id: id
+      }.compact
+      input_options[:value] = value if value.present?
+    %>
+
+    <% if form.present? %>
+      <%= form.send(:"#{field_type}_field", name, input_options) %>
+    <% else %>
+      <input type="<%= field_type %>" name="<%= name %>" <%= "value='#{value}'" if value.present? %> <% input_options.each do |k, v| next if k == :class; if k == :data; v.each { |dk, dv| %> data-<%= dk.to_s.dasherize %>="<%= dv %>" <% }; else %> <%= k %>="<%= v %>" <% end; end %> class="<%= input_options[:class] %>" />
+    <% end %>
+  <% end %>
+
+  <% if hint.present? %>
+    <p class="fieldset-label text-xs text-content-muted"><%= hint %></p>
+  <% end %>
+
+  <% if error.present? %>
+    <p class="fieldset-label text-xs text-error font-medium">
+      <%= error.is_a?(Array) ? error.join(", ") : error %>
+    </p>
+  <% end %>
+</fieldset>

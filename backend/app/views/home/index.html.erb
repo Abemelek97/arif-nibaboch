@@ -1,3 +1,4 @@
+<% content_for :title, t("titles.home") %>
 <div class="max-w-4xl mx-auto space-y-12">
   <%= turbo_frame_tag "discover_book_clubs", src: discover_book_clubs_path, loading: :lazy do %>
     <%= render "home/discover_book_clubs_skeleton" %>

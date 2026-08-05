@@ -1,0 +1,87 @@
+<%#
+  DaisyUI Button Component
+  Locals:
+    - label: String (text on button)
+    - type: String ("submit", "button", "link", "a", default: "submit")
+    - url: String (destination URL if type is "link" or "a")
+    - variant: String ("primary", "secondary", "accent", "neutral", "ghost", "outline", "error", "success", "warning", default: "primary")
+    - size: String ("xs", "sm", "md", "lg", default: "md")
+    - full_width: Boolean (default: true)
+    - icon: String / HTML (optional SVG icon)
+    - icon_position: String ("left", "right", default: "left")
+    - classes: String (additional custom CSS classes)
+    - data: Hash (data attributes)
+    - disabled: Boolean (default: false)
+    - id: String (optional ID)
+%>
+
+<%
+  label ||= nil
+  type ||= "submit"
+  url ||= "#"
+  variant ||= "primary"
+  size ||= "md"
+  full_width = true if local_assigns[:full_width].nil?
+  icon ||= nil
+  icon_position ||= "left"
+  classes ||= ""
+  data ||= {}
+  disabled ||= false
+  id ||= nil
+
+  variant_class = case variant.to_s
+  when "primary" then "btn-primary"
+  when "secondary" then "btn-secondary"
+  when "accent" then "btn-accent"
+  when "neutral" then "btn-neutral"
+  when "ghost" then "btn-ghost"
+  when "outline" then "btn-outline"
+  when "error" then "btn-error"
+  when "success" then "btn-success"
+  when "warning" then "btn-warning"
+  else "btn-#{variant}"
+  end
+
+  size_class = case size.to_s
+  when "xs" then "btn-xs"
+  when "sm" then "btn-sm"
+  when "lg" then "btn-lg text-base h-12"
+  else ""
+  end
+
+  width_class = full_width ? "w-full" : ""
+
+  btn_classes = ["btn", variant_class, size_class, width_class, "font-medium shadow-xs focus-visible:outline-2 focus-visible:outline-offset-2 transition-all duration-200 active:scale-[0.98]", classes].reject(&:empty?).join(" ")
+%>
+
+<% if type == "link" || type == "a" %>
+  <%= link_to url, class: btn_classes, data: data, id: id do %>
+    <% if icon.present? && icon_position == "left" %>
+      <span class="inline-flex items-center"><%= icon.html_safe %></span>
+    <% end %>
+    <% if label.present? %>
+      <span><%= label %></span>
+    <% end %>
+    <% if block_given? %>
+      <%= yield %>
+    <% end %>
+    <% if icon.present? && icon_position == "right" %>
+      <span class="inline-flex items-center"><%= icon.html_safe %></span>
+    <% end %>
+  <% end %>
+<% else %>
+  <button type="<%= type %>" class="<%= btn_classes %>" <%= "disabled" if disabled %> <%= "id='#{id}'" if id.present? %> <% data.each do |k, v| %> data-<%= k.to_s.dasherize %>="<%= v %>" <% end %>>
+    <% if icon.present? && icon_position == "left" %>
+      <span class="inline-flex items-center"><%= icon.html_safe %></span>
+    <% end %>
+    <% if label.present? %>
+      <span><%= label %></span>
+    <% end %>
+    <% if block_given? %>
+      <%= yield %>
+    <% end %>
+    <% if icon.present? && icon_position == "right" %>
+      <span class="inline-flex items-center"><%= icon.html_safe %></span>
+    <% end %>
+  </button>
+<% end %>
