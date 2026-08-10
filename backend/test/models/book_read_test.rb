@@ -1,6 +1,8 @@
 require "test_helper"
 
 class BookReadTest < ActiveSupport::TestCase
+  include ActiveJob::TestHelper
+
   def setup
     @book = books(:one)
     @club = book_clubs(:one)
@@ -68,5 +70,35 @@ class BookReadTest < ActiveSupport::TestCase
   test "should not allow max_capacity below 2" do
     @book_read.max_capacity = 1
     assert_not @book_read.valid?
+  end
+
+  test "calendar_sequence defaults to 0 on creation" do
+    @book_read.save!
+    assert_equal 0, @book_read.calendar_sequence
+  end
+
+  test "updating meetup_location increments calendar_sequence and enqueues job" do
+    @book_read.save!
+    assert_enqueued_with(job: SendBookReadInviteJob, args: [ @book_read.id, 1 ]) do
+      @book_read.update!(meetup_location: "New Room 101")
+    end
+    assert_equal 1, @book_read.calendar_sequence
+  end
+
+  test "updating meetup_time increments calendar_sequence and enqueues job" do
+    @book_read.save!
+    new_time = 2.weeks.from_now
+    assert_enqueued_with(job: SendBookReadInviteJob, args: [ @book_read.id, 1 ]) do
+      @book_read.update!(meetup_time: new_time)
+    end
+    assert_equal 1, @book_read.calendar_sequence
+  end
+
+  test "updating non-schedule attributes does not increment calendar_sequence or enqueue job" do
+    @book_read.save!
+    assert_no_enqueued_jobs(only: SendBookReadInviteJob) do
+      @book_read.update!(max_capacity: 10)
+    end
+    assert_equal 0, @book_read.calendar_sequence
   end
 end

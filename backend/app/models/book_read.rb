@@ -34,7 +34,29 @@ class BookRead < ApplicationRecord
     end
   end
 
+  CALENDAR_UPDATE_TRIGGER_ATTRIBUTES = %w[meetup_location meetup_time].freeze
+
+  before_save :increment_calendar_sequence, if: :schedule_changed?
+  after_commit :queue_schedule_update_invite, on: :update, if: :saved_change_to_schedule?
+
   private
+
+  def schedule_changed?
+    persisted? && CALENDAR_UPDATE_TRIGGER_ATTRIBUTES.any? { |attr| attribute_changed?(attr) }
+  end
+
+  def saved_change_to_schedule?
+    CALENDAR_UPDATE_TRIGGER_ATTRIBUTES.any? { |attr| saved_change_to_attribute?(attr) }
+  end
+
+  def increment_calendar_sequence
+    self.calendar_sequence += 1
+  end
+
+  def queue_schedule_update_invite
+    delay = ENV.fetch("BOOK_READ_UPDATE_DEBOUNCE_MINUTES", 5).to_i.minutes
+    SendBookReadInviteJob.set(wait: delay).perform_later(id, calendar_sequence)
+  end
 
   def has_book_or_poll
     unless book_id.present? || poll.present?
