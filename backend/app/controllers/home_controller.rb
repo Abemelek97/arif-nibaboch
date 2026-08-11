@@ -5,7 +5,7 @@ class HomeController < ApplicationController
   def upcoming
     @upcoming_book_reads = BookRead.includes(:book, :book_club)
                                     .where("meetup_time >= ?", Time.current)
-                                    .order(meetup_time: :asc)
+                                    .order(meetup_time: :asc, id: :asc)
 
     if turbo_frame_request? || request.format.turbo_stream?
       set_page_and_extract_portion_from @upcoming_book_reads
