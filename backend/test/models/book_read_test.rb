@@ -101,4 +101,29 @@ class BookReadTest < ActiveSupport::TestCase
     end
     assert_equal 0, @book_read.calendar_sequence
   end
+
+  test "concurrent schedule updates atomically increment calendar_sequence without collision" do
+    @book_read.save!
+    latch = Queue.new
+
+    threads = 5.times.map do |i|
+      Thread.new do
+        ActiveRecord::Base.connection_pool.with_connection do
+          read = BookRead.find(@book_read.id)
+          latch.pop # Pause until released simultaneously
+          read.update!(meetup_location: "Concurrent Room #{i}")
+        end
+      end
+    end
+
+    # Wait until all 5 threads are ready at the barrier
+    sleep 0.01 while latch.num_waiting < 5
+
+    # Release all 5 threads simultaneously
+    5.times { latch.push(true) }
+    threads.each(&:join)
+
+    @book_read.reload
+    assert_equal 5, @book_read.calendar_sequence
+  end
 end

@@ -50,7 +50,8 @@ class BookRead < ApplicationRecord
   end
 
   def increment_calendar_sequence
-    self.calendar_sequence += 1
+    latest_seq = self.class.where(id: id).lock.pick(:calendar_sequence) || calendar_sequence || 0
+    self.calendar_sequence = latest_seq + 1
   end
 
   def queue_schedule_update_invite
