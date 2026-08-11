@@ -61,7 +61,16 @@ class BookReadsController < ApplicationController
   end
 
   def update
-    if @book_read.update(book_read_params)
+    clean_params = book_read_params.dup
+    if params[:selection_type] == "book"
+      @book_read.poll&.destroy
+      @book_read.poll = nil
+      clean_params.delete(:poll_attributes)
+    elsif params[:selection_type] == "poll"
+      @book_read.book_id = nil
+    end
+
+    if @book_read.update(clean_params)
       redirect_to book_club_book_read_path(@book_club, @book_read), notice: "Book read was successfully updated."
     else
       render :edit, status: :unprocessable_entity

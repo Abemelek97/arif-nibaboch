@@ -5,7 +5,7 @@ Hi <%= @user.name %>,
 The meetup details for your upcoming book read session have been updated:
 
 - Book: <%= @book_read.book&.title || "Discussion" %>
-- New Time: <%= `@book_read.meetup_time.in_time_zone`(`@time_zone`).strftime("%A, %B %d at %I:%M %p %Z") %>
+- New Time: <%= @book_read.meetup_time.in_time_zone(@time_zone).strftime("%A, %B %d at %I:%M %p %Z") %>
 - New Location: <%= @book_read.meetup_location %>
 - Club: <%= @book_read.book_club.name %>
 

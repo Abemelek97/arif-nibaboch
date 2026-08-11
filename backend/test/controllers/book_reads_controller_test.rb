@@ -2,6 +2,7 @@ require "test_helper"
 
 class BookReadsControllerTest < ActionDispatch::IntegrationTest
   include Devise::Test::IntegrationHelpers
+  include ActiveJob::TestHelper
 
   setup do
     @user = users(:one)
@@ -100,28 +101,43 @@ class BookReadsControllerTest < ActionDispatch::IntegrationTest
     assert_select "form"
   end
 
+  test "should get edit for owner and render existing meetup_time value" do
+    @book_read = book_reads(:one)
+    sign_in @user
+    get edit_book_club_book_read_url(@book_club, @book_read)
+    assert_response :success
+    assert_select "form"
+    formatted_time = @book_read.meetup_time.strftime("%Y-%m-%dT%H:%M")
+    assert_select "input[name='book_read[meetup_time]'][value='#{formatted_time}']"
+  end
+
+  test "should update book_read meetup_time for owner, increment sequence, and enqueue invite job" do
+    @book_read = book_reads(:one)
+    sign_in @user
+    new_time = 2.months.from_now.to_datetime
+    initial_seq = @book_read.calendar_sequence
+
+    assert_enqueued_with(job: SendBookReadInviteJob, args: [ @book_read.id, initial_seq + 1 ]) do
+      patch book_club_book_read_url(@book_club, @book_read), params: {
+        book_read: {
+          meetup_time: new_time
+        }
+      }
+    end
+
+    assert_redirected_to book_club_book_read_url(@book_club, @book_read)
+    assert_equal "Book read was successfully updated.", flash[:notice]
+    @book_read.reload
+    assert_in_delta new_time.to_i, @book_read.meetup_time.to_i, 1
+    assert_equal initial_seq + 1, @book_read.calendar_sequence
+  end
+
   test "should not get edit if not owner" do
     @book_read = book_reads(:one)
     sign_in users(:two) # User two is not the owner
     get edit_book_club_book_read_url(@book_club, @book_read)
     assert_redirected_to book_club_url(@book_club)
     assert_equal "You are not authorized to perform this action.", flash[:alert]
-  end
-
-  test "should update book_read for owner" do
-    @book_read = book_reads(:one)
-    sign_in @user
-    new_time = 2.months.from_now.to_datetime
-    patch book_club_book_read_url(@book_club, @book_read), params: {
-      book_read: {
-        meetup_time: new_time
-      }
-    }
-    assert_redirected_to book_club_book_read_url(@book_club, @book_read)
-    assert_equal "Book read was successfully updated.", flash[:notice]
-    @book_read.reload
-    # Compare with a small tolerance for database time precision
-    assert_in_delta new_time.to_i, @book_read.meetup_time.to_i, 1
   end
 
   test "should not update book_read if not owner" do

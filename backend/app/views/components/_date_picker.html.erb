@@ -26,7 +26,8 @@
   label = nil if local_assigns[:label] == false
   label ||= name.to_s.humanize unless local_assigns[:label] == false
   placeholder ||= (field_type == :datetime_local ? "Select date & time..." : "Select date...")
-  value ||= nil
+  value = local_assigns[:value]
+  value = form.object.send(name) if value.nil? && form.present? && form.object.respond_to?(name)
   min ||= nil
   max ||= nil
   required = !!local_assigns[:required]
@@ -39,7 +40,7 @@
 
   input_id = id.presence || (form ? "#{form.object_name}_#{name}" : "field_#{name}")
 
-  val_str = value.is_a?(Time) || value.is_a?(DateTime) ? value.strftime(field_type == :datetime_local ? "%Y-%m-%dT%H:%M" : "%Y-%m-%d") : value.to_s
+  val_str = value.respond_to?(:strftime) ? value.strftime(field_type.to_sym == :datetime_local ? "%Y-%m-%dT%H:%M" : "%Y-%m-%d") : value.to_s
 
   field_method = case field_type.to_sym
                  when :datetime_local, :datetime then :datetime_local_field
