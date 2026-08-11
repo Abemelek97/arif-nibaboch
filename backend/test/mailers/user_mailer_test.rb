@@ -25,6 +25,9 @@ class UserMailerTest < ActionMailer::TestCase
     assert_match "UID:book-read-#{book_read.id}-rsvp-#{rsvp.id}@", attachment.body.to_s
     assert_match "SEQUENCE:0", attachment.body.to_s
     assert_match "METHOD:REQUEST", attachment.body.to_s
+    assert_match "ORGANIZER", attachment.body.to_s
+    assert_match "ATTENDEE", attachment.body.to_s
+    assert_match "mailto:#{user.email}", attachment.body.to_s
   end
 
   test "book_read_updated_invite" do
@@ -51,5 +54,8 @@ class UserMailerTest < ActionMailer::TestCase
     assert_match "SEQUENCE:1", attachment.body.to_s
     assert_match "METHOD:REQUEST", attachment.body.to_s
     assert_match "LOCATION:Updated Room 404", attachment.body.to_s
+    assert_match "ORGANIZER", attachment.body.to_s
+    assert_match "ATTENDEE", attachment.body.to_s
+    assert_match "mailto:#{user.email}", attachment.body.to_s
   end
 end

@@ -23,11 +23,16 @@ class UserMailer < ApplicationMailer
   end
 
   def attach_calendar_invite!(summary_prefix: nil, description_suffix: nil)
+    mail_domain = Rails.configuration.x.mail_from_domain
+    organizer_email = "noreply@#{mail_domain}"
+
     cal = Icalendar::Calendar.new
     cal.ip_method = "REQUEST"
     cal.event do |e|
       e.uid         = calendar_event_uid
       e.sequence    = @book_read.calendar_sequence || 0
+      e.organizer   = Icalendar::Values::CalAddress.new("mailto:#{organizer_email}", cn: Rails.configuration.x.app_name)
+      e.attendee    = [ Icalendar::Values::CalAddress.new("mailto:#{@user.email}", cn: @user.name) ]
       # Explicitly marking as UTC ensures calendars auto-adjust to user's local time
       e.dtstart     = Icalendar::Values::DateTime.new(@book_read.meetup_time.utc, tzid: "UTC")
       e.dtend       = Icalendar::Values::DateTime.new((@book_read.meetup_time + 2.hours).utc, tzid: "UTC")
