@@ -30,8 +30,14 @@
   value = form.object.send(name) if value.nil? && form.present? && form.object.respond_to?(name)
   min = local_assigns[:min]
   max = local_assigns[:max]
-  min_str = min.respond_to?(:strftime) ? min.strftime(field_type.to_sym == :datetime_local ? "%Y-%m-%dT%H:%M" : "%Y-%m-%d") : min.to_s
-  max_str = max.respond_to?(:strftime) ? max.strftime(field_type.to_sym == :datetime_local ? "%Y-%m-%dT%H:%M" : "%Y-%m-%d") : max.to_s
+  format_for_type = case field_type.to_sym
+                    when :datetime_local, :datetime then "%Y-%m-%dT%H:%M"
+                    when :time then "%H:%M"
+                    else "%Y-%m-%d"
+                    end
+
+  min_str = min.respond_to?(:strftime) ? min.strftime(format_for_type) : min.to_s
+  max_str = max.respond_to?(:strftime) ? max.strftime(format_for_type) : max.to_s
   required = !!local_assigns[:required]
   hint ||= nil
   error ||= nil
@@ -42,7 +48,7 @@
 
   input_id = id.presence || (form ? "#{form.object_name}_#{name}" : "field_#{name}")
 
-  val_str = value.respond_to?(:strftime) ? value.strftime(field_type.to_sym == :datetime_local ? "%Y-%m-%dT%H:%M" : "%Y-%m-%d") : value.to_s
+  val_str = value.respond_to?(:strftime) ? value.strftime(format_for_type) : value.to_s
 
   field_method = case field_type.to_sym
                  when :datetime_local, :datetime then :datetime_local_field
