@@ -67,7 +67,7 @@
     <%# Poll Selection Section %>
     <% if can_toggle_selection %>
       <div id="poll_fields" data-book-read-form-target="pollSection" class="hidden p-4 rounded-lg border border-border bg-surface shadow-sm space-y-4">
-        <%= form.fields_for :poll, (@book_read.poll || (current_selection == 'poll' ? Poll.new : nil)) do |poll_form| %>
+        <%= form.fields_for :poll, (@book_read.poll || Poll.new) do |poll_form| %>
           <div class="space-y-1">
             <%= poll_form.label :text, "Poll Question", class: "block text-sm font-medium text-content-subtle" %>
             <%= poll_form.text_field :text, 
