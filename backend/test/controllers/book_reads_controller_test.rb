@@ -24,7 +24,7 @@ class BookReadsControllerTest < ActionDispatch::IntegrationTest
         book_read: {
           book_id: @book.id,
           book_club_id: @book_club.id,
-          meetup_time: Date.today,
+          meetup_time: 1.week.from_now,
           meetup_location: "Vino Vino Cafe"
         }
       }
@@ -32,6 +32,24 @@ class BookReadsControllerTest < ActionDispatch::IntegrationTest
 
     assert_redirected_to book_club_book_read_url(@book_club, BookRead.last)
     assert_equal @user, BookRead.last.host
+  end
+
+  test "should not create book_read with meetup_time in the past" do
+    sign_in @user
+    assert_no_difference("BookRead.count") do
+      post book_club_book_reads_url(@book_club.id), params: {
+        book_read: {
+          book_id: @book.id,
+          book_club_id: @book_club.id,
+          meetup_time: 1.day.ago,
+          meetup_location: "Vino Vino Cafe"
+        }
+      }
+    end
+
+    assert_response :unprocessable_entity
+    assert_select "form"
+    assert_select "div.bg-red-50", text: /cannot be in the past/i
   end
 
   test "should not create book_read with invalid params" do
@@ -65,7 +83,7 @@ class BookReadsControllerTest < ActionDispatch::IntegrationTest
         book_read: {
           book_id: @book.id,
           book_club_id: @book_club.id,
-          meetup_time: Date.today,
+          meetup_time: 1.week.from_now,
           meetup_location: "Vino Vino Cafe"
         }
       }
@@ -84,7 +102,7 @@ class BookReadsControllerTest < ActionDispatch::IntegrationTest
         book_read: {
           book_id: @book.id,
           book_club_id: @book_club.id,
-          meetup_time: Date.today,
+          meetup_time: 1.week.from_now,
           meetup_location: "Vino Vino Cafe"
         }
       }
@@ -153,6 +171,29 @@ class BookReadsControllerTest < ActionDispatch::IntegrationTest
     assert_equal "You are not authorized to perform this action.", flash[:alert]
     @book_read.reload
     assert_equal original_time.to_i, @book_read.meetup_time.to_i
+  end
+
+  test "should rollback transaction and preserve poll when update fails" do
+    @book_read = book_reads(:one)
+    poll = Poll.create!(
+      book_read: @book_read,
+      text: "Which book?",
+      end_date: 1.day.from_now,
+      poll_options_attributes: [ { content: "Option 1" }, { content: "Option 2" } ]
+    )
+    sign_in @user
+
+    assert_no_difference("Poll.count") do
+      patch book_club_book_read_url(@book_club, @book_read), params: {
+        selection_type: "book",
+        book_read: {
+          meetup_location: ""
+        }
+      }
+    end
+
+    assert_response :unprocessable_entity
+    assert Poll.exists?(poll.id)
   end
 
   test "should get finalize for owner" do

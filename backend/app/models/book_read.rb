@@ -16,6 +16,7 @@ class BookRead < ApplicationRecord
   validates :host, presence: true
 
   validate :has_book_or_poll
+  validate :meetup_time_cannot_be_in_the_past, if: :will_save_change_to_meetup_time?
 
   def can_post_discussion_question?(user)
     return false if user.blank?
@@ -62,6 +63,12 @@ class BookRead < ApplicationRecord
   def has_book_or_poll
     unless book_id.present? || poll.present?
       errors.add(:base, "You must select a specific book or create a poll for this reading session")
+    end
+  end
+
+  def meetup_time_cannot_be_in_the_past
+    if meetup_time.present? && meetup_time < Time.current
+      errors.add(:meetup_time, "cannot be in the past")
     end
   end
 end

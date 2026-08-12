@@ -10,27 +10,33 @@
     </div>
   <% end %>
 
-  <%# Selection Toggle %>
-  <div class="space-y-3">
-    <label class="block text-sm font-semibold text-content ml-1">What are we reading?</label>
-    <% current_selection = params[:selection_type] || (@book_read.poll.present? ? 'poll' : 'book') %>
-    <div class="flex p-1 bg-background rounded-lg border border-border w-fit">
+  <%# Selection Toggle (Only shown when creating a new record or for poll sessions) %>
+  <% can_toggle_selection = @book_read.new_record? || @book_read.poll.present? %>
 
-       <label data-book-read-form-target="selectionBtn" 
-            data-action="click->book-read-form#toggle"
-            class="relative flex items-center px-4 py-2 rounded-md cursor-pointer transition-all bg-transparent">
-         <span class="text-sm font-bold text-content">Specific Book</span>
-        <%= radio_button_tag :selection_type, "book", current_selection == "book", class: "hidden" %>
-      </label>
+  <% if can_toggle_selection %>
+    <div class="space-y-3">
+      <label class="block text-sm font-semibold text-content ml-1">What are we reading?</label>
+      <% current_selection = params[:selection_type] || (@book_read.poll.present? ? 'poll' : 'book') %>
+      <div class="flex p-1 bg-background rounded-lg border border-border w-fit">
 
-       <label data-book-read-form-target="selectionBtn" 
-            data-action="click->book-read-form#toggle"
-            class="relative flex items-center px-4 py-2 rounded-md cursor-pointer transition-all bg-transparent">
-         <span class="text-sm font-bold text-content">Poll</span>
-        <%= radio_button_tag :selection_type, "poll", current_selection == "poll", class: "hidden" %>
-      </label>
+         <label data-book-read-form-target="selectionBtn" 
+              data-action="click->book-read-form#toggle"
+              class="relative flex items-center px-4 py-2 rounded-md cursor-pointer transition-all bg-transparent">
+           <span class="text-sm font-bold text-content">Specific Book</span>
+          <%= radio_button_tag :selection_type, "book", current_selection == "book", class: "hidden" %>
+        </label>
+
+         <label data-book-read-form-target="selectionBtn" 
+              data-action="click->book-read-form#toggle"
+              class="relative flex items-center px-4 py-2 rounded-md cursor-pointer transition-all bg-transparent">
+           <span class="text-sm font-bold text-content">Poll</span>
+          <%= radio_button_tag :selection_type, "poll", current_selection == "poll", class: "hidden" %>
+        </label>
+      </div>
     </div>
-  </div>
+  <% else %>
+    <%= hidden_field_tag :selection_type, "book" %>
+  <% end %>
 
   <%# Dynamic Sections %>
   <div class="relative">
@@ -59,55 +65,58 @@
     </div>
 
     <%# Poll Selection Section %>
-    <div id="poll_fields" data-book-read-form-target="pollSection" class="hidden p-4 rounded-lg border border-border bg-surface shadow-sm space-y-4">
-      <%= form.fields_for :poll, (@book_read.poll || (current_selection == 'poll' ? Poll.new : nil)) do |poll_form| %>
-        <div class="space-y-1">
-          <%= poll_form.label :text, "Poll Question", class: "block text-sm font-medium text-content-subtle" %>
-          <%= poll_form.text_field :text, 
-              class: "block w-full rounded-md border-border bg-background py-2 px-3 text-sm text-content placeholder:text-content-muted focus:bg-surface focus:border-primary transition-all outline-none", 
-              placeholder: "e.g., Which book should we read next?" %>
-        </div>
-        
-        <div class="pt-2 border-t border-border">
-          <label class="block text-sm font-medium text-content-subtle mb-3">Poll Options (Books)</label>
-          
-          <div data-controller="dynamic-nested-fields" id="poll_options">
-            <template data-dynamic-nested-fields-target="template">
-              <%= poll_form.fields_for :poll_options, PollOption.new, child_index: "NEW_RECORD" do |po_form| %>
-                <%= render "poll_option_fields", form: po_form %>
-              <% end %>
-            </template>
-
-            <div data-dynamic-nested-fields-target="container">
-              <%# If new poll, start with two empty options %>
-              <% if poll_form.object.new_record? && poll_form.object.poll_options.empty? %>
-                <% 2.times { poll_form.object.poll_options.build } %>
-              <% end %>
-              
-              <%= poll_form.fields_for :poll_options do |po_form| %>
-                <%= render "poll_option_fields", form: po_form %>
-              <% end %>
-            </div>
-
-            <button type="button" 
-                    data-action="click->dynamic-nested-fields#add" 
-                    class="mt-2 inline-flex items-center px-3 py-1.5 border border-border shadow-sm text-xs font-medium rounded text-content bg-surface hover:bg-background focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-primary transition-all">
-              <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" class="w-3.5 h-3.5 mr-1.5">
-                <path stroke-linecap="round" stroke-linejoin="round" d="M12 4.5v15m7.5-7.5h-15" />
-              </svg>
-              Add Another Option
-            </button>
+    <% if can_toggle_selection %>
+      <div id="poll_fields" data-book-read-form-target="pollSection" class="hidden p-4 rounded-lg border border-border bg-surface shadow-sm space-y-4">
+        <%= form.fields_for :poll, (@book_read.poll || (current_selection == 'poll' ? Poll.new : nil)) do |poll_form| %>
+          <div class="space-y-1">
+            <%= poll_form.label :text, "Poll Question", class: "block text-sm font-medium text-content-subtle" %>
+            <%= poll_form.text_field :text, 
+                class: "block w-full rounded-md border-border bg-background py-2 px-3 text-sm text-content placeholder:text-content-muted focus:bg-surface focus:border-primary transition-all outline-none", 
+                placeholder: "e.g., Which book should we read next?" %>
           </div>
-        </div>
+          
+          <div class="pt-2 border-t border-border">
+            <label class="block text-sm font-medium text-content-subtle mb-3">Poll Options (Books)</label>
+            
+            <div data-controller="dynamic-nested-fields" id="poll_options">
+              <template data-dynamic-nested-fields-target="template">
+                <%= poll_form.fields_for :poll_options, PollOption.new, child_index: "NEW_RECORD" do |po_form| %>
+                  <%= render "poll_option_fields", form: po_form %>
+                <% end %>
+              </template>
 
-        <%= render "components/date_picker",
-          form: poll_form,
-          field_type: :datetime_local,
-          name: :end_date,
-          label: "Voting Ends On",
-          error: poll_form.object.errors[:end_date] %>
-      <% end %>
-    </div>
+              <div data-dynamic-nested-fields-target="container">
+                <%# If new poll, start with two empty options %>
+                <% if poll_form.object.new_record? && poll_form.object.poll_options.empty? %>
+                  <% 2.times { poll_form.object.poll_options.build } %>
+                <% end %>
+                
+                <%= poll_form.fields_for :poll_options do |po_form| %>
+                  <%= render "poll_option_fields", form: po_form %>
+                <% end %>
+              </div>
+
+              <button type="button" 
+                      data-action="click->dynamic-nested-fields#add" 
+                      class="mt-2 inline-flex items-center px-3 py-1.5 border border-border shadow-sm text-xs font-medium rounded text-content bg-surface hover:bg-background focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-primary transition-all">
+                <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" class="w-3.5 h-3.5 mr-1.5">
+                  <path stroke-linecap="round" stroke-linejoin="round" d="M12 4.5v15m7.5-7.5h-15" />
+                </svg>
+                Add Another Option
+              </button>
+            </div>
+          </div>
+
+          <%= render "components/date_picker",
+            form: poll_form,
+            field_type: :datetime_local,
+            name: :end_date,
+            label: "Voting Ends On",
+            min: Time.current,
+            error: poll_form.object.errors[:end_date] %>
+        <% end %>
+      </div>
+    <% end %>
   </div>
 
   <%# Shared Fields %>
@@ -125,6 +134,7 @@
       field_type: :datetime_local,
       name: :meetup_time,
       label: "Meetup Time",
+      min: Time.current,
       error: @book_read.errors[:meetup_time] %>
 
     <%= render "components/input",

@@ -52,6 +52,17 @@ class BookReadTest < ActiveSupport::TestCase
     assert_not @book_read.valid?
   end
 
+  test "should not allow meetup_time in the past" do
+    @book_read.meetup_time = 1.day.ago
+    assert_not @book_read.valid?
+    assert_includes @book_read.errors[:meetup_time], "cannot be in the past"
+  end
+
+  test "should allow meetup_time in the future" do
+    @book_read.meetup_time = 1.day.from_now
+    assert @book_read.valid?
+  end
+
   test "should require a host" do
     @book_read.host = nil
     assert_not @book_read.valid?

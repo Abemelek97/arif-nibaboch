@@ -62,17 +62,25 @@ class BookReadsController < ApplicationController
 
   def update
     clean_params = book_read_params.dup
-    if params[:selection_type] == "book"
-      @book_read.poll&.destroy
-      @book_read.poll = nil
-      clean_params.delete(:poll_attributes)
-    elsif params[:selection_type] == "poll"
-      @book_read.book_id = nil
+
+    success = BookRead.transaction do
+      if params[:selection_type] == "book"
+        @book_read.poll&.destroy
+        @book_read.poll = nil
+        clean_params.delete(:poll_attributes)
+      elsif params[:selection_type] == "poll"
+        @book_read.book_id = nil
+      end
+
+      updated = @book_read.update(clean_params)
+      raise ActiveRecord::Rollback unless updated
+      true
     end
 
-    if @book_read.update(clean_params)
+    if success
       redirect_to book_club_book_read_path(@book_club, @book_read), notice: "Book read was successfully updated."
     else
+      @book_read.reload if @book_read.persisted?
       render :edit, status: :unprocessable_entity
     end
   end
