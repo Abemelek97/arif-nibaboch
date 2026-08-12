@@ -70,6 +70,8 @@ class BookReadsController < ApplicationController
         clean_params.delete(:poll_attributes)
       elsif params[:selection_type] == "poll"
         @book_read.book_id = nil
+        clean_params.delete(:book_id)
+        clean_params[:book_id] = nil
       end
 
       updated = @book_read.update(clean_params)
