@@ -116,6 +116,7 @@ class BookReadTest < ActiveSupport::TestCase
   test "concurrent schedule updates atomically increment calendar_sequence without collision" do
     @book_read.save!
     latch = Queue.new
+    exceptions = Queue.new
 
     threads = 5.times.map do |i|
       Thread.new do
@@ -124,15 +125,23 @@ class BookReadTest < ActiveSupport::TestCase
           latch.pop # Pause until released simultaneously
           read.update!(meetup_location: "Concurrent Room #{i}")
         end
+      rescue => e
+        exceptions.push(e)
       end
     end
 
-    # Wait until all 5 threads are ready at the barrier
-    sleep 0.01 while latch.num_waiting < 5
+    # Bounded wait until all 5 threads are ready at the barrier
+    50.times do
+      break if latch.num_waiting >= 5
+      sleep 0.02
+    end
+    assert_equal 5, latch.num_waiting, "Worker threads failed to reach the barrier in time"
 
     # Release all 5 threads simultaneously
     5.times { latch.push(true) }
     threads.each(&:join)
+
+    raise exceptions.pop unless exceptions.empty?
 
     @book_read.reload
     assert_equal 5, @book_read.calendar_sequence
