@@ -3,7 +3,9 @@ import { Controller } from "@hotwired/stimulus"
 export default class extends Controller {
   static targets = ["input", "display", "popover", "monthYear", "daysGrid", "hourSelect", "minuteSelect"]
   static values = {
-    mode: { type: String, default: "date" }
+    mode: { type: String, default: "date" },
+    min: { type: String, default: "" },
+    max: { type: String, default: "" }
   }
 
   connect() {
@@ -150,7 +152,14 @@ export default class extends Controller {
       html += `<span class="w-8 h-8"></span>`
     }
 
+    const minDate = this.hasMinValue && this.minValue ? new Date(this.minValue) : null
+    const maxDate = this.hasMaxValue && this.maxValue ? new Date(this.maxValue) : null
+
     for (let day = 1; day <= daysInMonth; day++) {
+      const cellEnd = new Date(this.viewYear, this.viewMonth, day, 23, 59, 59)
+      const cellStart = new Date(this.viewYear, this.viewMonth, day, 0, 0, 0)
+      const isDisabled = (minDate && cellEnd < minDate) || (maxDate && cellStart > maxDate)
+
       const isSelected = this.selectedDate &&
         this.selectedDate.getFullYear() === this.viewYear &&
         this.selectedDate.getMonth() === this.viewMonth &&
@@ -161,13 +170,17 @@ export default class extends Controller {
         this.today.getDate() === day
 
       let btnClass = "btn btn-sm btn-ghost w-8 h-8 p-0 font-normal rounded-lg text-content hover:bg-primary/10 hover:text-primary transition-colors"
-      if (isSelected) {
-        btnClass = "btn btn-sm btn-primary w-8 h-8 p-0 font-bold rounded-lg shadow-xs text-primary-contrast"
-      } else if (isToday) {
-        btnClass = "btn btn-sm btn-outline btn-primary w-8 h-8 p-0 font-semibold rounded-lg"
+      if (isDisabled) {
+        btnClass = "btn btn-sm btn-ghost w-8 h-8 p-0 font-normal rounded-lg text-content-muted opacity-30 cursor-not-allowed pointer-events-none"
+        html += `<button type="button" disabled class="${btnClass}">${day}</button>`
+      } else {
+        if (isSelected) {
+          btnClass = "btn btn-sm btn-primary w-8 h-8 p-0 font-bold rounded-lg shadow-xs text-primary-contrast"
+        } else if (isToday) {
+          btnClass = "btn btn-sm btn-outline btn-primary w-8 h-8 p-0 font-semibold rounded-lg"
+        }
+        html += `<button type="button" data-action="click->date-picker#selectDay" data-day="${day}" class="${btnClass}">${day}</button>`
       }
-
-      html += `<button type="button" data-action="click->date-picker#selectDay" data-day="${day}" class="${btnClass}">${day}</button>`
     }
 
     this.daysGridTarget.innerHTML = html

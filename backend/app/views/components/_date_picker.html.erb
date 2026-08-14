@@ -25,10 +25,19 @@
   name ||= :date
   label = nil if local_assigns[:label] == false
   label ||= name.to_s.humanize unless local_assigns[:label] == false
-  placeholder ||= (field_type == :datetime_local ? "Select date & time..." : "Select date...")
-  value ||= nil
-  min ||= nil
-  max ||= nil
+  placeholder ||= (field_type.to_sym == :datetime_local ? "Select date & time..." : "Select date...")
+  value = local_assigns[:value]
+  value = form.object.send(name) if value.nil? && form.present? && form.object.respond_to?(name)
+  min = local_assigns[:min]
+  max = local_assigns[:max]
+  format_for_type = case field_type.to_sym
+                    when :datetime_local, :datetime then "%Y-%m-%dT%H:%M"
+                    when :time then "%H:%M"
+                    else "%Y-%m-%d"
+                    end
+
+  min_str = min.respond_to?(:strftime) ? min.strftime(format_for_type) : min.to_s
+  max_str = max.respond_to?(:strftime) ? max.strftime(format_for_type) : max.to_s
   required = !!local_assigns[:required]
   hint ||= nil
   error ||= nil
@@ -39,7 +48,7 @@
 
   input_id = id.presence || (form ? "#{form.object_name}_#{name}" : "field_#{name}")
 
-  val_str = value.is_a?(Time) || value.is_a?(DateTime) ? value.strftime(field_type == :datetime_local ? "%Y-%m-%dT%H:%M" : "%Y-%m-%d") : value.to_s
+  val_str = value.respond_to?(:strftime) ? value.strftime(format_for_type) : value.to_s
 
   field_method = case field_type.to_sym
                  when :datetime_local, :datetime then :datetime_local_field
@@ -61,7 +70,9 @@
 
 <fieldset class="fieldset w-full relative <%= classes %>"
           data-controller="date-picker"
-          data-date-picker-mode-value="<%= field_type %>">
+          data-date-picker-mode-value="<%= field_type %>"
+          <% if min_str.present? %>data-date-picker-min-value="<%= min_str %>"<% end %>
+          <% if max_str.present? %>data-date-picker-max-value="<%= max_str %>"<% end %>>
   <% if label.present? %>
     <legend class="fieldset-legend font-medium text-sm text-content flex items-center justify-between w-full mb-1">
       <label for="<%= input_id %>_display" class="flex items-center justify-between w-full cursor-pointer">
@@ -75,9 +86,9 @@
 
   <%# Hidden actual input for form submission %>
   <% if form.present? %>
-    <%= form.send(field_method, name, value: val_str, id: input_id, required: required, data: { date_picker_target: "input" }, class: "hidden") %>
+    <%= form.send(field_method, name, value: val_str, id: input_id, min: min_str.presence, max: max_str.presence, required: required, data: { date_picker_target: "input" }, class: "hidden") %>
   <% else %>
-    <input type="<%= html_type %>" name="<%= name %>" value="<%= val_str %>" id="<%= input_id %>" <% if required %>required<% end %> data-date-picker-target="input" class="hidden" />
+    <input type="<%= html_type %>" name="<%= name %>" value="<%= val_str %>" id="<%= input_id %>" <% if min_str.present? %>min="<%= min_str %>"<% end %> <% if max_str.present? %>max="<%= max_str %>"<% end %> <% if required %>required<% end %> data-date-picker-target="input" class="hidden" />
   <% end %>
 
   <%# Visible DaisyUI Input Display with Calendar Trigger %>

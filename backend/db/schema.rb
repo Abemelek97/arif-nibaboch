@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema[8.0].define(version: 2026_06_20_011201) do
+ActiveRecord::Schema[8.0].define(version: 2026_08_11_120057) do
   create_table "active_storage_attachments", force: :cascade do |t|
     t.string "name", null: false
     t.string "record_type", null: false
@@ -81,6 +81,7 @@ ActiveRecord::Schema[8.0].define(version: 2026_06_20_011201) do
     t.datetime "meetup_time"
     t.integer "max_capacity"
     t.integer "host_id", null: false
+    t.integer "calendar_sequence", default: 0, null: false
     t.index ["book_club_id"], name: "index_book_reads_on_book_club_id"
     t.index ["book_id"], name: "index_book_reads_on_book_id"
     t.index ["host_id"], name: "index_book_reads_on_host_id"
