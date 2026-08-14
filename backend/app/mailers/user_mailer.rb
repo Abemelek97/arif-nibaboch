@@ -9,7 +9,7 @@ class UserMailer < ApplicationMailer
   end
 
   def book_read_updated_invite
-    attach_calendar_invite!(summary_prefix: "Updated: ", description_suffix: " (Schedule Updated)")
+    attach_calendar_invite!(description_suffix: " (Schedule Updated)")
     mail(to: @user.email, subject: "[Updated Calendar Invite] Book Read: #{@book_read.book&.title || 'Book Read'}")
   end
 
@@ -22,7 +22,7 @@ class UserMailer < ApplicationMailer
     @time_zone = params[:time_zone] || "Taipei"
   end
 
-  def attach_calendar_invite!(summary_prefix: nil, description_suffix: nil)
+  def attach_calendar_invite!(description_suffix: nil)
     mail_domain = Rails.configuration.x.mail_from_domain
     organizer_email = "noreply@#{mail_domain}"
 
@@ -36,7 +36,7 @@ class UserMailer < ApplicationMailer
       # Explicitly marking as UTC ensures calendars auto-adjust to user's local time
       e.dtstart     = Icalendar::Values::DateTime.new(@book_read.meetup_time.utc, tzid: "UTC")
       e.dtend       = Icalendar::Values::DateTime.new((@book_read.meetup_time + 2.hours).utc, tzid: "UTC")
-      e.summary     = "#{summary_prefix}Book Read: #{@book_read.book&.title || 'Discussion'}"
+      e.summary     = "Book Read: #{@book_read.book&.title || 'Discussion'}"
       e.description = "RSVP for #{@book_read.book_club.name}#{description_suffix}"
       e.location    = @book_read.meetup_location
       e.ip_class    = "PRIVATE"
