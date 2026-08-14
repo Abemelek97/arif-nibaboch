@@ -56,7 +56,7 @@ class BookRead < ApplicationRecord
   end
 
   def queue_schedule_update_invite
-    delay = ENV.fetch("BOOK_READ_UPDATE_DEBOUNCE_MINUTES", 5).to_i.minutes
+    delay = ENV.fetch("BOOK_READ_UPDATE_DEBOUNCE_MINUTES", 10).to_i.minutes
     SendBookReadInviteJob.set(wait: delay).perform_later(id, calendar_sequence)
   end
 
