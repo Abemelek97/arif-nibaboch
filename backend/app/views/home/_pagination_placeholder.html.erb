@@ -4,10 +4,9 @@
                         src: upcoming_book_reads_path(page: @next_page, format: :turbo_stream),
                         loading: :lazy do %>
       <div class="flex flex-col gap-4 mt-4 w-full">
-        <% 3.times do %>
-          <%= render partial: "home/upcoming_book_reads_skeleton" %>
-        <% end %>
+        <%= render partial: "home/upcoming_book_reads_skeleton" %>
       </div>
     <% end %>
   <% end %>
 </div>
+

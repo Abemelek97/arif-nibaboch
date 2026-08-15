@@ -1,5 +1,5 @@
 <%= turbo_stream.append "upcoming_book_reads_list" do %>
- <% @page.records.each do |book_read| %>
+  <% @page.records.each do |book_read| %>
     <%= render "shared/book_read_card_link", book_read: book_read %>
   <% end %>
 <% end %>

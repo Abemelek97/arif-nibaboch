@@ -7,8 +7,8 @@ class HomeController < ApplicationController
                                     .where("meetup_time >= ?", Time.current)
                                     .order(meetup_time: :asc, id: :asc)
 
+    set_page_and_extract_portion_from @upcoming_book_reads
     if turbo_frame_request? || request.format.turbo_stream?
-      set_page_and_extract_portion_from @upcoming_book_reads
       @next_page = @page.next_param
       @has_next_page = !@page.last?
     else

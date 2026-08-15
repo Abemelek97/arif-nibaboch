@@ -1,13 +1,5 @@
-<div class="flex flex-col">
-  <div class="flex items-baseline justify-between mb-4">
-    <div class="title title-sm font-bold text-content">
-      <%= t("upcoming_reads") %>
-    </div>
-  </div>
-
-  <div class="flex flex-col gap-3">
-    <% 5.times do %>
-      <%= render "shared/book_read_skeleton_card" %>
-    <% end %>
-  </div>
+<div class="flex flex-col gap-3">
+  <% 5.times do %>
+    <%= render "shared/book_read_skeleton_card" %>
+  <% end %>
 </div>
