@@ -1,3 +1,4 @@
+<% content_for :title, t("titles.home") %>
 <div class="max-w-4xl mx-auto space-y-12">
   <%= turbo_frame_tag "discover_book_clubs", src: discover_book_clubs_path, loading: :lazy do %>
     <%= render "home/discover_book_clubs_skeleton" %>
@@ -19,14 +20,10 @@
 <nav
   class="
     fixed bottom-0 left-0 z-50 w-full h-16 bg-surface border-t border-border
-    sm:hidden pb-safe
+    sm:hidden pb-safe hotwire-native:hidden
   "
 >
-  <div
-    class="
-      grid h-full max-w-lg grid-cols-4 mx-auto font-medium hotwire-native:hidden
-    "
-  >
+  <div class=" grid h-full max-w-lg grid-cols-4 mx-auto font-medium">
     <% main_navigation_items.each do |item| %>
       <% is_active = is_active_nav_item?(item) %>
       <%= link_to item[:path], class: "inline-flex flex-col items-center justify-center px-5 hover:bg-background group" do %>

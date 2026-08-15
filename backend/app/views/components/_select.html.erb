@@ -1,0 +1,101 @@
+<%#
+  DaisyUI Select Component with Fieldset & Fieldset Legend
+  (https://daisyui.com/components/select/)
+  Locals:
+    - form: FormBuilder object (e.g. f) or nil
+    - name: Symbol/String (attribute name, required)
+    - label: String (label text) or nil / false
+    - options: Array / Enumerable (options for select)
+    - selected: Object
+    - prompt: String / Boolean (e.g. "Select option")
+    - required: Boolean
+    - hint: String (help text)
+    - error: String / Array (error message)
+    - classes: String (wrapper extra classes)
+    - select_classes: String (select element extra classes)
+    - data: Hash
+    - id: String
+%>
+
+<%
+  form ||= nil
+  name ||= :select
+  label = nil if local_assigns[:label] == false
+  label ||= name.to_s.humanize unless local_assigns[:label] == false
+  options ||= []
+  selected ||= nil
+  prompt ||= nil
+  required = !!local_assigns[:required]
+  hint ||= nil
+  error ||= nil
+  classes ||= ""
+  select_classes ||= ""
+  data ||= {}
+  id ||= nil
+
+  input_id = id.presence || (form ? "#{form.object_name}_#{name}" : "field_#{name}")
+
+  box_classes = [
+    "select select-bordered w-full text-base sm:text-sm cursor-pointer",
+    (error.present? ? "select-error" : ""),
+    select_classes
+  ].reject(&:empty?).join(" ")
+
+  select_options = {
+    id: input_id,
+    data: data.dup
+  }.compact
+  select_options[:required] = true if required
+
+  raw_attrs = []
+  raw_attrs << "id=\"#{ERB::Util.html_escape(input_id)}\"" if input_id.present?
+  raw_attrs << "required" if required
+
+  if select_options[:data].present?
+    select_options[:data].each do |dk, dv|
+      raw_attrs << "data-#{dk.to_s.dasherize}=\"#{ERB::Util.html_escape(dv)}\""
+    end
+  end
+  raw_attr_str = raw_attrs.join(" ")
+%>
+
+<fieldset class="fieldset w-full <%= classes %>">
+  <% if label.present? %>
+    <legend class="fieldset-legend font-medium text-sm text-content flex items-center justify-between w-full">
+      <label for="<%= input_id %>" class="flex items-center justify-between w-full cursor-pointer">
+        <span><%= label %></span>
+        <% if required %>
+          <span class="text-xs text-error font-normal">*Required</span>
+        <% end %>
+      </label>
+    </legend>
+  <% end %>
+
+  <% if form.present? %>
+    <%= form.select name, options, { prompt: prompt, selected: selected }, select_options.merge(class: box_classes) %>
+  <% else %>
+    <select name="<%= name %>" <%= raw_attr_str.html_safe %> class="<%= box_classes %>">
+      <% if prompt.present? %>
+        <option value="" disabled <%= "selected" if selected.blank? %>><%= prompt %></option>
+      <% end %>
+      <% options.each do |opt| %>
+        <%
+          val = opt.is_a?(Array) ? opt.last : opt
+          text = opt.is_a?(Array) ? opt.first : opt
+          is_sel = selected.to_s == val.to_s
+        %>
+        <option value="<%= val %>" <%= "selected" if is_sel %>><%= text %></option>
+      <% end %>
+    </select>
+  <% end %>
+
+  <% if hint.present? %>
+    <p class="fieldset-label text-xs text-content-muted"><%= hint %></p>
+  <% end %>
+
+  <% if error.present? %>
+    <p class="fieldset-label text-xs text-error font-medium">
+      <%= error.is_a?(Array) ? error.join(", ") : error %>
+    </p>
+  <% end %>
+</fieldset>
