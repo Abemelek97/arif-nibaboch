@@ -1,0 +1,12 @@
+<div id="upcoming_pagination_placeholder">
+  <% if @has_next_page %>
+    <%= turbo_frame_tag "upcoming_book_reads_page_#{@next_page}",
+                        src: upcoming_book_reads_path(page: @next_page, format: :turbo_stream),
+                        loading: :lazy do %>
+      <div class="flex flex-col gap-4 mt-4 w-full">
+        <%= render partial: "home/upcoming_book_reads_skeleton" %>
+      </div>
+    <% end %>
+  <% end %>
+</div>
+
