@@ -1,5 +1,5 @@
 Sentry.init do |config|
-  config.dsn = ENV.fetch("SENTRY_DSN", "https://5hbu342ztcrPttCdTnPa3ukZ@s2397354.eu-fsn-3.betterstackdata.com/2681859")
+  config.dsn = ENV["SENTRY_DSN"]
 
   config.enabled_environments = ENV.fetch("SENTRY_ENABLED_ENVIRONMENTS", "production").split(",").map(&:strip)
 
