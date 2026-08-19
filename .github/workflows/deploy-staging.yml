@@ -52,6 +52,7 @@ jobs:
       DEEPL_AUTH_KEY: ${{ secrets.DEEPL_AUTH_KEY }}
       GOOGLE_BOOKS_API_KEY: ${{ secrets.GOOGLE_BOOKS_API_KEY }}
       RESEND_API_KEY: ${{ secrets.RESEND_API_KEY }}
+      SENTRY_DSN: ${{ secrets.SENTRY_DSN }}
       APP_DOMAIN: ${{ vars.APP_DOMAIN }}
       APP_PROTOCOL: ${{ vars.APP_PROTOCOL }}
       APP_NAME: ${{ VARS.APP_NAME }}

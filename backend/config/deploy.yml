@@ -48,6 +48,7 @@ env:
     - DEEPL_AUTH_KEY
     - GOOGLE_BOOKS_API_KEY
     - RESEND_API_KEY
+    - SENTRY_DSN
     - APP_DOMAIN
     - APP_PROTOCOL
     - APP_NAME
