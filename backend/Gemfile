@@ -85,6 +85,9 @@ gem "shadcn-ui", "~> 0.0.15"
 
 gem "logtail-rails", "~> 0.2.12"
 
+# Error tracking via Better Stack (Sentry-compatible) [https://betterstack.com/docs/error-tracking]
+gem "sentry-rails", "~> 5.22"
+
 gem "administrate", "~> 1.0"
 
 gem "mission_control-jobs", "~> 1.1"
