@@ -23,11 +23,24 @@ class BookReadRsvp < ApplicationRecord
 
       rsvp.status = desired_status
       rsvp.save!
+
+      promote_from_waitlist!(book_read) if desired_status == :cancelled
+
       rsvp
     end
   end
 
   private
+
+  def self.promote_from_waitlist!(book_read)
+    return unless book_read.max_capacity.present?
+
+    going_count = book_read.book_read_rsvps.going.count
+    return unless going_count < book_read.max_capacity
+
+    oldest_waitlisted = book_read.book_read_rsvps.waitlisted.order(created_at: :asc).first
+    oldest_waitlisted&.update!(status: :going)
+  end
 
   def send_rsvp_email
     UserMailer.with(rsvp: self, time_zone: Time.zone.name).rsvp_confirmation.deliver_later

@@ -57,6 +57,11 @@ zh-CN:
   time_label: "时间"
   location_label: "地点"
   host_label: "主持人"
+  going_label: "参加"
+  waitlist_label: "候补"
+  person_label: "人员"
+  status_label: "状态"
+  rsvp_dialog_title: "报名"
   hosted_by: "由 %{host} 主持"
   hosted_by_html: "由 %{host} 主持"
   scan_to_rsvp: "扫码报名"
@@ -70,9 +75,23 @@ zh-CN:
   leaving_club: "正在退出..."
   cancel_rsvp_confirm: "确定要取消报名吗？"
   cancel_rsvp: "取消报名"
+  leave_waitlist_confirm: "确定要离开候补名单吗？"
+  leave_waitlist: "离开候补"
+  join_waitlist: "加入候补"
+  rsvp_closed: "此活动已停止报名。"
+  event_started: "此活动已经开始。"
   rsvpd: "已报名"
+  you_are_going: "你已参加"
+  you_are_waitlisted: "你在候补名单中"
   waitlisted: "候补中"
   updating_rsvp: "更新中..."
+  people_going:
+    other: "%{count} 人参加"
+  people_waitlisted:
+    other: "%{count} 人候补"
+  waitlisted_count: "(%{count} 候补)"
+  spots_remaining:
+    other: "剩 %{count} 个名额"
   member_count:
     other: "%{count} 个成员"
 

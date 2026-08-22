@@ -24,6 +24,10 @@ class BookRead < ApplicationRecord
     rsvp_users.exists?(id: user.id)
   end
 
+  def full?
+    max_capacity.present? && book_read_rsvps.going.count >= max_capacity
+  end
+
   def visible_discussion_questions_for(user)
     questions = discussion_questions.includes(:question_translations)
     if user&.admin? || book_club.owner == user || book_club.book_club_members.exists?(user: user, role: :admin)

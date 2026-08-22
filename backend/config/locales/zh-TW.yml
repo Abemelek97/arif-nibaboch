@@ -57,6 +57,11 @@ zh-TW:
   time_label: "時間"
   location_label: "地點"
   host_label: "主持人"
+  going_label: "參加"
+  waitlist_label: "候補"
+  person_label: "人員"
+  status_label: "狀態"
+  rsvp_dialog_title: "報名"
   hosted_by: "由 %{host} 主持"
   hosted_by_html: "由 %{host} 主持"
   scan_to_rsvp: "掃碼報名"
@@ -70,9 +75,23 @@ zh-TW:
   leaving_club: "正在退出..."
   cancel_rsvp_confirm: "確定要取消報名嗎？"
   cancel_rsvp: "取消報名"
+  leave_waitlist_confirm: "確定要離開候補名單嗎？"
+  leave_waitlist: "離開候補"
+  join_waitlist: "加入候補"
+  rsvp_closed: "此活動已停止報名。"
+  event_started: "此活動已經開始。"
   rsvpd: "已報名"
+  you_are_going: "你已參加"
+  you_are_waitlisted: "你在候補名單中"
   waitlisted: "候補中"
   updating_rsvp: "更新中..."
+  people_going:
+    other: "%{count} 人參加"
+  people_waitlisted:
+    other: "%{count} 人候補"
+  waitlisted_count: "(%{count} 候補)"
+  spots_remaining:
+    other: "剩 %{count} 個名額"
   member_count:
     other: "%{count} 個成員"
 
