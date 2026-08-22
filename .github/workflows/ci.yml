@@ -38,7 +38,9 @@ jobs:
       - name: Install Ruby dependencies
         run: |
           bundle config set path 'vendor/bundle'
-          bundle install
+          bundle config set jobs 4
+          bundle config set deployment true
+          bundle check || bundle install
 
       - name: Setup database
         run: bin/rails db:test:prepare
