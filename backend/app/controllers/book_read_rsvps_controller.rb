@@ -7,6 +7,7 @@ class BookReadRsvpsController < ApplicationController
     ensure_membership!
     @rsvp = BookReadRsvp.rsvp!(book_read: @book_read, user: current_user, status: :going)
     @rsvp_users = @book_read.book_read_rsvps.going.includes(:user).map(&:user)
+    @waitlisted_count = @book_read.book_read_rsvps.waitlisted.count
 
     respond_to do |format|
       format.html { redirect_to book_club_book_read_path(@book_club, @book_read), notice: rsvp_notice(@rsvp) }
@@ -19,6 +20,7 @@ class BookReadRsvpsController < ApplicationController
     status = params.dig(:book_read_rsvp, :status) || :going
     @rsvp = BookReadRsvp.rsvp!(book_read: @book_read, user: current_user, status: status)
     @rsvp_users = @book_read.book_read_rsvps.going.includes(:user).map(&:user)
+    @waitlisted_count = @book_read.book_read_rsvps.waitlisted.count
 
     respond_to do |format|
       format.html { redirect_to book_club_book_read_path(@book_club, @book_read), notice: rsvp_notice(@rsvp) }

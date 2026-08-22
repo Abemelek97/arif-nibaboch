@@ -33,6 +33,7 @@ class BookReadsController < ApplicationController
     @new_discussion_question = DiscussionQuestion.new(content: draft_content)
     @rsvp = @book_read.book_read_rsvps.find_by(user: current_user) if user_signed_in?
     @rsvp_users = @book_read.book_read_rsvps.going.includes(:user).map(&:user)
+    @waitlisted_count = @book_read.book_read_rsvps.waitlisted.count
     @rsvp_records = @book_read.book_read_rsvps.includes(:user).order(created_at: :asc)
   end
 

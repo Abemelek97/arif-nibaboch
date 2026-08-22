@@ -73,6 +73,11 @@ zh-CN:
   rsvpd: "已报名"
   waitlisted: "候补中"
   updating_rsvp: "更新中..."
+  people_going:
+    other: "%{count} 人参加"
+  people_waitlisted:
+    other: "%{count} 人候补"
+  waitlisted_count: "(%{count} 候补)"
   member_count:
     other: "%{count} 个成员"
 

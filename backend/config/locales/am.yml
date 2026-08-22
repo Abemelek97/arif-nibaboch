@@ -73,6 +73,13 @@ am:
   rsvpd: "ተመዝግበዋል"
   waitlisted: "በተጠባባቂ ላይ"
   updating_rsvp: "በማዘመን ላይ..."
+  people_going:
+    one: "1 ሰው ይገኛል"
+    other: "%{count} ሰዎች ይገኙ ነው"
+  people_waitlisted:
+    one: "1 ሰው በተጠባባቂ ላይ"
+    other: "%{count} ሰዎች በተጠባባቂ ላይ"
+  waitlisted_count: "(%{count} ተጠባባቂ)"
   member_count:
     one: "1 አባል"
     other: "%{count} አባላት"

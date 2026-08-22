@@ -73,6 +73,11 @@ zh-TW:
   rsvpd: "已報名"
   waitlisted: "候補中"
   updating_rsvp: "更新中..."
+  people_going:
+    other: "%{count} 人參加"
+  people_waitlisted:
+    other: "%{count} 人候補"
+  waitlisted_count: "(%{count} 候補)"
   member_count:
     other: "%{count} 個成員"
 

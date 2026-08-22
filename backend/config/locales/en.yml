@@ -102,6 +102,13 @@ en:
   rsvpd: "RSVP'd"
   waitlisted: "Waitlisted"
   updating_rsvp: "Updating..."
+  people_going:
+    one: "1 person going"
+    other: "%{count} people going"
+  people_waitlisted:
+    one: "1 person waitlisted"
+    other: "%{count} people waitlisted"
+  waitlisted_count: "(%{count} waitlisted)"
   member_count:
     one: "1 member"
     other: "%{count} members"
