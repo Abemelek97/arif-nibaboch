@@ -58,4 +58,23 @@ class UserMailerTest < ActionMailer::TestCase
     assert_match "ATTENDEE", attachment.body.to_s
     assert_match "mailto:#{user.email}", attachment.body.to_s
   end
+
+  test "book_read_reminder_email" do
+    user = users(:one)
+    book_read = book_reads(:one)
+    rsvp = BookReadRsvp.create!(user: user, book_read: book_read, status: :going)
+    email = UserMailer.with(rsvp: rsvp).book_read_reminder_email
+
+    assert_emails 1 do
+      email.deliver_now
+    end
+
+    assert_equal [ rsvp.user.email ], email.to
+    assert_equal "Reminder: Upcoming Book Read for #{rsvp.book_read.book.title}", email.subject
+    assert_match "Upcoming Book Read Reminder", email.html_part.body.to_s
+    assert_match "Upcoming Book Read Reminder", email.text_part.body.to_s
+    assert_match book_read.meetup_location, email.html_part.body.to_s
+    assert_match book_read.meetup_location, email.text_part.body.to_s
+    assert_equal 0, email.attachments.size
+  end
 end

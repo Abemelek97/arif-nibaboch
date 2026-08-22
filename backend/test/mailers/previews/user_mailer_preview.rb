@@ -4,4 +4,9 @@ class UserMailerPreview < ActionMailer::Preview
     rsvp = BookReadRsvp.going.last || BookReadRsvp.last
     UserMailer.with(rsvp: rsvp).rsvp_confirmation
   end
+
+  def book_read_reminder_email
+    rsvp = BookReadRsvp.going.last || BookReadRsvp.last
+    UserMailer.with(rsvp: rsvp).book_read_reminder_email
+  end
 end
