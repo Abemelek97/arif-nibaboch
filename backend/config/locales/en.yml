@@ -99,7 +99,12 @@ en:
   leaving_club: "Leaving..."
   cancel_rsvp_confirm: "Cancel your RSVP?"
   cancel_rsvp: "Cancel RSVP"
+  leave_waitlist_confirm: "Leave the waitlist?"
+  leave_waitlist: "Leave Waitlist"
+  join_waitlist: "Join Waitlist"
   rsvpd: "RSVP'd"
+  you_are_going: "You're going"
+  you_are_waitlisted: "You're on the waitlist"
   waitlisted: "Waitlisted"
   updating_rsvp: "Updating..."
   people_going:
@@ -109,6 +114,10 @@ en:
     one: "1 person waitlisted"
     other: "%{count} people waitlisted"
   waitlisted_count: "(%{count} waitlisted)"
+  spots_remaining:
+    zero: "No spots left"
+    one: "1 spot left"
+    other: "%{count} spots left"
   member_count:
     one: "1 member"
     other: "%{count} members"

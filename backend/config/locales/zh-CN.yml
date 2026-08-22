@@ -70,7 +70,12 @@ zh-CN:
   leaving_club: "正在退出..."
   cancel_rsvp_confirm: "确定要取消报名吗？"
   cancel_rsvp: "取消报名"
+  leave_waitlist_confirm: "确定要离开候补名单吗？"
+  leave_waitlist: "离开候补"
+  join_waitlist: "加入候补"
   rsvpd: "已报名"
+  you_are_going: "你已参加"
+  you_are_waitlisted: "你在候补名单中"
   waitlisted: "候补中"
   updating_rsvp: "更新中..."
   people_going:
@@ -78,6 +83,8 @@ zh-CN:
   people_waitlisted:
     other: "%{count} 人候补"
   waitlisted_count: "(%{count} 候补)"
+  spots_remaining:
+    other: "剩 %{count} 个名额"
   member_count:
     other: "%{count} 个成员"
 

@@ -3,7 +3,7 @@
     <%= render "shared/avatar_group", users: rsvp_users, limit: 5, size_classes: "w-6 h-6", text_size: "text-[9px]", container_classes: "" %>
     <span class="text-xs text-content-subtle"><%= t("people_going", count: rsvp_users.size) %></span>
     <% if waitlisted_count&.positive? %>
-      <span class="text-xs text-yellow-700">· <%= t("people_waitlisted", count: waitlisted_count) %></span>
+      <span class="text-xs text-violet-700 dark:text-violet-400">· <%= t("people_waitlisted", count: waitlisted_count) %></span>
     <% end %>
   <% else %>
     <span class="text-xs text-content-muted">No RSVPs yet</span>
