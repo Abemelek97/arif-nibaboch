@@ -21,6 +21,11 @@ jobs:
     steps:
       - name: Checkout code
         uses: actions/checkout@v4
+        with:
+          fetch-depth: 1
+          sparse-checkout: |
+            backend
+            .github/workflows
 
       - name: Cache bundle dependencies
         uses: actions/cache@v4
