@@ -5,55 +5,55 @@
 <%= render layout: "shared/dialog",
   locals: {
     id: "rsvp_dialog",
-    title: "RSVPs (#{going_count} going#{waitlisted_records.any? ? ", #{waitlisted_records.size} waitlisted" : ''})",
+    title: "#{t('rsvp_dialog_title')} (#{t('people_going', count: going_count)}#{waitlisted_records.any? ? ", #{t('people_waitlisted', count: waitlisted_records.size)}" : ''})",
     box_class: "bg-surface border border-border shadow-xl rounded-2xl max-w-2xl p-6 relative"
   } do %>
   <div class="p-0 bg-surface space-y-6">
     <%# Going section %>
     <div>
-      <h3 class="text-sm font-semibold text-content mb-3">Going (<%= going_count %>)</h3>
+      <h3 class="text-sm font-semibold text-content mb-3"><%= t('going_label') %> (<%= going_count %>)</h3>
       <% body_content = capture do %>
         <%= render "book_read_rsvps/rsvp_row",
-            user: book_read.host,
-            status: "Host",
+             user: book_read.host,
+             status: t("host_label"),
             variant: "blue",
             is_last: going_records.empty? %>
         <% going_records.each_with_index do |rsvp, idx| %>
           <%= render "book_read_rsvps/rsvp_row",
               user: rsvp.user,
-              status: "Going",
+              status: t("going_label"),
               variant: "green",
               is_last: idx == going_records.size - 1 %>
         <% end %>
       <% end %>
 
       <%= render "shared/table/table",
-      columns: [{ label: "Person", classes: "w-3/4" }, { label: "Status", classes: "w-1/4" }],
-      body_content: body_content,
-      hoverable: true,
-      sticky_header: true,
-      bordered: false,
-      container: false,
-      classes: "table-fixed" %>
+       columns: [{ label: t("person_label"), classes: "w-3/4" }, { label: t("status_label"), classes: "w-1/4" }],
+       body_content: body_content,
+       hoverable: true,
+       sticky_header: true,
+       bordered: false,
+       container: false,
+       classes: "table-fixed" %>
     </div>
 
     <%# Waitlist section %>
     <% if waitlisted_records.any? %>
       <div>
-        <h3 class="text-sm font-semibold text-content mb-3">Waitlist (<%= waitlisted_records.size %>)</h3>
+        <h3 class="text-sm font-semibold text-content mb-3"><%= t('waitlist_label') %> (<%= waitlisted_records.size %>)</h3>
         <% waitlist_body = capture do %>
           <% waitlisted_records.each_with_index do |rsvp, idx| %>
             <%= render "book_read_rsvps/rsvp_row",
                 user: rsvp.user,
-                status: "Waitlisted",
+                status: t("waitlisted"),
                 variant: "violet",
                 is_last: idx == waitlisted_records.size - 1 %>
           <% end %>
         <% end %>
 
         <%= render "shared/table/table",
-        columns: [{ label: "Person", classes: "w-3/4" }, { label: "Status", classes: "w-1/4" }],
-        body_content: waitlist_body,
+       columns: [{ label: t("person_label"), classes: "w-3/4" }, { label: t("status_label"), classes: "w-1/4" }],
+       body_content: waitlist_body,
         hoverable: true,
         sticky_header: true,
         bordered: false,
