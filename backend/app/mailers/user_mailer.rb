@@ -1,7 +1,7 @@
 class UserMailer < ApplicationMailer
   default from: "#{Rails.configuration.x.app_name} <noreply@#{Rails.configuration.x.mail_from_domain}>" # this domain must be verified with Resend
 
-  before_action :set_rsvp_params, only: [ :rsvp_confirmation, :book_read_updated_invite ]
+  before_action :set_rsvp_params, only: [ :rsvp_confirmation, :book_read_updated_invite, :book_read_reminder_email ]
 
   def rsvp_confirmation
     attach_calendar_invite!
@@ -11,6 +11,10 @@ class UserMailer < ApplicationMailer
   def book_read_updated_invite
     attach_calendar_invite!(description_suffix: " (Schedule Updated)")
     mail(to: @user.email, subject: "[Updated Calendar Invite] Book Read: #{@book_read.book&.title || 'Book Read'}")
+  end
+
+  def book_read_reminder_email
+    mail(to: @user.email, subject: "Reminder: Upcoming Book Read for #{@book_read.book&.title || 'Discussion'}")
   end
 
   private
