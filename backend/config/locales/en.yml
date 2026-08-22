@@ -107,6 +107,8 @@ en:
   leave_waitlist_confirm: "Leave the waitlist?"
   leave_waitlist: "Leave Waitlist"
   join_waitlist: "Join Waitlist"
+  rsvp_closed: "RSVPs are closed for this event."
+  event_started: "This event has already started."
   rsvpd: "RSVP'd"
   you_are_going: "You're going"
   you_are_waitlisted: "You're on the waitlist"

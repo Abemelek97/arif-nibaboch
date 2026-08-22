@@ -78,6 +78,8 @@ zh-CN:
   leave_waitlist_confirm: "确定要离开候补名单吗？"
   leave_waitlist: "离开候补"
   join_waitlist: "加入候补"
+  rsvp_closed: "此活动已停止报名。"
+  event_started: "此活动已经开始。"
   rsvpd: "已报名"
   you_are_going: "你已参加"
   you_are_waitlisted: "你在候补名单中"

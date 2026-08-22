@@ -78,6 +78,8 @@ zh-TW:
   leave_waitlist_confirm: "確定要離開候補名單嗎？"
   leave_waitlist: "離開候補"
   join_waitlist: "加入候補"
+  rsvp_closed: "此活動已停止報名。"
+  event_started: "此活動已經開始。"
   rsvpd: "已報名"
   you_are_going: "你已參加"
   you_are_waitlisted: "你在候補名單中"

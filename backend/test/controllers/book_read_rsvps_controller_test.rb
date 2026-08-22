@@ -69,4 +69,59 @@ class BookReadRsvpsControllerTest < ActionDispatch::IntegrationTest
     assert_equal "waitlisted", rsvp.status
     assert_match "waitlisted", response.body.downcase
   end
+
+  test "blocks rsvp when event has passed" do
+    @book_read.update_column(:meetup_time, 1.day.ago)
+    user = users(:three)
+    sign_in user
+
+    assert_no_difference "BookReadRsvp.count" do
+      post book_club_book_read_rsvp_url(@book_club, @book_read)
+    end
+
+    assert_redirected_to book_club_book_read_path(@book_club, @book_read)
+    assert_match "closed", flash[:alert].downcase
+  end
+
+  test "blocks rsvp cancellation when event has passed" do
+    @book_read.update_column(:meetup_time, 1.day.ago)
+    user = users(:three)
+    sign_in user
+    BookReadRsvp.create!(book_read: @book_read, user: user, status: :going)
+
+    patch book_club_book_read_rsvp_url(@book_club, @book_read), params: {
+      book_read_rsvp: { status: "cancelled" }
+    }
+
+    rsvp = BookReadRsvp.find_by!(book_read: @book_read, user: user)
+    assert_equal "going", rsvp.status
+    assert_redirected_to book_club_book_read_path(@book_club, @book_read)
+  end
+
+  test "blocks rsvp when event has started" do
+    @book_read.update_column(:meetup_time, 1.hour.ago)
+    user = users(:three)
+    sign_in user
+
+    assert_no_difference "BookReadRsvp.count" do
+      post book_club_book_read_rsvp_url(@book_club, @book_read)
+    end
+
+    assert_redirected_to book_club_book_read_path(@book_club, @book_read)
+  end
+
+  test "allows rsvp for future event" do
+    @book_read.update!(meetup_time: 1.week.from_now)
+    user = users(:three)
+    sign_in user
+
+    assert_difference "BookReadRsvp.count" do
+      post book_club_book_read_rsvp_url(@book_club, @book_read)
+    end
+  end
+
+  test "requires authentication for rsvp" do
+    post book_club_book_read_rsvp_url(@book_club, @book_read)
+    assert_redirected_to new_user_session_path
+  end
 end

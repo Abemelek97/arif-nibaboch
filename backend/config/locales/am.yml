@@ -78,6 +78,8 @@ am:
   leave_waitlist_confirm: "ተጠባባቂ ዝርዝር መተው ይፈልጋሉ?"
   leave_waitlist: "ተጠባባቂነትን ይተዉ"
   join_waitlist: "ተጠባባቂ ይሁኑ"
+  rsvp_closed: "ለዚህ ድርጊት ምዝገባ ተዘጉዋል።"
+  event_started: "ይህ ድርጊት ቀድሞውን ተጀምሯል።"
   rsvpd: "ተመዝግበዋል"
   you_are_going: "እርስዎ ይገኛሉ"
   you_are_waitlisted: "እርስዎ በተጠባባቂ ላይ ነዎት"
