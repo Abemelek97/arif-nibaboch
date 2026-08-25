@@ -6,11 +6,11 @@
       </div>
     </div>
 
-    <div class="flex flex-col gap-3">
-      <% @upcoming_book_reads.each do |book_read| %>
+    <div id="upcoming_book_reads_list" class="flex flex-col gap-3">
+      <% @page.records.each do |book_read| %>
         <%= render "shared/book_read_card_link", book_read: book_read %>
       <% end %>
     </div>
+    <%= render partial: "home/pagination_placeholder" %>
   </div>
 <% end %>
-

@@ -1,3 +1,4 @@
+<% content_for :title, t("titles.edit_book_club", name: @club.name) %>
 <div class="max-w-2xl mx-auto mt-8 bg-surface p-8 rounded-lg shadow">
   <h1 class="title title-lg text-content font-bold mb-6">Edit Book Club for <%= @club.name %></h1>
   <%= render partial: "form" %>

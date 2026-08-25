@@ -1,0 +1,14 @@
+Upcoming Book Read Reminder
+
+Hi <%= @user.name %>,
+
+This is a friendly reminder that your book read session in <%= @book_read.book_club.name %> is coming up soon.
+
+- Book: <%= @book_read.book&.title || "Discussion" %>
+- Time: <%= @book_read.meetup_time.in_time_zone(@time_zone).strftime("%A, %B %d at %I:%M %p %Z") %>
+- Location: <%= @book_read.meetup_location %>
+- Host: <%= @book_read.host.name %>
+
+View session details: <%= book_club_book_read_url(@book_read.book_club, @book_read) %>
+
+See you there!

@@ -1,42 +1,56 @@
 <%= form_with(model: @club, local: true, class: "space-y-6") do |form| %> 
   <% if @club.errors.any? %>
-    <div class="bg-red-50 text-red-700 p-4 rounded-md">
-      <h2 class="font-bold mb-2"><%= pluralize(@club.errors.count, "error") %> prohibited this club from being saved:</h2>
-      <ul class="list-disc pl-5">
-        <% @club.errors.full_messages.each do |message| %>
-          <li><%= message %></li>
-        <% end %>
-      </ul>
-    </div>
+    <%= render "devise/shared/error_messages", resource: @club %>
   <% end %>
 
-  <div>
-    <%= form.label :name, class: "block text-sm font-medium text-content mb-1" %>
-    <%= form.text_field :name, class: "w-full border-border bg-surface text-content rounded-md shadow-sm placeholder:text-content-muted focus:border-primary focus:ring-primary", placeholder: "e.g., Sci-Fi Enthusiasts", required: true %>
-  </div>
+  <%= render "components/input",
+    form: form,
+    name: :name,
+    label: "Club Name",
+    placeholder: "e.g., Sci-Fi Enthusiasts",
+    required: true,
+    error: @club.errors[:name] %>
 
-  <div>
-    <%= form.label :description, class: "block text-sm font-medium text-content mb-1" %>
-    <%= form.text_area :description, rows: 4, class: "w-full border-border bg-surface text-content rounded-md shadow-sm placeholder:text-content-muted focus:border-primary focus:ring-primary", placeholder: "What is this club about?" %>
-  </div>
+  <%= render "components/textarea",
+    form: form,
+    name: :description,
+    label: "Description",
+    placeholder: "What is this club about?",
+    rows: 4,
+    error: @club.errors[:description] %>
 
-  <div>
-    <%= form.label :photo, "Club Avatar Photo", class: "block text-sm font-medium text-content mb-1" %>
-    <%= form.file_field :photo, class: "w-full text-sm text-content-subtle file:mr-4 file:py-2 file:px-4 file:rounded-md file:border-0 file:text-sm file:font-semibold file:bg-background file:text-primary hover:file:bg-background" %>
-  </div>
+  <%= render "components/file_input",
+    form: form,
+    name: :photo,
+    label: "Club Avatar Photo",
+    accept: "image/*",
+    hint: "Square avatar image for the club profile",
+    error: @club.errors[:photo] %>
 
-  <div>
-    <%= form.label :cover_photo, "Cover Photo", class: "block text-sm font-medium text-content mb-1" %>
-    <%= form.file_field :cover_photo, class: "w-full text-sm text-content-subtle file:mr-4 file:py-2 file:px-4 file:rounded-md file:border-0 file:text-sm file:font-semibold file:bg-background file:text-primary hover:file:bg-background" %>
-  </div>
+  <%= render "components/file_input",
+    form: form,
+    name: :cover_photo,
+    label: "Cover Banner Photo",
+    accept: "image/*",
+    hint: "Wide banner image for the club header",
+    error: @club.errors[:cover_photo] %>
 
-  <div class="flex items-center">
-    <%= form.check_box :is_private, class: "h-4 w-4 text-primary focus:ring-primary border-border rounded" %>
-    <%= form.label :is_private, "Make this club private (only invited members can join)", class: "ml-2 block text-sm text-content" %>
-  </div>
+  <%= render "components/checkbox",
+    form: form,
+    name: :is_private,
+    label: "Make this club private (only invited members can join)" %>
 
-  <div class="flex items-center justify-end space-x-4 pt-4">
-    <%= link_to 'Cancel', book_clubs_path, class: "text-content-subtle hover:text-content font-medium text-sm" %>
-    <%= form.submit @club.persisted? ? "Update Club" : "Create Club", class: "bg-primary text-primary-contrast px-4 py-2 rounded-md hover:bg-primary focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-primary font-medium" %>
+  <div class="flex flex-col-reverse sm:flex-row items-center justify-end gap-3 pt-6 border-t border-border/60">
+    <%= render "components/button",
+      label: "Cancel",
+      type: "link",
+      url: book_clubs_path,
+      variant: "ghost",
+      classes: "w-full sm:w-auto text-content-subtle hover:text-content" %>
+    <%= render "components/button",
+      label: (@club.persisted? ? "Update Club" : "Create Club"),
+      type: "submit",
+      variant: "primary",
+      classes: "w-full sm:w-auto" %>
   </div>
 <% end %>

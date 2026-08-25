@@ -33,6 +33,7 @@ class BookReadsController < ApplicationController
     @new_discussion_question = DiscussionQuestion.new(content: draft_content)
     @rsvp = @book_read.book_read_rsvps.find_by(user: current_user) if user_signed_in?
     @rsvp_users = @book_read.book_read_rsvps.going.includes(:user).map(&:user)
+    @waitlisted_count = @book_read.book_read_rsvps.waitlisted.count
     @rsvp_records = @book_read.book_read_rsvps.includes(:user).order(created_at: :asc)
   end
 
@@ -61,9 +62,28 @@ class BookReadsController < ApplicationController
   end
 
   def update
-    if @book_read.update(book_read_params)
+    clean_params = book_read_params.dup
+
+    success = BookRead.transaction do
+      if params[:selection_type] == "book"
+        @book_read.poll&.destroy
+        @book_read.poll = nil
+        clean_params.delete(:poll_attributes)
+      elsif params[:selection_type] == "poll"
+        @book_read.book_id = nil
+        clean_params.delete(:book_id)
+        clean_params[:book_id] = nil
+      end
+
+      updated = @book_read.update(clean_params)
+      raise ActiveRecord::Rollback unless updated
+      true
+    end
+
+    if success
       redirect_to book_club_book_read_path(@book_club, @book_read), notice: "Book read was successfully updated."
     else
+      @book_read.reload if @book_read.persisted?
       render :edit, status: :unprocessable_entity
     end
   end

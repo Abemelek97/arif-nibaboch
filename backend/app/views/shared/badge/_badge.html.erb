@@ -6,7 +6,7 @@
     - text: String - The badge text content
 
   Optional locals:
-    - variant: String (default: "gray") - Color variant: "gray", "red", "orange", "yellow", "green", "blue", "purple", "pink"
+    - variant: String (default: "gray") - Color variant: "gray", "red", "orange", "yellow", "violet", "green", "blue", "purple", "pink"
     - size: String (default: "md") - Size: "sm" (small), "md" (regular)
     - pill: Boolean (default: false) - Whether to use pill shape (rounded-full) instead of rounded corners
     - dot: Boolean (default: false) - Whether to show a colored dot indicator
@@ -60,6 +60,17 @@
         button_text: "text-yellow-600 dark:text-yellow-400",
         button_hover: "hover:bg-yellow-200 hover:dark:bg-yellow-400/20",
         button_outline: "outline outline-yellow-500/20 dark:outline-yellow-400/25"
+      }
+    when "violet"
+      {
+        bg: "bg-violet-50 dark:bg-violet-400/10",
+        text: "text-violet-700 dark:text-violet-400",
+        outline: "outline outline-violet-700/20 dark:outline-violet-400/25",
+        dot: "bg-violet-500 dark:bg-violet-400",
+        button_bg: "bg-violet-100 dark:bg-violet-400/10",
+        button_text: "text-violet-600 dark:text-violet-400",
+        button_hover: "hover:bg-violet-200 hover:dark:bg-violet-400/20",
+        button_outline: "outline outline-violet-500/20 dark:outline-violet-400/25"
       }
     when "green"
       {

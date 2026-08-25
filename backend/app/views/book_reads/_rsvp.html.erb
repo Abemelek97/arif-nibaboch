@@ -1,15 +1,45 @@
 <%= turbo_frame_tag "book_read_rsvp" do %>
-  <div class="bg-surface p-5 rounded-xl border border-border mb-8">
-    <%= form_with url: book_club_book_read_rsvp_path(book_club, book_read), method: (rsvp ? :patch : :post), scope: :book_read_rsvp, class: "flex flex-col sm:flex-row sm:items-center gap-4" do |form| %>
-      <% next_status = rsvp&.going? || rsvp&.waitlisted? ? "cancelled" : "going" %>
-      <%= form.hidden_field :status, value: next_status %>
-      <%= form.submit(
-        (next_status == "going") ? "RSVP" : t("cancel_rsvp"),
-        class: "px-4 py-2 text-sm font-bold rounded-md cursor-pointer #{next_status == "going" ? "bg-primary text-primary-contrast hover:bg-primary" : "bg-background text-content hover:bg-surface"}",
-        data: (next_status == "cancelled" ? { turbo_confirm: t("cancel_rsvp_confirm") } : {})
-      ) %>
-      <% if rsvp&.waitlisted? %>
-        <span class="text-xs text-amber-700 bg-amber-50 border border-amber-200 rounded px-2 py-1">Currently waitlisted</span>
+  <% past = book_read.meetup_time&.past? %>
+  <% going = rsvp&.going? %>
+  <% waitlisted = rsvp&.waitlisted? %>
+  <% is_active = going || waitlisted %>
+  <% next_status = is_active ? "cancelled" : "going" %>
+  <% full = book_read.full? %>
+  <% going_count ||= book_read.book_read_rsvps.going.count %>
+  <% waitlisted_count ||= book_read.book_read_rsvps.waitlisted.count %>
+  <% remaining = book_read.max_capacity.present? ? book_read.max_capacity - going_count : nil %>
+  <%
+    button_label = if is_active
+      waitlisted ? t("leave_waitlist") : t("cancel_rsvp")
+    else
+      full ? t("join_waitlist") : "RSVP"
+    end
+    confirm_msg = is_active ? (waitlisted ? t("leave_waitlist_confirm") : t("cancel_rsvp_confirm")) : nil
+    is_primary = !is_active
+  %>
+  <div class="bg-surface/95 backdrop-blur-sm border border-border shadow-lg rounded-lg sticky bottom-0 z-10 mx-auto max-w-4xl mt-8 px-5 py-3 flex items-center justify-between gap-4">
+    <div class="flex items-center gap-3 text-sm">
+      <% if past %>
+        <span class="text-content-muted"><%= t("event_started") %></span>
+      <% elsif is_active %>
+        <span class="font-semibold <%= waitlisted ? "text-violet-700 dark:text-violet-400" : "text-content" %>">
+          <%= waitlisted ? t("you_are_waitlisted") : t("you_are_going") %>
+        </span>
+      <% end %>
+      <% unless past %>
+        <% if book_read.max_capacity.present? %>
+          <span class="<%= is_active ? "text-content-muted" : "font-semibold text-content" %>"><%= t("spots_remaining", count: remaining || 0) %></span>
+        <% elsif !is_active %>
+          <span class="font-semibold text-content"><%= t("people_going", count: going_count) %></span>
+        <% end %>
+      <% end %>
+    </div>
+    <% unless past %>
+      <%= form_with url: book_club_book_read_rsvp_path(book_club, book_read), method: (rsvp ? :patch : :post), scope: :book_read_rsvp, class: "flex-shrink-0" do |form| %>
+        <%= form.hidden_field :status, value: next_status %>
+        <%= form.submit button_label,
+          class: "px-6 py-2.5 text-sm font-bold rounded-lg cursor-pointer transition-colors #{is_primary ? "bg-primary text-primary-contrast hover:bg-primary/90" : "bg-background text-content border border-border hover:bg-surface"}",
+          data: (confirm_msg ? { turbo_confirm: confirm_msg } : {}) %>
       <% end %>
     <% end %>
   </div>
