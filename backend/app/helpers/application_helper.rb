@@ -3,6 +3,13 @@ module ApplicationHelper
     Rails.configuration.x.app_name
   end
 
+  LINK_HTML = { target: "_blank", rel: "noopener noreferrer", class: "text-primary hover:text-accent underline decoration-accent/40 underline-offset-2" }.freeze
+
+  def formatted_text(text)
+    return "" if text.blank?
+    auto_link(simple_format(text), html: LINK_HTML)
+  end
+
   def flash_classes(type)
     case type.to_sym
     when :notice, :success

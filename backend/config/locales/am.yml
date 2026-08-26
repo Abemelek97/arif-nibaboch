@@ -99,6 +99,8 @@ am:
   member_count:
     one: "1 አባል"
     other: "%{count} አባላት"
+  show_more: "ተጨማሪ አሳይ"
+  show_less: "ዝሉ"
 
   time:
     formats:

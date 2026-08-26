@@ -94,6 +94,8 @@ zh-CN:
     other: "剩 %{count} 个名额"
   member_count:
     other: "%{count} 个成员"
+  show_more: "显示更多"
+  show_less: "收起"
 
   time:
     formats:

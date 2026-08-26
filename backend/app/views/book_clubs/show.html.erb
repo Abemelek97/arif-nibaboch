@@ -108,7 +108,7 @@
 
       <div class="prose max-w-none text-content-subtle mt-6">
         <% if @club.description.present? %>
-          <%= simple_format(@club.description) %>
+          <%= render "shared/collapsible_text", text: @club.description %>
         <% else %>
           <p class="italic text-content-muted">No description provided for this club yet.</p>
         <% end %>
