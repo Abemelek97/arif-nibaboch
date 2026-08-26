@@ -5,6 +5,7 @@ module BookLookup
   module Providers
     class OpenLibrary
       OPEN_LIBRARY_URL = "https://openlibrary.org/search.json"
+      ExternalServiceError = Class.new(StandardError)
 
       def initialize(title:, author:, max_candidates:)
         @title = title
@@ -18,11 +19,19 @@ module BookLookup
         uri = URI(OPEN_LIBRARY_URL)
         uri.query = URI.encode_www_form(query_params)
 
-        response = Net::HTTP.start(uri.hostname, uri.port, use_ssl: true, read_timeout: 10, open_timeout: 5) do |http|
-          http.request(Net::HTTP::Get.new(uri))
-        end
+        response = stoplight.run(method(:stoplight_fallback)) do
+          request = Net::HTTP::Get.new(uri)
+          response = Net::HTTP.start(uri.hostname, uri.port, use_ssl: true, read_timeout: 10, open_timeout: 5) do |http|
+            http.request(request)
+          end
 
-        return [] unless response.is_a?(Net::HTTPSuccess)
+          if response.is_a?(Net::HTTPSuccess)
+            response
+          else
+            raise ExternalServiceError, "status=#{response.code} body=#{response.body.to_s[0, 500]}"
+          end
+        end
+        return [] if response.nil?
 
         data = JSON.parse(response.body)
         docs = data.fetch("docs", [])
@@ -98,6 +107,32 @@ module BookLookup
         return nil if key.blank?
 
         "https://openlibrary.org#{key}"
+      end
+
+      def stoplight
+        @stoplight ||= Stoplight(
+          "book_lookup/open_library",
+          threshold: 3,
+          cool_off_time: 60,
+          tracked_errors: [
+            ExternalServiceError,
+            Net::OpenTimeout,
+            Net::ReadTimeout,
+            Timeout::Error,
+            SocketError,
+            Errno::ECONNRESET,
+            Errno::ECONNREFUSED
+          ]
+        )
+      end
+
+      def stoplight_fallback(error)
+        if error
+          Rails.logger.warn("OpenLibrary lookup failed: #{error.message}")
+        else
+          Rails.logger.warn("OpenLibrary lookup skipped because circuit is open")
+        end
+        nil
       end
     end
   end

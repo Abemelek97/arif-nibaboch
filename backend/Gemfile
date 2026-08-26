@@ -97,3 +97,5 @@ gem "icalendar", "~> 2.12"
 gem "premailer-rails", "~> 1.12"
 
 gem "rails_autolink", "~> 1.1"
+
+gem "stoplight", "~> 5.8"
