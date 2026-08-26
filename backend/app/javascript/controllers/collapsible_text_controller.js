@@ -9,8 +9,23 @@ export default class extends Controller {
   };
 
   connect() {
+    this.checkOverflow();
+    this.resizeObserver = new ResizeObserver(() => this.checkOverflow());
+    this.resizeObserver.observe(this.contentTarget);
+  }
+
+  disconnect() {
+    if (this.resizeObserver) {
+      this.resizeObserver.disconnect();
+      this.resizeObserver = null;
+    }
+  }
+
+  checkOverflow() {
     if (this.contentTarget.scrollHeight > this.contentTarget.clientHeight) {
       this.toggleTarget.classList.remove("hidden");
+    } else {
+      this.toggleTarget.classList.add("hidden");
     }
   }
 
