@@ -55,7 +55,7 @@ jobs:
       SENTRY_DSN: ${{ secrets.SENTRY_DSN }}
       APP_DOMAIN: ${{ vars.APP_DOMAIN }}
       APP_PROTOCOL: ${{ vars.APP_PROTOCOL }}
-      APP_NAME: ${{ VARS.APP_NAME }}
+      APP_NAME: ${{ vars.APP_NAME }}
       REDIS_URL: ${{ secrets.REDIS_URL }}
 
     permissions:
@@ -74,7 +74,7 @@ jobs:
         run: kamal lock release || true
 
       - name: Kamal start redis accessory
-        run: kamal accessory start redis
+        run: kamal accessory start redis || true
 
       - name: Kamal Deploy
         run: kamal deploy
