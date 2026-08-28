@@ -86,7 +86,7 @@ Rails.application.routes.draw do
   # Secure dashboard to only admin users
   authenticate :user, ->(u) { u.admin? } do
     mount MissionControl::Jobs::Engine, at: "/jobs"
-    mount Stoplight::Admin, at:  "/stoplights"
+    mount Stoplight::Admin, at: "/stoplights"
   end
 
   authenticate :user do
