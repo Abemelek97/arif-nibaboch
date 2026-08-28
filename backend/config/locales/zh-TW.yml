@@ -85,15 +85,11 @@ zh-TW:
   you_are_waitlisted: "你在候補名單中"
   waitlisted: "候補中"
   updating_rsvp: "更新中..."
-  people_going:
-    other: "%{count} 人參加"
-  people_waitlisted:
-    other: "%{count} 人候補"
+  people_going: "%{count} 人參加"
+  people_waitlisted: "%{count} 人候補"
   waitlisted_count: "(%{count} 候補)"
-  spots_remaining:
-    other: "剩 %{count} 個名額"
-  member_count:
-    other: "%{count} 個成員"
+  spots_remaining: "剩 %{count} 個名額"
+  member_count: "%{count} 個成員"
   show_more: "顯示更多"
   show_less: "收起"
 
