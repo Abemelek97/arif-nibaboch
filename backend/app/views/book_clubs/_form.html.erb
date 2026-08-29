@@ -53,6 +53,7 @@
       label: "Application Form URL",
       placeholder: "https://docs.google.com/forms/...",
       hint: "Shown to people who apply to join your private club (e.g., a Google Form)",
+      disabled: !@club.is_private,
       error: @club.errors[:application_form_url] %>
     </div>
   </div>

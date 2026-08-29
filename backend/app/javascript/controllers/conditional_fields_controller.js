@@ -12,9 +12,12 @@ export default class extends Controller {
   }
 
   update() {
-    const checked = this.toggleTargets.some((toggle) => toggle.checked);
+    const enabled = this.toggleTargets.some((toggle) => toggle.checked);
     this.fieldTargets.forEach((field) => {
-      field.classList.toggle("hidden", !checked);
+      field.classList.toggle("hidden", !enabled);
+      field.querySelectorAll("input, select, textarea").forEach((control) => {
+        control.disabled = !enabled;
+      });
     });
   }
 }

@@ -75,4 +75,30 @@ class BookClubTest < ActiveSupport::TestCase
 
     assert club.valid?
   end
+
+  test "accepts a valid application form URL" do
+    club = BookClub.new(name: "Form Club", application_form_url: "https://docs.google.com/forms/d/abc123")
+    assert club.valid?
+  end
+
+  test "rejects hostless application form URLs" do
+    club = BookClub.new(name: "Bad Host Club", application_form_url: "https://?")
+    assert_not club.valid?
+    assert_includes club.errors[:application_form_url], "must be a valid URL starting with http:// or https://"
+
+    club.application_form_url = "http://#"
+    assert_not club.valid?
+    assert_includes club.errors[:application_form_url], "must be a valid URL starting with http:// or https://"
+  end
+
+  test "rejects non-HTTP application form URLs" do
+    club = BookClub.new(name: "FTP Club", application_form_url: "ftp://example.com")
+    assert_not club.valid?
+    assert_includes club.errors[:application_form_url], "must be a valid URL starting with http:// or https://"
+  end
+
+  test "allows blank application form URL" do
+    club = BookClub.new(name: "No URL Club", application_form_url: "")
+    assert club.valid?
+  end
 end

@@ -129,6 +129,7 @@ class BookClubsControllerTest < ActionDispatch::IntegrationTest
     assert_select "input[name='book_club[is_private]'][data-conditional-fields-target='toggle']"
     assert_select "input[name='book_club[is_private]'][data-action='change->conditional-fields#toggle']"
     assert_select "div[data-conditional-fields-target='field'][class*='hidden']", 0
+    assert_select "input[name='book_club[application_form_url]'][disabled]", 0
     assert_select "input[name='book_club[application_form_url]']"
   end
 
@@ -140,5 +141,6 @@ class BookClubsControllerTest < ActionDispatch::IntegrationTest
 
     assert_select "input[name='book_club[is_private]'][checked]", 0
     assert_select "div[data-conditional-fields-target='field'][class*='hidden']"
+    assert_select "input[name='book_club[application_form_url]'][disabled]"
   end
 end

@@ -17,9 +17,7 @@ class BookClub < ApplicationRecord
   ALLOWED_PHOTO_TYPES = %w[image/jpeg image/jpg image/png image/webp image/gif].freeze
 
   validates :name, presence: true
-  validates :application_form_url,
-            format: { with: %r{\Ahttps?://\S+\z}, message: "must be a valid URL starting with http:// or https://" },
-            allow_blank: true
+  validate :application_form_url_is_valid
   validate :acceptable_photo
 
   after_create :add_owner_as_admin
@@ -31,6 +29,21 @@ class BookClub < ApplicationRecord
   end
 
   private
+
+  def application_form_url_is_valid
+    return if application_form_url.blank?
+
+    begin
+      uri = URI.parse(application_form_url)
+    rescue URI::InvalidURIError
+      errors.add(:application_form_url, "must be a valid URL starting with http:// or https://")
+      return
+    end
+
+    unless uri.is_a?(URI::HTTP) && uri.host.present?
+      errors.add(:application_form_url, "must be a valid URL starting with http:// or https://")
+    end
+  end
 
   def acceptable_photo
     return unless photo.attached?
