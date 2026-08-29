@@ -89,4 +89,56 @@ class BookClubsControllerTest < ActionDispatch::IntegrationTest
     assert_equal "New updated description", @club.description
     assert_equal true, @club.is_private
   end
+
+  test "should update application_form_url for owner" do
+    @club = book_clubs(:one)
+    sign_in @user
+    patch book_club_url(@club), params: {
+      book_club: {
+        application_form_url: "https://docs.google.com/forms/d/abc123"
+      }
+    }
+    assert_redirected_to book_club_url(@club)
+
+    @club.reload
+    assert_equal "https://docs.google.com/forms/d/abc123", @club.application_form_url
+  end
+
+  test "should not update application_form_url with invalid URL" do
+    @club = book_clubs(:one)
+    sign_in @user
+    patch book_club_url(@club), params: {
+      book_club: {
+        application_form_url: "not-a-url"
+      }
+    }
+    assert_response :unprocessable_entity
+
+    @club.reload
+    assert_nil @club.application_form_url
+  end
+
+  test "edit shows checked private checkbox and visible application form url field for private club" do
+    @club = book_clubs(:one)
+    @club.update!(is_private: true)
+    sign_in @user
+    get edit_book_club_url(@club)
+    assert_response :success
+
+    assert_select "input[name='book_club[is_private]'][checked]"
+    assert_select "input[name='book_club[is_private]'][data-conditional-fields-target='toggle']"
+    assert_select "input[name='book_club[is_private]'][data-action='change->conditional-fields#toggle']"
+    assert_select "div[data-conditional-fields-target='field'][class*='hidden']", 0
+    assert_select "input[name='book_club[application_form_url]']"
+  end
+
+  test "edit shows unchecked private checkbox and hidden application form url field for public club" do
+    @club = book_clubs(:one)
+    sign_in @user
+    get edit_book_club_url(@club)
+    assert_response :success
+
+    assert_select "input[name='book_club[is_private]'][checked]", 0
+    assert_select "div[data-conditional-fields-target='field'][class*='hidden']"
+  end
 end

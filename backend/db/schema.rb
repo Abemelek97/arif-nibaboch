@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema[8.0].define(version: 2026_08_22_040645) do
+ActiveRecord::Schema[8.0].define(version: 2026_08_29_024113) do
   create_table "active_storage_attachments", force: :cascade do |t|
     t.string "name", null: false
     t.string "record_type", null: false
@@ -58,6 +58,7 @@ ActiveRecord::Schema[8.0].define(version: 2026_08_22_040645) do
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
     t.integer "book_club_members_count", default: 0, null: false
+    t.string "application_form_url"
     t.index ["owner_id"], name: "index_book_clubs_on_owner_id"
   end
 

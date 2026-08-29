@@ -35,11 +35,27 @@
   hint: "Wide banner image for the club header",
   error: @club.errors[:cover_photo] %>
 
-  <%# TODO: Add private club functionality %>
-  <%# <%= render "components/checkbox", %>
-  <%#   form: form, %>
-  <%#   name: :is_private, %>
-  <%#   label: "Make this club private (only invited members can join)" %>
+  <div class="space-y-6" data-controller="conditional-fields">
+    <%= render "components/toggle",
+    form: form,
+    name: :is_private,
+    label: "Make this club private",
+    data: {
+      action: "change->conditional-fields#toggle",
+      conditional_fields_target: "toggle"
+    } %>
+
+    <div data-conditional-fields-target="field" class="<%= "hidden" unless @club.is_private %>">
+      <%= render "components/input",
+      form: form,
+      field_type: :url,
+      name: :application_form_url,
+      label: "Application Form URL",
+      placeholder: "https://docs.google.com/forms/...",
+      hint: "Shown to people who apply to join your private club (e.g., a Google Form)",
+      error: @club.errors[:application_form_url] %>
+    </div>
+  </div>
 
   <div
     class="

@@ -17,6 +17,9 @@ class BookClub < ApplicationRecord
   ALLOWED_PHOTO_TYPES = %w[image/jpeg image/jpg image/png image/webp image/gif].freeze
 
   validates :name, presence: true
+  validates :application_form_url,
+            format: { with: %r{\Ahttps?://\S+\z}, message: "must be a valid URL starting with http:// or https://" },
+            allow_blank: true
   validate :acceptable_photo
 
   after_create :add_owner_as_admin

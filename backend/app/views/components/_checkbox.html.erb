@@ -16,7 +16,6 @@
   form ||= nil
   name ||= :checkbox
   label ||= name.to_s.humanize
-  checked ||= false
   variant ||= "primary"
   size ||= "sm"
   classes ||= ""
@@ -30,14 +29,17 @@
     "rounded border-border/80 transition-colors cursor-pointer",
     "focus:ring-2 focus:ring-primary focus:ring-offset-1"
   ].reject(&:empty?).join(" ")
+
+  checkbox_options = { class: checkbox_classes, data: data, id: id }
+  checkbox_options[:checked] = true if local_assigns[:checked]
 %>
 
 <div class="form-control inline-block <%= classes %>">
   <label class="label cursor-pointer justify-start gap-2.5 py-1 px-0 select-none group">
     <% if form.present? %>
-      <%= form.check_box name, { class: checkbox_classes, checked: checked, data: data, id: id } %>
+      <%= form.check_box name, checkbox_options %>
     <% else %>
-      <input type="checkbox" name="<%= name %>" class="<%= checkbox_classes %>" <%= "checked" if checked %><% if id.present? %> id="<%= id %>"<% end %><% data.each do |k, v| %> data-<%= k.to_s.dasherize %>="<%= v %>"<% end %> />
+      <input type="checkbox" name="<%= name %>" class="<%= checkbox_classes %>" <%= "checked" if local_assigns[:checked] %><% if id.present? %> id="<%= id %>"<% end %><% data.each do |k, v| %> data-<%= k.to_s.dasherize %>="<%= v %>"<% end %> />
     <% end %>
     <span class="label-text text-sm font-medium text-content group-hover:text-primary transition-colors"><%= label %></span>
   </label>
