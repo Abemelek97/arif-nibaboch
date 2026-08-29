@@ -143,4 +143,27 @@ class BookClubsControllerTest < ActionDispatch::IntegrationTest
     assert_select "div[data-conditional-fields-target='field'][class*='hidden']"
     assert_select "input[name='book_club[application_form_url]'][disabled]"
   end
+
+  test "show hides member avatars and members dialog for non-member of private club" do
+    @club = book_clubs(:one)
+    @club.update!(is_private: true)
+    sign_in users(:two)
+
+    get book_club_url(@club)
+    assert_response :success
+
+    assert_select "#members_dialog", 0
+    assert_select "img[src*='/rails/active_storage']", 0
+  end
+
+  test "show shows member avatars and members dialog for member of private club" do
+    @club = book_clubs(:one)
+    @club.update!(is_private: true)
+    sign_in @user
+
+    get book_club_url(@club)
+    assert_response :success
+
+    assert_select "#members_dialog"
+  end
 end

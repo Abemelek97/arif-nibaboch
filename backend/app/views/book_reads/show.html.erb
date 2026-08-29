@@ -3,7 +3,9 @@
 <% content_for :og_title,
 "#{@book_read.book&.title || @book_read.poll&.text || "Reading Session"} | #{@book_club.name}" %>
 <% content_for :og_description,
-"Join #{@book_club.name}'s book reading session! Meetup: #{@book_read.meetup_time ? l(@book_read.meetup_time, format: :flyer) : "TBD"} at #{@book_read.meetup_location.presence || "TBD"}." %>
+  @private_info_visible ?
+    "Join #{@book_club.name}'s book reading session! Meetup: #{@book_read.meetup_time ? l(@book_read.meetup_time, format: :flyer) : "TBD"} at #{@book_read.meetup_location.presence || "TBD"}." :
+    "Join #{@book_club.name}'s private book club to see meetup details." %>
 <% content_for :og_url, book_club_book_read_url(@book_club, @book_read) %>
 <% if @book_read.book.present? && @book_read.book.cover_image.present? %>
   <% content_for :og_image, cover_book_url(@book_read.book) %>
@@ -103,13 +105,15 @@
         <% end %>
       </div>
 
-      <%= render "book_reads/rsvp_dialog",
-      book_read: @book_read,
-      rsvp_records: @rsvp_records %>
+      <% if @private_info_visible %>
+        <%= render "book_reads/rsvp_dialog",
+        book_read: @book_read,
+        rsvp_records: @rsvp_records %>
 
-      <%= render "book_reads/share_flyer_dialog",
-      book_club: @book_club,
-      book_read: @book_read %>
+        <%= render "book_reads/share_flyer_dialog",
+        book_club: @book_club,
+        book_read: @book_read %>
+      <% end %>
 
       <div class="w-full md:w-2/3 flex flex-col">
         <div class="flex justify-between items-start mb-2">
@@ -122,42 +126,57 @@
           <p class="text-xl text-content-subtle mb-3">By
             <%= @book_read.book.author %></p>
         <% end %>
-        <button
-          onclick="document.getElementById('rsvp_dialog').showModal()"
-          class="
-            w-full text-left hover:opacity-80 transition-opacity focus:outline-none cursor-pointer
-            focus-visible:ring-2 focus-visible:ring-primary rounded-md mb-6
-          "
-        >
-          <div
+        <% if @private_info_visible %>
+          <button
+            onclick="document.getElementById('rsvp_dialog').showModal()"
             class="
-              flex flex-col sm:flex-row sm:items-center sm:justify-between gap-2
+              w-full text-left hover:opacity-80 transition-opacity focus:outline-none cursor-pointer
+              focus-visible:ring-2 focus-visible:ring-primary rounded-md mb-6
             "
           >
-            <div class="flex items-center gap-2 text-xs text-content">
-              <%= render "shared/avatar",
-              user: @book_read.host,
-              classes:
-                "w-6 h-6 ring-2 ring-surface bg-primary text-primary-contrast text-[9px] font-semibold" %>
-              <span>Hosted by:
-                <span class="font-semibold"><%= @book_read.host.to_s %></span></span>
+            <div
+              class="
+                flex flex-col sm:flex-row sm:items-center sm:justify-between gap-2
+              "
+            >
+              <div class="flex items-center gap-2 text-xs text-content">
+                <%= render "shared/avatar",
+                user: @book_read.host,
+                classes:
+                  "w-6 h-6 ring-2 ring-surface bg-primary text-primary-contrast text-[9px] font-semibold" %>
+                <span>Hosted by:
+                  <span class="font-semibold"><%= @book_read.host.to_s %></span></span>
+              </div>
+              <%= render "book_read_rsvps/rsvp_users", rsvp_users: @rsvp_users, waitlisted_count: @waitlisted_count %>
             </div>
-            <%= render "book_read_rsvps/rsvp_users", rsvp_users: @rsvp_users, waitlisted_count: @waitlisted_count %>
+          </button>
+        <% else %>
+          <div class="flex items-center gap-2 text-xs text-content mb-6">
+            <%= render "shared/avatar",
+            user: @book_read.host,
+            classes:
+              "w-6 h-6 ring-2 ring-surface bg-primary text-primary-contrast text-[9px] font-semibold" %>
+            <span>Hosted by:
+              <span class="font-semibold"><%= @book_read.host.to_s %></span></span>
           </div>
-        </button>
+        <% end %>
 
         <div class="bg-background rounded-xl p-6 mb-8 border border-border">
           <h3 class="text-xs font-semibold text-primary uppercase tracking-wider mb-4">Meetup Details</h3>
-          <div class="grid grid-cols-1 sm:grid-cols-2 gap-6">
-            <div>
-              <p class="text-sm text-content-muted mb-1">When</p>
-              <p class="font-semibold text-content"><%= @book_read.meetup_time&.strftime("%B %d, %Y at %H:%M") || "Not set" %></p>
+          <% if @private_info_visible %>
+            <div class="grid grid-cols-1 sm:grid-cols-2 gap-6">
+              <div>
+                <p class="text-sm text-content-muted mb-1">When</p>
+                <p class="font-semibold text-content"><%= @book_read.meetup_time&.strftime("%B %d, %Y at %H:%M") || "Not set" %></p>
+              </div>
+              <div>
+                <p class="text-sm text-content-muted mb-1">Where</p>
+                <p class="font-semibold text-content"><%= @book_read.meetup_location.presence || "Not set" %></p>
+              </div>
             </div>
-            <div>
-              <p class="text-sm text-content-muted mb-1">Where</p>
-              <p class="font-semibold text-content"><%= @book_read.meetup_location.presence || "Not set" %></p>
-            </div>
-          </div>
+          <% else %>
+            <p class="text-content-subtle text-sm">This is a private club. Join to see meetup details.</p>
+          <% end %>
         </div>
 
         <% if @book_read.book&.description.present? %>
@@ -168,32 +187,34 @@
         <% end %>
 
         <div class="mt-auto flex gap-3 items-center pt-6 border-t border-border">
-          <button
-            type="button"
-            onclick="document.getElementById('share_flyer_dialog').showModal()"
-            class="
-              flex-1 sm:flex-none inline-flex items-center justify-center px-5 py-2.5 border
-              border-transparent shadow-sm text-sm font-semibold rounded-xl
-              text-primary-contrast bg-primary hover:bg-primary/90 focus:outline-none
-              focus:ring-2 focus:ring-offset-2 focus:ring-primary transition-colors gap-2
-            "
-          >
-            <svg
-              xmlns="http://www.w3.org/2000/svg"
-              fill="none"
-              viewBox="0 0 24 24"
-              stroke-width="2.5"
-              stroke="currentColor"
-              class="w-4 h-4"
+          <% if @private_info_visible %>
+            <button
+              type="button"
+              onclick="document.getElementById('share_flyer_dialog').showModal()"
+              class="
+                flex-1 sm:flex-none inline-flex items-center justify-center px-5 py-2.5 border
+                border-transparent shadow-sm text-sm font-semibold rounded-xl
+                text-primary-contrast bg-primary hover:bg-primary/90 focus:outline-none
+                focus:ring-2 focus:ring-offset-2 focus:ring-primary transition-colors gap-2
+              "
             >
-              <path
-                stroke-linecap="round"
-                stroke-linejoin="round"
-                d="M9 8.25H7.5a2.25 2.25 0 0 0-2.25 2.25v9a2.25 2.25 0 0 0 2.25 2.25h9a2.25 2.25 0 0 0 2.25-2.25v-9a2.25 2.25 0 0 0-2.25-2.25H15m0-3-3-3m0 0-3 3m3-3V15"
-              />
-            </svg>
-            <%= t("share_flyer") %>
-          </button>
+              <svg
+                xmlns="http://www.w3.org/2000/svg"
+                fill="none"
+                viewBox="0 0 24 24"
+                stroke-width="2.5"
+                stroke="currentColor"
+                class="w-4 h-4"
+              >
+                <path
+                  stroke-linecap="round"
+                  stroke-linejoin="round"
+                  d="M9 8.25H7.5a2.25 2.25 0 0 0-2.25 2.25v9a2.25 2.25 0 0 0 2.25 2.25h9a2.25 2.25 0 0 0 2.25-2.25v-9a2.25 2.25 0 0 0-2.25-2.25H15m0-3-3-3m0 0-3 3m3-3V15"
+                />
+              </svg>
+              <%= t("share_flyer") %>
+            </button>
+          <% end %>
 
           <div class="dropdown dropdown-top sm:dropdown-bottom sm:dropdown-end">
             <button
@@ -425,37 +446,44 @@
     </div>
   <% end %>
   <!-- Discussion Questions Section -->
-  <div class="bg-surface p-8 rounded-lg shadow-sm border border-border">
-    <h2 class="title title-lg text-content font-bold">Discussion Questions</h2>
+  <% if @private_info_visible %>
+    <div class="bg-surface p-8 rounded-lg shadow-sm border border-border">
+      <h2 class="title title-lg text-content font-bold">Discussion Questions</h2>
 
-    <div class="mb-6 flex flex-col">
-      <%= render partial: "discussion_questions/form",
-      locals: {
-        book_club: @book_club,
-        book_read: @book_read,
-        discussion_question: @new_discussion_question,
-      } %>
-    </div>
-
-    <%= turbo_stream_from @book_read, :discussion_questions %>
-
-    <div id="discussion_questions_list" class="space-y-5">
-      <% @discussion_questions.where.not(id: nil).each do |question| %>
-        <%= render partial: "discussion_questions/discussion_question",
+      <div class="mb-6 flex flex-col">
+        <%= render partial: "discussion_questions/form",
         locals: {
-          discussion_question: question,
+          book_club: @book_club,
+          book_read: @book_read,
+          discussion_question: @new_discussion_question,
         } %>
-      <% end %>
-    </div>
+      </div>
 
-    <div id="no_discussion_questions_wrapper">
-      <% if @discussion_questions.where.not(id: nil).empty? %>
-        <%= render partial: "discussion_questions/no_questions" %>
-      <% end %>
-    </div>
-  </div>
+      <%= turbo_stream_from @book_read, :discussion_questions %>
 
-  <% if user_signed_in? && current_user != @book_read.host %>
+      <div id="discussion_questions_list" class="space-y-5">
+        <% @discussion_questions.where.not(id: nil).each do |question| %>
+          <%= render partial: "discussion_questions/discussion_question",
+          locals: {
+            discussion_question: question,
+          } %>
+        <% end %>
+      </div>
+
+      <div id="no_discussion_questions_wrapper">
+        <% if @discussion_questions.where.not(id: nil).empty? %>
+          <%= render partial: "discussion_questions/no_questions" %>
+        <% end %>
+      </div>
+    </div>
+  <% else %>
+    <div class="bg-surface p-8 rounded-lg shadow-sm border border-border">
+      <h2 class="title title-lg text-content font-bold">Discussion Questions</h2>
+      <p class="text-content-subtle text-sm mt-4">This is a private club. Join to see and participate in discussion questions.</p>
+    </div>
+  <% end %>
+
+  <% if @private_info_visible && user_signed_in? && current_user != @book_read.host %>
     <%= render "book_reads/rsvp",
     book_club: @book_club,
     book_read: @book_read,

@@ -14,15 +14,30 @@ class BookReadsController < ApplicationController
   end
 
   def show
-    discussion_questions = @book_read.discussion_questions.includes(:question_translations)
-    if user_signed_in? && @book_club.owner == current_user
-      @discussion_questions = discussion_questions.order(:position)
-    else
-      @discussion_questions = discussion_questions.revealed
-      if user_signed_in?
-        @discussion_questions = @discussion_questions.or(discussion_questions.where(user: current_user))
+    @private_info_visible = @book_club.private_info_visible_to?(current_user)
+
+    if @private_info_visible
+      discussion_questions = @book_read.discussion_questions.includes(:question_translations)
+      if user_signed_in? && @book_club.owner == current_user
+        @discussion_questions = discussion_questions.order(:position)
+      else
+        @discussion_questions = discussion_questions.revealed
+        if user_signed_in?
+          @discussion_questions = @discussion_questions.or(discussion_questions.where(user: current_user))
+        end
+        @discussion_questions = @discussion_questions.order(:position)
       end
-      @discussion_questions = @discussion_questions.order(:position)
+
+      @rsvp = @book_read.book_read_rsvps.find_by(user: current_user) if user_signed_in?
+      @rsvp_users = @book_read.book_read_rsvps.going.includes(:user).map(&:user)
+      @waitlisted_count = @book_read.book_read_rsvps.waitlisted.count
+      @rsvp_records = @book_read.book_read_rsvps.includes(:user).order(created_at: :asc)
+    else
+      @discussion_questions = DiscussionQuestion.none
+      @rsvp = nil
+      @rsvp_users = []
+      @waitlisted_count = 0
+      @rsvp_records = []
     end
 
     draft_content = if user_signed_in?
@@ -31,10 +46,6 @@ class BookReadsController < ApplicationController
       session[:discussion_question_draft]
     end
     @new_discussion_question = DiscussionQuestion.new(content: draft_content)
-    @rsvp = @book_read.book_read_rsvps.find_by(user: current_user) if user_signed_in?
-    @rsvp_users = @book_read.book_read_rsvps.going.includes(:user).map(&:user)
-    @waitlisted_count = @book_read.book_read_rsvps.waitlisted.count
-    @rsvp_records = @book_read.book_read_rsvps.includes(:user).order(created_at: :asc)
   end
 
   def new

@@ -28,6 +28,10 @@ class BookClub < ApplicationRecord
     book_club_members.exists?(user: user)
   end
 
+  def private_info_visible_to?(user)
+    !is_private || has_member?(user)
+  end
+
   private
 
   def application_form_url_is_valid

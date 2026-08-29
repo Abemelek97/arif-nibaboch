@@ -36,9 +36,18 @@
         <div>
           <div class="flex items-center gap-3 mb-2">
             <% if @club.photo.attached? %>
-              <%= image_tag @club.photo, alt: "", class: "w-10 h-10 aspect-square rounded-full object-cover ring-2 ring-accent/20 shrink-0" %>
+              <%= image_tag @club.photo,
+              alt: "",
+              class:
+                "w-10 h-10 aspect-square rounded-full object-cover ring-2 ring-accent/20 shrink-0" %>
             <% else %>
-              <div aria-hidden="true" class="w-10 h-10 rounded-full bg-accent/15 text-accent font-bold text-base flex items-center justify-center shrink-0">
+              <div
+                aria-hidden="true"
+                class="
+                  w-10 h-10 rounded-full bg-accent/15 text-accent font-bold text-base flex
+                  items-center justify-center shrink-0
+                "
+              >
                 <%= @club.name_initial %>
               </div>
             <% end %>
@@ -62,18 +71,22 @@
               end %>
             </span>
           </div>
+          <% can_see_private = @club.private_info_visible_to?(current_user) %>
+
           <button
-            onclick="document.getElementById('members_dialog').showModal()"
+            onclick="<%= can_see_private ? "document.getElementById('members_dialog').showModal()" : "return false;" %>"
             class="
               text-left mt-4 hover:opacity-80 transition-opacity focus:outline-none
               focus:ring-2 focus:ring-offset-2 focus:ring-primary rounded-md block
             "
           >
             <div class="flex items-center gap-2">
-              <%= render "shared/avatar_group",
-              users: @club.members,
-              limit: 5,
-              container_classes: "cursor-pointer" %>
+              <% if can_see_private %>
+                <%= render "shared/avatar_group",
+                users: @club.members,
+                limit: 5,
+                container_classes: "cursor-pointer" %>
+              <% end %>
               <span class="text-sm text-content-subtle font-medium"><%= pluralize(@club.members.size, "member") %></span>
             </div>
           </button>
@@ -124,7 +137,10 @@
   </div>
 
   <% if @current_read %>
-    <%= render "shared/book_read_card_link", book_read: @current_read, club: @club, show_club_name: false %>
+    <%= render "shared/book_read_card_link",
+    book_read: @current_read,
+    club: @club,
+    show_club_name: false %>
   <% else %>
     <div
       class="
@@ -157,60 +173,62 @@
   <% end %>
 </div>
 
-<dialog
-  id="members_dialog"
-  class="
-    p-0 rounded-2xl shadow-2xl backdrop:bg-black/50 w-full max-w-2xl max-h-[80vh]
-    open:flex flex-col m-auto
-  "
->
-  <div
+<% if can_see_private %>
+  <dialog
+    id="members_dialog"
     class="
-      flex justify-between items-center p-6 border-b border-border bg-surface sticky
-      top-0 z-10
+      p-0 rounded-2xl shadow-2xl backdrop:bg-black/50 w-full max-w-2xl max-h-[80vh]
+      open:flex flex-col m-auto
     "
   >
-    <h3 class="title title-sm text-content font-semibold">Club Members (<%= @club.members.size %>)</h3>
-    <button
-      onclick="document.getElementById('members_dialog').close()"
+    <div
       class="
-        text-content-muted hover:text-content focus:outline-none transition-colors
-        rounded-full p-1 hover:bg-background
+        flex justify-between items-center p-6 border-b border-border bg-surface sticky
+        top-0 z-10
       "
     >
-      <svg class="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-        <path
-          stroke-linecap="round"
-          stroke-linejoin="round"
-          stroke-width="2"
-          d="M6 18L18 6M6 6l12 12"
-        />
-      </svg>
-    </button>
-  </div>
+      <h3 class="title title-sm text-content font-semibold">Club Members (<%= @club.members.size %>)</h3>
+      <button
+        onclick="document.getElementById('members_dialog').close()"
+        class="
+          text-content-muted hover:text-content focus:outline-none transition-colors
+          rounded-full p-1 hover:bg-background
+        "
+      >
+        <svg class="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+          <path
+            stroke-linecap="round"
+            stroke-linejoin="round"
+            stroke-width="2"
+            d="M6 18L18 6M6 6l12 12"
+          />
+        </svg>
+      </button>
+    </div>
 
-  <div class="overflow-y-auto p-0 bg-surface">
-    <% current_user_is_admin =
-      @club.book_club_members.find_by(user: current_user)&.admin? %>
-    <% body_content = capture do %>
-      <% @club.book_club_members.includes(:user).order(role: :desc, created_at: :asc).each_with_index do |membership, row_idx| %>
-        <%= render "book_club_members/member_row",
-        membership: membership,
-        club: @club,
-        is_last: row_idx == @club.book_club_members.size - 1,
-        current_user_is_admin: current_user_is_admin %>
+    <div class="overflow-y-auto p-0 bg-surface">
+      <% current_user_is_admin =
+        @club.book_club_members.find_by(user: current_user)&.admin? %>
+      <% body_content = capture do %>
+        <% @club.book_club_members.includes(:user).order(role: :desc, created_at: :asc).each_with_index do |membership, row_idx| %>
+          <%= render "book_club_members/member_row",
+          membership: membership,
+          club: @club,
+          is_last: row_idx == @club.book_club_members.size - 1,
+          current_user_is_admin: current_user_is_admin %>
+        <% end %>
       <% end %>
-    <% end %>
 
-    <% columns = %w[Member Role Joined] %>
-    <% columns << "Actions" if current_user_is_admin %>
+      <% columns = %w[Member Role Joined] %>
+      <% columns << "Actions" if current_user_is_admin %>
 
-    <%= render "shared/table/table",
-    columns: columns,
-    body_content: body_content,
-    hoverable: true,
-    sticky_header: true,
-    bordered: false,
-    container: false %>
-  </div>
-</dialog>
+      <%= render "shared/table/table",
+      columns: columns,
+      body_content: body_content,
+      hoverable: true,
+      sticky_header: true,
+      bordered: false,
+      container: false %>
+    </div>
+  </dialog>
+<% end %>
