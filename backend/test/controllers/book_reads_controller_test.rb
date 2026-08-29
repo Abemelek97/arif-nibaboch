@@ -266,4 +266,28 @@ class BookReadsControllerTest < ActionDispatch::IntegrationTest
     assert_select "#rsvp_dialog", 0
     assert_select "#share_flyer_dialog", 0
   end
+
+  test "non-member cannot see poll text of private club book read" do
+    @book_club.update!(is_private: true)
+    @book_read = book_reads(:one)
+    sign_in users(:two)
+
+    get book_club_book_read_url(@book_club, @book_read)
+    assert_response :success
+
+    assert_select "p", text: "What should we read next?", count: 0
+    assert_select "h2", text: "Poll"
+    assert_select "p", text: /private club/i
+  end
+
+  test "member can see poll text of private club book read" do
+    @book_club.update!(is_private: true)
+    @book_read = book_reads(:one)
+    sign_in @user
+
+    get book_club_book_read_url(@book_club, @book_read)
+    assert_response :success
+
+    assert_select "p", text: "What should we read next?"
+  end
 end

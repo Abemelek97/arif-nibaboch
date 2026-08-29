@@ -3,9 +3,9 @@ class BookReadRsvpsController < ApplicationController
   before_action :set_book_club
   before_action :set_book_read
   before_action :ensure_not_past_event
+  before_action :ensure_membership!, only: [ :create, :update ]
 
   def create
-    ensure_membership!
     @rsvp = BookReadRsvp.rsvp!(book_read: @book_read, user: current_user, status: :going)
     @rsvp_users = @book_read.book_read_rsvps.going.includes(:user).map(&:user)
     @waitlisted_count = @book_read.book_read_rsvps.waitlisted.count
@@ -17,7 +17,6 @@ class BookReadRsvpsController < ApplicationController
   end
 
   def update
-    ensure_membership!
     status = params.dig(:book_read_rsvp, :status) || :going
     @rsvp = BookReadRsvp.rsvp!(book_read: @book_read, user: current_user, status: status)
     @rsvp_users = @book_read.book_read_rsvps.going.includes(:user).map(&:user)
@@ -46,7 +45,12 @@ class BookReadRsvpsController < ApplicationController
   end
 
   def ensure_membership!
-    @book_club.book_club_members.find_or_create_by!(user: current_user)
+    if @book_club.is_private && !@book_club.has_member?(current_user)
+      redirect_to book_club_book_read_path(@book_club, @book_read),
+                  alert: "This is a private club. Join the club first to RSVP."
+    else
+      @book_club.book_club_members.find_or_create_by!(user: current_user)
+    end
   end
 
   def rsvp_notice(rsvp)

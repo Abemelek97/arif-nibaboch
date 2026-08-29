@@ -320,7 +320,7 @@
     </div>
   </div>
 
-  <% if @book_read.poll.present? %>
+  <% if @book_read.poll.present? && @private_info_visible %>
     <% poll = @book_read.poll %>
     <% finalized = poll.finalized_at.present? %>
     <% poll_active = poll.active? %>
@@ -443,6 +443,11 @@
           <%= poll.end_date&.strftime("%B %d, %Y at %I:%M %p") %>
         </p>
       <% end %>
+    </div>
+  <% elsif @book_read.poll.present? %>
+    <div class="bg-surface p-8 rounded-lg shadow-sm border border-border mb-8">
+      <h2 class="title title-lg text-content font-bold">Poll</h2>
+      <p class="text-content-subtle text-sm mt-4">This is a private club. Join to see poll details.</p>
     </div>
   <% end %>
   <!-- Discussion Questions Section -->
