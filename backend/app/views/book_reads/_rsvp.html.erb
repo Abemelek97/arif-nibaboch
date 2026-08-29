@@ -44,8 +44,9 @@
     <% end %>
   <% else %>
     <%= link_to button_label, new_user_session_path,
-          class: "px-6 py-2.5 text-sm font-bold rounded-lg cursor-pointer transition-colors bg-primary text-primary-contrast inline-block text-center flex-shrink-0",
+          class: "px-6 py-2.5 text-sm font-bold rounded-lg cursor-pointer transition-colors #{is_primary ? "bg-primary text-primary-contrast hover:bg-primary/90" : "bg-background text-content border border-border hover:bg-surface"}",
           data: { turbo_frame: "_top" } %>
   <% end %>
 <% end %>
+</div>
 <% end %>
