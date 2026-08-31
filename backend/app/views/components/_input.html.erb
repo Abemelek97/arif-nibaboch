@@ -80,13 +80,13 @@
   raw_attr_str = raw_attrs.join(" ")
 %>
 
-<fieldset class="fieldset w-full <%= classes %>" <% if toggle_password %> data-controller="password" <% end %>>
+<fieldset class="group/field fieldset w-full <%= classes %>" <% if toggle_password %> data-controller="password" <% end %>>
   <% if label.present? %>
     <legend class="fieldset-legend font-medium text-sm text-content flex items-center justify-between w-full mb-1">
       <label for="<%= input_id %>" class="flex items-center justify-between w-full cursor-pointer">
         <span><%= label %></span>
         <% if required %>
-          <span class="text-xs text-error font-normal">*Required</span>
+          <span class="text-xs text-error font-normal group-has-[input:not(:placeholder-shown)]/field:hidden"">*Required</span>
         <% end %>
       </label>
     </legend>
