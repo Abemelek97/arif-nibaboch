@@ -8,15 +8,14 @@
       class="
         flex items-center justify-between p-4 rounded-lg border border-border
         bg-background hover:bg-surface transition-all group cursor-pointer
-      "
-    >
+      ">
       <div class="flex items-center gap-4 flex-1">
         <%= check_box_tag "poll_option_ids[]",
         option.id,
         false,
         class: "w-4 h-4 text-primary focus:ring-primary border-border rounded",
         data: { poll_vote_form_target: "option", action: "poll-vote-form#toggle" } %>
-        
+
         <% if option.book.present? %>
           <div class="flex items-center gap-3">
             <% if option.book.cover_image.present? %>
@@ -50,8 +49,7 @@
       text-primary-contrast bg-primary hover:bg-primary
       focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-primary
       disabled:opacity-50 disabled:cursor-not-allowed
-    "
-  >
+    ">
     Vote
   </button>
 <% end %>

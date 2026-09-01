@@ -1,7 +1,7 @@
 <% content_for :title, current_user.name.presence || t("titles.my_profile") %>
 <div class="max-w-4xl mx-auto py-8 sm:py-12">
   <div class="bg-surface rounded-3xl shadow-sm border border-border overflow-hidden">
-    
+
     <%# Profile Header / Banner %>
     <div class="bg-linear-to-r from-primary to-accent h-32 sm:h-48 relative">
       <div class="absolute -bottom-12 sm:-bottom-16 left-6 sm:left-10">
@@ -24,7 +24,7 @@
             <span class="text-xs text-content-muted">Joined <%= current_user.created_at.strftime("%B %Y") %></span>
           </div>
         </div>
-        
+
         <div class="flex gap-3">
           <%= link_to edit_user_registration_path, class: "inline-flex items-center justify-center px-4 py-2 border border-border shadow-sm text-sm font-medium rounded-xl text-content bg-surface hover:bg-background transition-colors" do %>
             <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20" fill="currentColor" class="w-4 h-4 mr-2 text-content-muted">
@@ -33,7 +33,7 @@
             </svg>
             Edit Profile
           <% end %>
-          
+
           <%= button_to destroy_user_session_path, method: :delete, data: { turbo: false }, class: "inline-flex items-center justify-center px-4 py-2 border border-red-200 shadow-sm text-sm font-medium rounded-xl text-red-600 bg-red-50 hover:bg-red-100 hover:border-red-300 transition-colors" do %>
             <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20" fill="currentColor" class="w-4 h-4 mr-2">
                <path fill-rule="evenodd" d="M3 4.25A2.25 2.25 0 015.25 2h5.5A2.25 2.25 0 0113 4.25v2a.75.75 0 01-1.5 0v-2a.75.75 0 00-.75-.75h-5.5a.75.75 0 00-.75.75v11.5c0 .414.336.75.75.75h5.5a.75.75 0 00.75-.75v-2a.75.75 0 011.5 0v2A2.25 2.25 0 0110.75 18h-5.5A2.25 2.25 0 013 15.75V4.25z" clip-rule="evenodd" />
@@ -52,7 +52,7 @@
           </span>
           <span class="text-sm font-medium text-content-subtle uppercase tracking-wide">Books Rated</span>
         </div>
-        
+
         <div class="bg-background rounded-2xl p-6 border border-border flex flex-col items-center justify-center text-center">
           <span class="text-4xl font-extrabold text-primary mb-1">0</span>
           <span class="text-sm font-medium text-content-subtle uppercase tracking-wide">Reviews Written</span>
@@ -82,7 +82,7 @@
            <%= link_to 'Update', edit_user_registration_path, class: "text-sm font-semibold text-primary hover:text-accent" %>
         </div>
       </div>
-      
+
     </div>
   </div>
 </div>

@@ -71,8 +71,8 @@
 <fieldset class="fieldset w-full relative <%= classes %>"
           data-controller="date-picker"
           data-date-picker-mode-value="<%= field_type %>"
-          <% if min_str.present? %>data-date-picker-min-value="<%= min_str %>"<% end %>
-          <% if max_str.present? %>data-date-picker-max-value="<%= max_str %>"<% end %>>
+          <% if min_str.present? %> data-date-picker-min-value="<%= min_str %>"<% end %>
+          <% if max_str.present? %> data-date-picker-max-value="<%= max_str %>"<% end %>>
   <% if label.present? %>
     <legend class="fieldset-legend font-medium text-sm text-content flex items-center justify-between w-full mb-1">
       <label for="<%= input_id %>_display" class="flex items-center justify-between w-full cursor-pointer">
@@ -88,7 +88,7 @@
   <% if form.present? %>
     <%= form.send(field_method, name, value: val_str, id: input_id, min: min_str.presence, max: max_str.presence, required: required, data: { date_picker_target: "input" }, class: "hidden") %>
   <% else %>
-    <input type="<%= html_type %>" name="<%= name %>" value="<%= val_str %>" id="<%= input_id %>" <% if min_str.present? %>min="<%= min_str %>"<% end %> <% if max_str.present? %>max="<%= max_str %>"<% end %> <% if required %>required<% end %> data-date-picker-target="input" class="hidden" />
+    <input type="<%= html_type %>" name="<%= name %>" value="<%= val_str %>" id="<%= input_id %>" <% if min_str.present? %> min="<%= min_str %>"<% end %> <% if max_str.present? %> max="<%= max_str %>"<% end %> <% if required %> required<% end %> data-date-picker-target="input" class="hidden">
   <% end %>
 
   <%# Visible DaisyUI Input Display with Calendar Trigger %>
@@ -101,10 +101,11 @@
 
     <input type="text"
            id="<%= input_id %>_display"
+           autocomplete="off"
            readonly
            placeholder="<%= placeholder %>"
            data-date-picker-target="display"
-           class="grow bg-transparent border-none outline-none focus:outline-none focus:ring-0 ring-0 shadow-none p-0 text-base sm:text-sm cursor-pointer select-none" />
+           class="grow bg-transparent border-none outline-none focus:outline-none focus:ring-0 ring-0 shadow-none p-0 text-base sm:text-sm cursor-pointer select-none">
 
     <span class="opacity-50 text-xs">▼</span>
   </div>
@@ -112,7 +113,7 @@
   <%# DaisyUI 5 Calendar Dropdown Popover %>
   <div data-date-picker-target="popover"
        class="hidden absolute left-0 z-50 mt-2 p-4 bg-surface border border-border/80 rounded-2xl shadow-xl w-72 backdrop-blur-md">
-    
+
     <%# Calendar Month/Year Controls %>
     <div class="flex items-center justify-between mb-3 px-1">
       <button type="button"

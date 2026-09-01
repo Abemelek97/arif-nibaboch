@@ -1,7 +1,8 @@
 <%#
   Book Club Card Component
   Locals:
-    - club: BookClub %>
+    - club: BookClub
+%>
   <% is_member =
     if local_assigns[:joined_club_ids]
       joined_club_ids.include?(club.id)

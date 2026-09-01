@@ -3,9 +3,9 @@
   <head>
     <meta http-equiv="Content-Type" content="text/html; charset=utf-8">
     <style type="text/css">
-      /* 
-         We use hardcoded hex values here because email clients 
-         (Gmail/Outlook) do not support CSS Variables or @import. 
+      /*
+         We use hardcoded hex values here because email clients
+         (Gmail/Outlook) do not support CSS Variables or @import.
          Premailer-rails will take these and put them inline.
       */
       body {
@@ -97,11 +97,11 @@
       <div class="header">
         <h1><%= Rails.configuration.x.app_name %></h1>
       </div>
-      
+
       <div class="content">
         <%= yield %>
       </div>
-      
+
       <div class="footer">
         &copy; <%= Time.now.year %> <%= Rails.configuration.x.app_name %>. All rights reserved.
       </div>

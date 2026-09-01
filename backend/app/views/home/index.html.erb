@@ -21,8 +21,7 @@
   class="
     fixed bottom-0 left-0 z-50 w-full h-16 bg-surface border-t border-border
     sm:hidden pb-safe hotwire-native:hidden
-  "
->
+  ">
   <div class=" grid h-full max-w-lg grid-cols-4 mx-auto font-medium">
     <% main_navigation_items.each do |item| %>
       <% is_active = is_active_nav_item?(item) %>
@@ -31,13 +30,11 @@
           class="w-6 h-6 mb-1 <%= is_active ? 'text-primary' : 'text-content-subtle group-hover:text-accent' %>"
           fill="none"
           viewBox="0 0 24 24"
-          stroke="currentColor"
-        >
+          stroke="currentColor">
           <%= item[:icon].html_safe %>
         </svg>
         <span
-          class="text-xs <%= is_active ? 'text-primary' : 'text-content-subtle group-hover:text-accent' %>"
-        ><%= item[:name] %></span>
+          class="text-xs <%= is_active ? 'text-primary' : 'text-content-subtle group-hover:text-accent' %>"><%= item[:name] %></span>
       <% end %>
     <% end %>
   </div>
