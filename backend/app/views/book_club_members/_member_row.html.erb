@@ -3,7 +3,7 @@
   current_user_is_admin ||= false
 %>
 <tr id="<%= dom_id(membership) %>" class="hover:bg-background transition-colors <%= is_last ? '' : '[box-shadow:inset_0_-1px_0_0_rgb(229_224_211)]' %>">
-  <td class="px-6 py-4 whitespace-nowrap">
+  <td class="py-4 whitespace-nowrap">
     <div class="flex items-center">
       <div class="shrink-0 h-10 w-10">
         <%= render "shared/avatar", user: membership.user, classes: "w-10 h-10 ring-2 ring-surface bg-primary text-primary-contrast text-sm font-semibold" %>
@@ -14,7 +14,7 @@
       </div>
     </div>
   </td>
-  <td class="px-6 py-4 whitespace-nowrap">
+  <td class="py-4 whitespace-nowrap">
     <% if membership.user_id == club.owner_id %>
       <%= render "shared/badge/badge", text: "Owner", variant: "blue", pill: true %>
     <% elsif membership.admin? %>
@@ -23,11 +23,11 @@
       <%= render "shared/badge/badge", text: "Member", variant: "neutral", pill: true %>
     <% end %>
   </td>
-  <td class="px-6 py-4 whitespace-nowrap text-sm text-content-subtle">
+  <td class="py-4 whitespace-nowrap text-sm text-content-subtle">
     <%= membership.created_at.strftime("%b %d, %Y") %>
   </td>
   <% if current_user_is_admin %>
-    <td class="px-6 py-4 whitespace-nowrap text-sm font-medium text-right">
+    <td class="py-4 whitespace-nowrap text-sm font-medium text-right">
       <% unless membership.user_id == club.owner_id %>
         <% trigger_html = capture do %>
           <button type="button" class="inline-flex items-center justify-center p-1.5 rounded-full text-content-muted hover:text-content hover:bg-background transition-colors focus:outline-none">

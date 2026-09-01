@@ -14,6 +14,7 @@ class BookClubDashboard < Administrate::BaseDashboard
     book_reads: Field::HasMany,
     books: Field::HasMany,
     description: Field::Text,
+    application_form_url: Field::Url,
     is_private: Field::Boolean,
     members: Field::HasMany,
     name: Field::String,
@@ -41,6 +42,7 @@ class BookClubDashboard < Administrate::BaseDashboard
     name
     description
     is_private
+    application_form_url
     owner
     book_club_members
     book_reads
@@ -58,6 +60,7 @@ class BookClubDashboard < Administrate::BaseDashboard
     books
     description
     is_private
+    application_form_url
     members
     name
     owner

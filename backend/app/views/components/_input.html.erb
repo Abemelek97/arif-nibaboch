@@ -11,6 +11,7 @@
     - autofocus: Boolean
     - autocomplete: String
     - required: Boolean
+    - disabled: Boolean
     - hint: String (help text)
     - error: String / Array (error message)
     - icon: String / HTML (prefix icon SVG)
@@ -31,6 +32,7 @@
   autofocus = !!local_assigns[:autofocus]
   autocomplete ||= nil
   required = !!local_assigns[:required]
+  disabled = !!local_assigns[:disabled]
   hint ||= nil
   error ||= nil
   icon ||= nil
@@ -60,6 +62,7 @@
   }.compact
   input_options[:value] = value if value.present?
   input_options[:required] = true if required
+  input_options[:disabled] = true if disabled
   input_options[:autofocus] = true if autofocus
 
   if toggle_password
@@ -75,6 +78,7 @@
     raw_attrs << "autocomplete=\"#{ERB::Util.html_escape(autocomplete)}\""
   end
   raw_attrs << "required" if required
+  raw_attrs << "disabled" if disabled
   raw_attrs << "autofocus" if autofocus
 
   if input_options[:data].present?

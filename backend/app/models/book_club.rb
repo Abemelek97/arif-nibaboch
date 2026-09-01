@@ -1,3 +1,5 @@
+require "uri"
+
 class BookClub < ApplicationRecord
   belongs_to :owner, class_name: "User", optional: true
 
@@ -12,11 +14,13 @@ class BookClub < ApplicationRecord
   has_many :books, through: :book_reads
   has_many :book_club_members, dependent: :destroy
   has_many :members, through: :book_club_members, source: :user
+  has_many :membership_requests, dependent: :destroy
 
   MAX_PHOTO_SIZE = 5.megabytes
   ALLOWED_PHOTO_TYPES = %w[image/jpeg image/jpg image/png image/webp image/gif].freeze
 
   validates :name, presence: true
+  validate :application_form_url_is_valid
   validate :acceptable_photo
 
   after_create :add_owner_as_admin
@@ -27,7 +31,36 @@ class BookClub < ApplicationRecord
     book_club_members.exists?(user: user)
   end
 
+  def private_info_visible_to?(user)
+    !is_private || (user.present? && (owner == user || has_member?(user)))
+  end
+
+  def pending_request_from?(user)
+    return false unless user
+
+    membership_requests.exists?(user: user, status: :pending)
+  end
+
+  def pending_membership_requests
+    membership_requests.where(status: :pending).includes(:user)
+  end
+
   private
+
+  def application_form_url_is_valid
+    return if application_form_url.blank?
+
+    begin
+      uri = URI.parse(application_form_url)
+    rescue URI::InvalidURIError
+      errors.add(:application_form_url, "must be a valid URL starting with http:// or https://")
+      return
+    end
+
+    unless uri.is_a?(URI::HTTP) && uri.host.present?
+      errors.add(:application_form_url, "must be a valid URL starting with http:// or https://")
+    end
+  end
 
   def acceptable_photo
     return unless photo.attached?

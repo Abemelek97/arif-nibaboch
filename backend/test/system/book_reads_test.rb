@@ -22,8 +22,8 @@ class BookReadsTest < ApplicationSystemTestCase
     assert_no_selector "#book_selection_field", visible: true
     assert_selector "#poll_fields", visible: true
     # Check for simplified event fields
-    assert_selector "label", text: "Meetup time"
-    assert_selector "label", text: "Meetup location"
+    assert_selector "label", text: "Meetup Time"
+    assert_selector "label", text: "Meetup Location"
 
     # Toggle back to Book
     find("[data-book-read-form-target='selectionBtn']", text: "Specific Book").click
@@ -42,8 +42,8 @@ class BookReadsTest < ApplicationSystemTestCase
     assert_selector "[data-book-autocomplete-target='results'] div", text: book.title, wait: 5
     find("[data-book-autocomplete-target='results'] div", text: book.title, match: :first).click
 
-    fill_in "Meetup time", with: (Time.current + 1.week).strftime("%m%d%Y\t%I%M%p")
-    fill_in "Meetup location", with: "Starbucks"
+    pick_datetime "Meetup Time", Time.current + 1.week, hour: 15, minute: 30
+    fill_in "Meetup Location", with: "Starbucks"
 
     click_on "Schedule Read"
 
@@ -54,8 +54,8 @@ class BookReadsTest < ApplicationSystemTestCase
   test "showing errors when creating a book read without a book or poll" do
     visit new_book_club_book_read_path(@book_club)
 
-    fill_in "Meetup time", with: (Time.current + 1.week).strftime("%m%d%Y\t%I%M%p")
-    fill_in "Meetup location", with: "Starbucks"
+    pick_datetime "Meetup Time", Time.current + 1.week, hour: 15, minute: 30
+    fill_in "Meetup Location", with: "Starbucks"
 
     click_on "Schedule Read"
 
@@ -69,30 +69,30 @@ class BookReadsTest < ApplicationSystemTestCase
     find("[data-book-read-form-target='selectionBtn']", text: "Poll").click
 
     fill_in "Poll Question", with: "What should we read next?"
-    fill_in "Voting Ends On", with: (Time.current + 3.days).strftime("%m%d%Y\t%I%M%p")
+    pick_datetime "Voting Ends On", Time.current + 3.days, hour: 23, minute: 55
 
     # Add Poll Options
     within "#poll_options" do
       # Enter first option
       within ".poll-option-field:nth-child(1)" do
-        fill_in "Enter book title or option...", with: "The Great Gatsby"
+        fill_in "Enter book title or search...", with: "The Great Gatsby"
       end
 
       # Enter second option
       within ".poll-option-field:nth-child(2)" do
-        fill_in "Enter book title or option...", with: "1984"
+        fill_in "Enter book title or search...", with: "1984"
       end
 
       click_button "Add Another Option"
 
       # Enter third option
       within ".poll-option-field:nth-child(3)" do
-        fill_in "Enter book title or option...", with: "Brave New World"
+        fill_in "Enter book title or search...", with: "Brave New World"
       end
     end
 
-    fill_in "Meetup time", with: (Time.current + 1.week).strftime("%m%d%Y\t%I%M%p")
-    fill_in "Meetup location", with: "Public Library"
+    pick_datetime "Meetup Time", Time.current + 1.week, hour: 15, minute: 30
+    fill_in "Meetup Location", with: "Public Library"
 
     click_on "Schedule Read"
 
@@ -114,7 +114,7 @@ class BookReadsTest < ApplicationSystemTestCase
 
     # Fill some fields but miss a required one (meetup_time)
     fill_in "Poll Question", with: "Incomplete Poll"
-    fill_in "Meetup location", with: "Nowhere"
+    fill_in "Meetup Location", with: "Nowhere"
 
     click_on "Schedule Read"
 
@@ -141,7 +141,7 @@ class BookReadsTest < ApplicationSystemTestCase
     login_as book_club.owner
     visit book_club_book_read_path(book_club, book_read)
 
-    assert_selector "button", text: "Finalize Poll"
+    assert_selector "a", text: "Finalize Poll"
   end
 
   test "showing errors when creating a poll without options" do
@@ -151,10 +151,10 @@ class BookReadsTest < ApplicationSystemTestCase
     find("[data-book-read-form-target='selectionBtn']", text: "Poll").click
 
     fill_in "Poll Question", with: "Poll with no options"
-    fill_in "Voting Ends On", with: (Time.current + 3.days).strftime("%m%d%Y\t%I%M%p")
+    pick_datetime "Voting Ends On", Time.current + 3.days, hour: 23, minute: 55
 
-    fill_in "Meetup time", with: (Time.current + 1.week).strftime("%m%d%Y\t%I%M%p")
-    fill_in "Meetup location", with: "Public Library"
+    pick_datetime "Meetup Time", Time.current + 1.week, hour: 15, minute: 30
+    fill_in "Meetup Location", with: "Public Library"
 
     # Ensure options are empty (they shouldn't be by default as we build 2, but let's assume we remove them or they are blank)
     # Our form builds 2 empty ones by default, so if we leave them blank they should be rejected by reject_if: :all_blank
@@ -166,14 +166,21 @@ class BookReadsTest < ApplicationSystemTestCase
 
   private
 
-  def login_as(user)
-    visit profile_path
-    if page.has_button?("Sign out")
-      click_on "Sign out"
+  def pick_datetime(label, target, hour:, minute:)
+    fieldset = find("fieldset[data-controller='date-picker']", text: label)
+    fieldset.find("div[data-action='click->date-picker#togglePopover']").click
+
+    target_month = target.strftime("%B %Y")
+    until fieldset.find("[data-date-picker-target='monthYear']").text == target_month
+      fieldset.find("[data-action='click->date-picker#nextMonth']").click
     end
-    visit new_user_session_path
-    fill_in "Email", with: user.email
-    fill_in "Password", with: "password123"
-    click_on "Log in"
+
+    fieldset.find("[data-date-picker-target='daysGrid'] button[data-day='#{target.day}']").click
+
+    if fieldset.has_selector?("[data-date-picker-target='hourSelect']", visible: true)
+      fieldset.find("[data-date-picker-target='hourSelect']").select(hour.to_s.rjust(2, "0"))
+      fieldset.find("[data-date-picker-target='minuteSelect']").select(minute.to_s.rjust(2, "0"))
+      fieldset.find("div[data-action='click->date-picker#togglePopover']").click
+    end
   end
 end

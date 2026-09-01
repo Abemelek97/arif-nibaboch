@@ -1,0 +1,66 @@
+<%#
+  DaisyUI Toggle Component (https://daisyui.com/components/toggle/)
+  Locals:
+    - form: FormBuilder object (e.g. f) or nil
+    - name: Symbol/String (attribute name, e.g. :remember_me)
+    - label: String (label text)
+    - checked: Boolean
+    - variant: String ("primary", "secondary", "accent", etc., default: "primary")
+    - size: String ("xs", "sm", "md", "lg", "xl", default: "sm")
+    - classes: String (additional wrapper classes)
+    - data: Hash
+    - id: String
+%>
+
+<%
+  form ||= nil
+  name ||= :toggle
+  label ||= name.to_s.humanize
+  variant ||= "primary"
+  size ||= "sm"
+  classes ||= ""
+  data ||= {}
+  id ||= nil
+
+  variant_class = case variant.to_s
+  when "primary" then "toggle-primary"
+  when "secondary" then "toggle-secondary"
+  when "accent" then "toggle-accent"
+  when "neutral" then "toggle-neutral"
+  when "success" then "toggle-success"
+  when "warning" then "toggle-warning"
+  when "info" then "toggle-info"
+  when "error" then "toggle-error"
+  else "toggle-#{variant}"
+  end
+
+  size_class = case size.to_s
+  when "xs" then "toggle-xs"
+  when "sm" then "toggle-sm"
+  when "md" then "toggle-md"
+  when "lg" then "toggle-lg"
+  when "xl" then "toggle-xl"
+  else ""
+  end
+
+  toggle_classes = [
+    "toggle",
+    variant_class,
+    size_class,
+    "transition-colors cursor-pointer"
+  ].reject(&:empty?).join(" ")
+
+  toggle_options = { class: toggle_classes, data: data, id: id }
+  toggle_options[:checked] = true if local_assigns[:checked]
+%>
+
+<div class="form-control inline-block <%= classes %>">
+  <label class="label cursor-pointer justify-start gap-2.5 py-1 px-0 select-none group">
+    <% if form.present? %>
+      <%= form.check_box name, toggle_options %>
+    <% else %>
+      <input type="checkbox" name="<%= name %>" class="<%= toggle_classes %>" <%= "checked" if local_assigns[:checked] %> <% if id.present? %> id="<%= id %>"<% end %><% data.each do |k, v| %> data-<%= k.to_s.dasherize %>="<%= v %>"<% end %>>
+    <% end %>
+    <span class="label-text text-sm font-medium text-content group-hover:text-primary transition-colors"><%= label %></span>
+  </label>
+</div>

@@ -44,6 +44,97 @@ class BookClubMembersControllerTest < ActionDispatch::IntegrationTest
     assert_response :unauthorized
   end
 
+  test "non-member cannot directly join private club" do
+    @book_club.update!(is_private: true)
+    sign_in @user
+
+    assert_no_difference("BookClubMember.count") do
+      post book_club_membership_url(@book_club), as: :json
+    end
+
+    assert_response :forbidden
+    assert_match (/private club/i), JSON.parse(response.body)["error"]
+  end
+
+  test "member can leave private club" do
+    @book_club.update!(is_private: true)
+    sign_in @user
+    @book_club.book_club_members.create!(user: @user)
+
+    assert_difference("BookClubMember.count", -1) do
+      post book_club_membership_url(@book_club), as: :json
+    end
+
+    assert_response :success
+    assert_equal "left", JSON.parse(response.body)["status"]
+  end
+
+  test "leaving a private club shows Apply to Join on the club show page" do
+    @book_club.update!(is_private: true)
+    sign_in @user
+    @book_club.book_club_members.create!(user: @user)
+
+    assert_difference("BookClubMember.count", -1) do
+      post book_club_membership_url(@book_club)
+    end
+
+    assert_redirected_to @book_club
+    follow_redirect!
+
+    assert_response :success
+    assert_not @book_club.has_member?(@user)
+
+    # Back to non-member state: show page offers Apply to Join again
+    assert_select "button#book_club_show_join_button", /Apply to Join/
+    assert_select "#apply_dialog_#{@book_club.id}"
+    assert_select "button", text: /Leave Club/, count: 0
+  end
+
+  test "turbo stream leave private club restores Apply to Join and the apply dialog container" do
+    @book_club.update!(is_private: true)
+    sign_in @user
+    @book_club.book_club_members.create!(user: @user)
+
+    assert_difference("BookClubMember.count", -1) do
+      post book_club_membership_url(@book_club), as: :turbo_stream
+    end
+
+    assert_response :success
+    assert_equal "text/vnd.turbo-stream.html", @response.media_type
+
+    # Card and show button both swap to the apply state, never a direct Join
+    assert_match /turbo-stream action="replace" target="book_club_#{@book_club.id}"/, @response.body
+    assert_match /turbo-stream action="replace" target="book_club_show_join_button"/, @response.body
+    assert_match /Apply to Join/, @response.body
+    assert_no_match /Join Club/, @response.body
+
+    # The member view rendered an empty dialog container, so the leave
+    # response swaps in the apply dialog — no append, no duplicate IDs
+    assert_match /turbo-stream action="replace" target="apply_dialog_container"><template>[\s\S]*<dialog id="apply_dialog_#{@book_club.id}"/, @response.body
+  end
+
+  test "turbo stream blocked join attempt keeps Apply to Join and shows alert toast" do
+    @book_club.update!(is_private: true)
+    sign_in @user
+
+    assert_no_difference("BookClubMember.count") do
+      post book_club_membership_url(@book_club), as: :turbo_stream
+    end
+
+    assert_response :success
+    assert_equal "text/vnd.turbo-stream.html", @response.media_type
+
+    # Button/card stay in the apply state — never flip to a direct Join
+    assert_match /Apply to Join/, @response.body
+    assert_no_match /Join Club/, @response.body
+
+    # Nothing changed, so no dialog is delivered anywhere — only the alert toast
+    assert_no_match /turbo-stream action="append" target="toast_triggers"><template>[\s\S]*<dialog id="apply_dialog_#{@book_club.id}"/, @response.body
+    assert_no_match /target="apply_dialog_container"/, @response.body
+    assert_match /data-flash-toast-type-value="error"/, @response.body
+    assert_match /private club/i, @response.body
+  end
+
   test "should redirect to login page and store return location if guest tries to join via html" do
     assert_no_difference("BookClubMember.count") do
       post book_club_membership_url(@book_club)

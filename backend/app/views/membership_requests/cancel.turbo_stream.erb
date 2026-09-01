@@ -1,0 +1,25 @@
+<%# Replace the card in carousels/lists if present %>
+<%= turbo_stream.replace dom_id(@book_club) do %>
+  <%= render "book_clubs/card", club: @book_club %>
+<% end %>
+
+<%# Replace the join button on the show page if present %>
+<%= turbo_stream.replace "book_club_show_join_button" do %>
+  <button type="button"
+  id="book_club_show_join_button"
+  onclick="document.getElementById('apply_dialog_<%= @book_club.id %>').showModal()"
+  class="bg-primary text-primary-contrast hover:bg-primary px-6 py-2 rounded-md text-sm font-medium transition-colors cursor-pointer">
+    Apply to Join
+  </button>
+<% end %>
+
+<%# Restore the apply dialog inside its show-page container %>
+<%= turbo_stream.replace "apply_dialog_container" do %>
+  <div id="apply_dialog_container">
+    <%= render "book_clubs/apply_dialog", club: @book_club %>
+  </div>
+<% end %>
+
+<%= turbo_stream.append "toast_triggers" do %>
+  <div data-controller="flash-toast" data-flash-toast-message-value="<%= flash.now[:notice] %>" data-flash-toast-type-value="success"></div>
+<% end %>

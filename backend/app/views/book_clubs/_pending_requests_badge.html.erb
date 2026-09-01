@@ -1,0 +1,19 @@
+<%#
+  Pending Join Requests Indicator
+  Shown to the club owner on the show page next to the member count.
+  Renders nothing when the club has no pending requests, so the
+  [data-pending-requests-badge] wrapper it is rendered into stays clean
+  when the approve/reject turbo streams swap its content.
+
+  Locals:
+    - club: BookClub
+%>
+<% count = club.pending_membership_requests.count %>
+<% if count.positive? %>
+<%# Same violet pill styling as the RSVP waitlist indicator %>
+<%= render "shared/badge/badge",
+text: pluralize(count, "pending request"),
+variant: "violet",
+size: "sm",
+pill: true %>
+<% end %>
