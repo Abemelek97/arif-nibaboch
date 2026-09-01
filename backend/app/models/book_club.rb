@@ -32,7 +32,7 @@ class BookClub < ApplicationRecord
   end
 
   def private_info_visible_to?(user)
-    !is_private || has_member?(user)
+    !is_private || (user.present? && (owner == user || has_member?(user)))
   end
 
   def pending_request_from?(user)

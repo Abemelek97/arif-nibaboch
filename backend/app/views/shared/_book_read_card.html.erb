@@ -10,7 +10,7 @@
         src="<%= book.cover_image %>"
         alt="<%= book.title %>"
         class="absolute inset-0 h-full w-full object-cover object-center group-hover:scale-105 transition-transform duration-500">
-    <% elsif book_read.poll.present? %>
+    <% elsif book_read.poll.present? && can_see_details %>
       <div class="absolute inset-0 flex flex-col items-center justify-center text-accent p-2 text-center">
         <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" class="w-8 h-8 mb-1">
           <path stroke-linecap="round" stroke-linejoin="round" d="M9 12.75 11.25 15 15 9.75M21 12a9 9 0 1 1-18 0 9 9 0 0 1 18 0Z" />
@@ -45,14 +45,14 @@
 
     <%# Book Title / Session Header %>
     <h2 class="title title-sm font-bold text-content leading-tight line-clamp-2 group-hover:text-accent transition-colors">
-      <%= book&.title || book_read.poll&.text || "New Reading Session" %>
+      <%= book&.title || (can_see_details ? book_read.poll&.text : nil) || "New Reading Session" %>
     </h2>
 
     <%# Author / Subtext %>
     <p class="text-xs sm:text-sm text-content-subtle mt-0.5 truncate">
       <% if book.present? %>
         by <%= book.author.presence || "Unknown Author" %>
-      <% elsif book_read.poll.present? %>
+      <% elsif book_read.poll.present? && can_see_details %>
         Voting in Progress
       <% end %>
     </p>

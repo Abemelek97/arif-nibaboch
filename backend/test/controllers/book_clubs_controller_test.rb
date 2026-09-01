@@ -186,6 +186,95 @@ class BookClubsControllerTest < ActionDispatch::IntegrationTest
     assert_select "button", text: /Leave Club/, count: 0
   end
 
+  test "show links Apply to Join to sign in for signed-out visitor of private club" do
+    @club = book_clubs(:one)
+    @club.update!(is_private: true)
+
+    get book_club_url(@club)
+    assert_response :success
+
+    assert_select "a#book_club_show_join_button[href='/users/sign_in']", /Apply to Join/
+    assert_select "#apply_dialog_#{@club.id}", 0
+  end
+
+  test "show hides member count and members trigger for non-member of private club" do
+    @club = book_clubs(:one)
+    @club.update!(is_private: true)
+    sign_in users(:two)
+
+    get book_club_url(@club)
+    assert_response :success
+
+    assert_select "button[onclick*='members_dialog']", 0
+    assert_select "span.text-sm.text-content-subtle.font-medium", count: 0
+  end
+
+  test "discover carousel hides member count on club card for non-member of private club" do
+    @club = book_clubs(:one)
+    @club.update!(is_private: true)
+    sign_in users(:two)
+
+    get discover_book_clubs_path
+    assert_response :success
+
+    assert_select "#book_club_#{@club.id} span.text-xs", count: 0
+  end
+
+  test "discover carousel shows member count on club card for member of private club" do
+    @club = book_clubs(:one)
+    @club.update!(is_private: true)
+    sign_in @user
+
+    get discover_book_clubs_path
+    assert_response :success
+
+    assert_select "#book_club_#{@club.id} span.text-xs", /\d+ members?/
+  end
+
+  test "show hides poll details on the current reading card for non-member of private club" do
+    @club = book_clubs(:one)
+    @club.update!(is_private: true)
+    book_read = @club.book_reads.new(
+      host: @user,
+      meetup_time: Time.current + 1.week,
+      meetup_location: "Secret Spot"
+    )
+    poll = book_read.build_poll(text: "Which book should we read next?", end_date: Time.current + 3.days)
+    poll.poll_options.build(content: "Beloved")
+    poll.poll_options.build(content: "Sula")
+    book_read.save!
+    sign_in users(:two)
+
+    get book_club_url(@club)
+    assert_response :success
+
+    assert_select "h2", text: "Which book should we read next?", count: 0
+    assert_no_match /Voting in Progress/, @response.body
+    assert_select "figure span", text: "Poll", count: 0
+    assert_select "span", text: "Members only"
+  end
+
+  test "show shows poll details on the current reading card for member of private club" do
+    @club = book_clubs(:one)
+    @club.update!(is_private: true)
+    book_read = @club.book_reads.new(
+      host: @user,
+      meetup_time: Time.current + 1.week,
+      meetup_location: "Secret Spot"
+    )
+    poll = book_read.build_poll(text: "Which book should we read next?", end_date: Time.current + 3.days)
+    poll.poll_options.build(content: "Beloved")
+    poll.poll_options.build(content: "Sula")
+    book_read.save!
+    sign_in @user
+
+    get book_club_url(@club)
+    assert_response :success
+
+    assert_select "h2", text: "Which book should we read next?"
+    assert_match /Voting in Progress/, @response.body
+  end
+
   test "show renders pending requests indicator for the club owner" do
     @club = book_clubs(:one)
     @club.update!(is_private: true)

@@ -37,6 +37,16 @@ class MembershipRequestsController < ApplicationController
   end
 
   def approve
+    if @membership_request.approved?
+      # Idempotent: a replayed approval must not append a duplicate member
+      # row or send a second decision email
+      respond_to do |format|
+        format.html { redirect_to @book_club, notice: "This request has already been approved." }
+        format.turbo_stream { head :no_content }
+      end
+      return
+    end
+
     @membership_request.approve!
     @membership = @book_club.book_club_members.find_by(user: @membership_request.user)
     UserMailer.with(membership_request: @membership_request).membership_request_decision.deliver_later
@@ -47,6 +57,14 @@ class MembershipRequestsController < ApplicationController
   end
 
   def reject
+    if @membership_request.rejected?
+      respond_to do |format|
+        format.html { redirect_to @book_club, notice: "This request has already been rejected." }
+        format.turbo_stream { head :no_content }
+      end
+      return
+    end
+
     @membership_request.reject!
     UserMailer.with(membership_request: @membership_request).membership_request_decision.deliver_later
     respond_to do |format|

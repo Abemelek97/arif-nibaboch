@@ -55,10 +55,10 @@
             size_classes: "w-6 h-6",
             text_size: "text-[9px]",
             container_classes: "" %>
+            <span class="text-xs">
+              <%= t("member_count", count: club.members.count) %>
+            </span>
           <% end %>
-          <span class="text-xs">
-            <%= t("member_count", count: club.members.count) %>
-          </span>
         </div>
         <!-- Action Row -->
         <div class="card-actions justify-self-end relative z-20">

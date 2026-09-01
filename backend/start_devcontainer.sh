@@ -21,4 +21,4 @@ echo "🔄 Preparing database and starting server..."
 
 # Exec into the container and run the start commands
 # We use bash -c to chain the commands: ensure bundle is ready, db:prepare and bin/dev
-devcontainer exec --workspace-folder . /bin/bash -c "bundle check || bundle install; bin/rails db:prepare && bin/dev"
+devcontainer exec --workspace-folder . /bin/bash -c "set -e; bundle check || bundle install; bin/rails db:prepare && bin/dev"

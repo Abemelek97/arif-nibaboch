@@ -67,29 +67,29 @@
           </div>
           <% can_see_private = @club.private_info_visible_to?(current_user) %>
 
-          <button
-            onclick="<%= can_see_private ? "document.getElementById('members_dialog').showModal()" : "return false;" %>"
-            class="
-              text-left mt-4 hover:opacity-80 transition-opacity focus:outline-none
-              focus:ring-2 focus:ring-offset-2 focus:ring-primary rounded-md block
-            ">
-            <div class="flex items-center gap-2">
-              <% if can_see_private %>
+          <% if can_see_private %>
+            <button
+              onclick="document.getElementById('members_dialog').showModal()"
+              class="
+                text-left mt-4 hover:opacity-80 transition-opacity focus:outline-none
+                focus:ring-2 focus:ring-offset-2 focus:ring-primary rounded-md block
+              ">
+              <div class="flex items-center gap-2">
                 <%= render "shared/avatar_group",
                 users: @club.members,
                 limit: 5,
                 container_classes: "cursor-pointer" %>
-              <% end %>
-              <span class="text-sm text-content-subtle font-medium"><%= pluralize(@club.members.size, "member") %></span>
-              <%# Owner-only pending requests indicator; kept in sync by the
-                  approve/reject turbo streams via [data-pending-requests-badge] %>
-              <% if user_signed_in? && @club.owner == current_user %>
-                <span data-pending-requests-badge>
-                  <%= render "book_clubs/pending_requests_badge", club: @club %>
-                </span>
-              <% end %>
-            </div>
-          </button>
+                <span class="text-sm text-content-subtle font-medium"><%= pluralize(@club.members.size, "member") %></span>
+                <%# Owner-only pending requests indicator; kept in sync by the
+                    approve/reject turbo streams via [data-pending-requests-badge] %>
+                <% if user_signed_in? && @club.owner == current_user %>
+                  <span data-pending-requests-badge>
+                    <%= render "book_clubs/pending_requests_badge", club: @club %>
+                  </span>
+                <% end %>
+              </div>
+            </button>
+          <% end %>
         </div>
 
         <% if user_signed_in? && @club.owner == current_user %>
@@ -100,6 +100,11 @@
             class:
               "bg-surface border border-border text-content hover:bg-background px-4 py-2 rounded-md text-sm font-medium transition-colors" %>
           </div>
+        <% elsif @club.is_private && !user_signed_in? %>
+          <%= link_to "Apply to Join",
+          new_user_session_path,
+          id: "book_club_show_join_button",
+          class: "bg-primary text-primary-contrast hover:bg-primary px-6 py-2 rounded-md text-sm font-medium transition-colors cursor-pointer" %>
         <% elsif @club.is_private && !@club.has_member?(current_user) %>
           <% if @club.pending_request_from?(current_user) %>
             <%= render "components/button",

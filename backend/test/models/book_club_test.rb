@@ -101,4 +101,24 @@ class BookClubTest < ActiveSupport::TestCase
     club = BookClub.new(name: "No URL Club", application_form_url: "")
     assert club.valid?
   end
+
+  test "owner can see private info even without a membership row" do
+    club = book_clubs(:one)
+    club.update!(is_private: true)
+    club.book_club_members.find_by(user: club.owner)&.destroy!
+
+    assert club.private_info_visible_to?(club.owner)
+  end
+
+  test "member can see private info and non-member or anonymous user cannot" do
+    club = book_clubs(:one)
+    club.update!(is_private: true)
+    member = users(:two)
+    club.book_club_members.create!(user: member)
+    outsider = users(:three)
+
+    assert club.private_info_visible_to?(member)
+    assert_not club.private_info_visible_to?(outsider)
+    assert_not club.private_info_visible_to?(nil)
+  end
 end

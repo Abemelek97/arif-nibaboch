@@ -85,6 +85,67 @@ class MembershipRequestsControllerTest < ActionDispatch::IntegrationTest
     assert_not @book_club.has_member?(@non_member)
   end
 
+  test "replayed approval is idempotent" do
+    @book_club.update!(is_private: true)
+    request = @book_club.membership_requests.create!(user: @non_member, status: :pending)
+
+    sign_in @owner
+    patch approve_book_club_membership_request_path(@book_club, request)
+    assert @book_club.has_member?(@non_member)
+
+    assert_no_difference "BookClubMember.count" do
+      assert_enqueued_emails 0 do
+        patch approve_book_club_membership_request_path(@book_club, request)
+      end
+    end
+
+    assert_redirected_to book_club_path(@book_club)
+    assert_match /already been approved/i, flash[:notice]
+  end
+
+  test "replayed rejection is idempotent" do
+    @book_club.update!(is_private: true)
+    request = @book_club.membership_requests.create!(user: @non_member, status: :pending)
+
+    sign_in @owner
+    patch reject_book_club_membership_request_path(@book_club, request)
+
+    assert_no_difference "BookClubMember.count" do
+      assert_enqueued_emails 0 do
+        patch reject_book_club_membership_request_path(@book_club, request)
+      end
+    end
+
+    assert_redirected_to book_club_path(@book_club)
+    assert_match /already been rejected/i, flash[:notice]
+  end
+
+  test "turbo stream replayed approval renders no duplicate member row" do
+    @book_club.update!(is_private: true)
+    request = @book_club.membership_requests.create!(user: @non_member, status: :pending)
+    sign_in @owner
+
+    patch approve_book_club_membership_request_path(@book_club, request), as: :turbo_stream
+    assert_equal "text/vnd.turbo-stream.html", @response.media_type
+
+    patch approve_book_club_membership_request_path(@book_club, request), as: :turbo_stream
+    assert_response :no_content
+  end
+
+  test "owner can still approve a rejected request" do
+    @book_club.update!(is_private: true)
+    request = @book_club.membership_requests.create!(user: @non_member, status: :rejected)
+
+    sign_in @owner
+    assert_difference "BookClubMember.count" do
+      patch approve_book_club_membership_request_path(@book_club, request)
+    end
+
+    assert_redirected_to book_club_path(@book_club)
+    assert request.reload.approved?
+    assert @book_club.has_member?(@non_member)
+  end
+
   test "turbo stream approve updates members list and pending indicator" do
     @book_club.update!(is_private: true)
     request = @book_club.membership_requests.create!(user: @non_member, status: :pending)
