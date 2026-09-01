@@ -197,6 +197,17 @@ class BookClubsControllerTest < ActionDispatch::IntegrationTest
     assert_select "#apply_dialog_#{@club.id}", 0
   end
 
+  test "card links Apply to Join to sign in for signed-out visitor of private club" do
+    @club = book_clubs(:one)
+    @club.update!(is_private: true)
+
+    get discover_book_clubs_path
+    assert_response :success
+
+    assert_select "#book_club_#{@club.id} a[href='/users/sign_in']", text: /Apply to Join/
+    assert_select "#apply_dialog_#{@club.id}", 0
+  end
+
   test "show hides member count and members trigger for non-member of private club" do
     @club = book_clubs(:one)
     @club.update!(is_private: true)
