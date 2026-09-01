@@ -35,18 +35,18 @@
       <% end %>
     </div>
     <% unless past %>
-  <% if user_signed_in? %>
-    <%= form_with url: book_club_book_read_rsvp_path(book_club, book_read), method: (rsvp ? :patch : :post), scope: :book_read_rsvp, class: "flex-shrink-0" do |form| %>
-      <%= form.hidden_field :status, value: next_status %>
-      <%= form.submit button_label,
-            class: "px-6 py-2.5 text-sm font-bold rounded-lg cursor-pointer transition-colors #{is_primary ? "bg-primary text-primary-contrast hover:bg-primary/90" : "bg-background text-content border border-border hover:bg-surface"}",
-            data: (confirm_msg ? { turbo_confirm: confirm_msg } : {}) %>
+      <% if user_signed_in? %>
+        <%= form_with url: book_club_book_read_rsvp_path(book_club, book_read), method: (rsvp ? :patch : :post), scope: :book_read_rsvp, class: "flex-shrink-0" do |form| %>
+          <%= form.hidden_field :status, value: next_status %>
+          <%= form.submit button_label,
+                class: "px-6 py-2.5 text-sm font-bold rounded-lg cursor-pointer transition-colors #{is_primary ? "bg-primary text-primary-contrast hover:bg-primary/90" : "bg-background text-content border border-border hover:bg-surface"}",
+                data: (confirm_msg ? { turbo_confirm: confirm_msg } : {}) %>
+        <% end %>
+      <% else %>
+        <%= link_to button_label, new_user_session_path,
+              class: "px-6 py-2.5 text-sm font-bold rounded-lg cursor-pointer transition-colors #{is_primary ? "bg-primary text-primary-contrast hover:bg-primary/90" : "bg-background text-content border border-border hover:bg-surface"}",
+              data: { turbo_frame: "_top" } %>
+      <% end %>
     <% end %>
-  <% else %>
-    <%= link_to button_label, new_user_session_path,
-          class: "px-6 py-2.5 text-sm font-bold rounded-lg cursor-pointer transition-colors bg-primary text-primary-contrast inline-block text-center flex-shrink-0",
-          data: { turbo_frame: "_top" } %>
-  <% end %>
-<% end %>
-</div>
+  </div>
 <% end %>
