@@ -11,6 +11,13 @@ class BookClubMembersController < ApplicationController
       @membership.destroy
       @status = "left"
       @count = @book_club.reload.book_club_members_count
+    elsif @book_club.is_private
+      respond_to do |format|
+        format.json { render json: { error: "This is a private club. Submit a join request first." }, status: :forbidden }
+        format.html { redirect_to @book_club, alert: "This is a private club. Submit a join request first." }
+        format.turbo_stream { flash.now[:alert] = "This is a private club. Submit a join request first." }
+      end
+      return
     elsif @membership.save
       @status = "joined"
       @count = @book_club.reload.book_club_members_count
@@ -31,7 +38,7 @@ class BookClubMembersController < ApplicationController
 
   def update
     @membership = @book_club.book_club_members.find(params[:id])
-    
+
     if @membership.user_id == @book_club.owner_id
       respond_to do |format|
         format.html { redirect_to @book_club, alert: "Cannot change the role of the club owner." }
@@ -55,7 +62,7 @@ class BookClubMembersController < ApplicationController
 
   def destroy
     @membership = @book_club.book_club_members.find(params[:id])
-    
+
     if @membership.user_id == @book_club.owner_id
       respond_to do |format|
         format.html { redirect_to @book_club, alert: "Cannot remove the club owner." }

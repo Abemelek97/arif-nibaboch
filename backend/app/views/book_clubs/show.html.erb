@@ -57,7 +57,7 @@
             <span
               class="
                 inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium
-                <%= @club.is_private ? 'bg-red-100 text-red-800' : 'bg-background text-primary' %>
+                <%= @club.is_private ? 'bg-error/10 text-error border border-error/30' : 'bg-background text-primary border border-primary/30' %>
               "
             >
               <%= @club.is_private ? "Private Club" : "Public Club" %>
@@ -88,6 +88,13 @@
                 container_classes: "cursor-pointer" %>
               <% end %>
               <span class="text-sm text-content-subtle font-medium"><%= pluralize(@club.members.size, "member") %></span>
+              <%# Owner-only pending requests indicator; kept in sync by the
+                  approve/reject turbo streams via [data-pending-requests-badge] %>
+              <% if user_signed_in? && @club.owner == current_user %>
+                <span data-pending-requests-badge>
+                  <%= render "book_clubs/pending_requests_badge", club: @club %>
+                </span>
+              <% end %>
             </div>
           </button>
         </div>
@@ -100,6 +107,24 @@
             class:
               "bg-surface border border-border text-content hover:bg-background px-4 py-2 rounded-md text-sm font-medium transition-colors" %>
           </div>
+        <% elsif @club.is_private && !@club.has_member?(current_user) %>
+          <% if @club.pending_request_from?(current_user) %>
+            <%= render "components/button",
+            label: "Cancel Join Request",
+            type: "link",
+            url: cancel_book_club_membership_request_path(@club, @club.membership_requests.find_by(user: current_user, status: :pending)),
+            variant: "negative",
+            full_width: false,
+            data: { turbo_submits_with: "Cancelling...", turbo_confirm: "Are you sure you want to cancel your join request?", turbo_method: :delete },
+            id: "book_club_show_join_button" %>
+          <% else %>
+            <button type="button"
+            id="book_club_show_join_button"
+            onclick="document.getElementById('apply_dialog_<%= @club.id %>').showModal()"
+            class="bg-primary text-primary-contrast hover:bg-primary px-6 py-2 rounded-md text-sm font-medium transition-colors cursor-pointer">
+              Apply to Join
+            </button>
+          <% end %>
         <% else %>
           <%= button_to @club.has_member?(current_user) ? "Leave Club" : "Join Club",
           book_club_membership_path(@club),
@@ -173,62 +198,81 @@
   <% end %>
 </div>
 
+<%# Swapped by the join/leave/request turbo streams. The container exists only
+    on this page, so stream updates are no-ops on carousels where the replaced
+    card already carries its own dialog - no duplicate IDs. %>
+<% if user_signed_in? && @club.is_private %>
+  <div id="apply_dialog_container">
+    <% unless @club.has_member?(current_user) || @club.pending_request_from?(current_user) %>
+      <%= render "book_clubs/apply_dialog", club: @club %>
+    <% end %>
+  </div>
+<% end %>
+
 <% if can_see_private %>
-  <dialog
-    id="members_dialog"
-    class="
-      p-0 rounded-2xl shadow-2xl backdrop:bg-black/50 w-full max-w-2xl max-h-[80vh]
-      open:flex flex-col m-auto
-    "
-  >
-    <div
-      class="
-        flex justify-between items-center p-6 border-b border-border bg-surface sticky
-        top-0 z-10
-      "
-    >
-      <h3 class="title title-sm text-content font-semibold">Club Members (<%= @club.members.size %>)</h3>
-      <button
-        onclick="document.getElementById('members_dialog').close()"
-        class="
-          text-content-muted hover:text-content focus:outline-none transition-colors
-          rounded-full p-1 hover:bg-background
-        "
-      >
-        <svg class="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-          <path
-            stroke-linecap="round"
-            stroke-linejoin="round"
-            stroke-width="2"
-            d="M6 18L18 6M6 6l12 12"
-          />
-        </svg>
-      </button>
-    </div>
+  <% current_user_is_admin =
+    @club.book_club_members.find_by(user: current_user)&.admin? %>
+  <% current_user_is_owner = @club.owner == current_user %>
 
-    <div class="overflow-y-auto p-0 bg-surface">
-      <% current_user_is_admin =
-        @club.book_club_members.find_by(user: current_user)&.admin? %>
-      <% body_content = capture do %>
-        <% @club.book_club_members.includes(:user).order(role: :desc, created_at: :asc).each_with_index do |membership, row_idx| %>
-          <%= render "book_club_members/member_row",
-          membership: membership,
-          club: @club,
-          is_last: row_idx == @club.book_club_members.size - 1,
-          current_user_is_admin: current_user_is_admin %>
-        <% end %>
+  <%= render layout: "shared/dialog",
+    locals: {
+      id: "members_dialog",
+      title: "Club Members (<span data-members-count>#{@club.members.size}</span>)".html_safe,
+      box_class: "bg-surface border border-border shadow-xl rounded-2xl max-w-2xl p-6 relative"
+    } do %>
+    <div id="pending_requests_section">
+      <% if current_user_is_owner && @club.pending_membership_requests.any? %>
+        <div class="mb-6 border-b border-border pb-6">
+          <h4 class="text-sm font-semibold text-content mb-4">Pending Join Requests (<span data-pending-requests-count><%= @club.pending_membership_requests.count %></span>)</h4>
+          <div id="pending_requests_list" class="space-y-3">
+            <% @club.pending_membership_requests.each do |request| %>
+              <div id="<%= dom_id(request) %>" class="flex items-center justify-between">
+                <div class="flex items-center gap-3">
+                  <%= render "shared/avatar", user: request.user, classes: "w-8 h-8 bg-blue-600 text-white text-xs font-semibold ring-2 ring-white" %>
+                  <span class="text-sm text-content"><%= request.user %></span>
+                </div>
+                <div class="flex gap-2">
+                  <%= button_to "Approve",
+                  approve_book_club_membership_request_path(@club, request),
+                  method: :patch,
+                  form: { data: { turbo_frame: "_top" } },
+                  class: "btn btn-primary btn-sm" %>
+                <%= render "components/button",
+                label: "Reject",
+                type: "link",
+                url: reject_book_club_membership_request_path(@club, request),
+                variant: "negative",
+                size: "sm",
+                full_width: false,
+                data: { turbo_submits_with: "Rejecting...", turbo_method: :patch } %>
+                </div>
+              </div>
+            <% end %>
+          </div>
+        </div>
       <% end %>
-
-      <% columns = %w[Member Role Joined] %>
-      <% columns << "Actions" if current_user_is_admin %>
-
-      <%= render "shared/table/table",
-      columns: columns,
-      body_content: body_content,
-      hoverable: true,
-      sticky_header: true,
-      bordered: false,
-      container: false %>
     </div>
-  </dialog>
+
+    <% body_content = capture do %>
+      <% @club.book_club_members.includes(:user).order(role: :desc, created_at: :asc).each_with_index do |membership, row_idx| %>
+        <%= render "book_club_members/member_row",
+        membership: membership,
+        club: @club,
+        is_last: row_idx == @club.book_club_members.size - 1,
+        current_user_is_admin: current_user_is_admin %>
+      <% end %>
+    <% end %>
+
+    <% columns = %w[Member Role Joined] %>
+    <% columns << "Actions" if current_user_is_admin %>
+
+    <%= render "shared/table/table",
+    columns: columns,
+    body_content: body_content,
+    hoverable: true,
+    sticky_header: false,
+    bordered: false,
+    container: false,
+    tbody_id: "members_tbody" %>
+  <% end %>
 <% end %>

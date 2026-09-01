@@ -166,4 +166,60 @@ class BookClubsControllerTest < ActionDispatch::IntegrationTest
 
     assert_select "#members_dialog"
   end
+
+  test "show renders Apply to Join button and dialog for non-member of private club" do
+    @club = book_clubs(:one)
+    @club.update!(is_private: true)
+    sign_in users(:two)
+
+    get book_club_url(@club)
+    assert_response :success
+
+    # Apply button targets the dialog and the dialog posts to membership requests
+    assert_select "button#book_club_show_join_button", /Apply to Join/
+    assert_select "#apply_dialog_#{@club.id}"
+    assert_select "#apply_dialog_#{@club.id} form[action='/book_clubs/#{@club.id}/membership_requests']"
+    assert_select "#apply_dialog_#{@club.id} button[disabled]", /Send Request/
+
+    # No direct Join/Leave affordance for a private club non-member
+    assert_select "button", text: /Join Club/, count: 0
+    assert_select "button", text: /Leave Club/, count: 0
+  end
+
+  test "show renders pending requests indicator for the club owner" do
+    @club = book_clubs(:one)
+    @club.update!(is_private: true)
+    @club.membership_requests.create!(user: users(:two), status: :pending)
+    sign_in @user
+
+    get book_club_url(@club)
+    assert_response :success
+
+    # Badge next to the member count, plus the live count in the dialog header
+    assert_select "[data-pending-requests-badge]"
+    assert_select "[data-pending-requests-badge] span", text: /1 pending request/
+    assert_select "[data-pending-requests-count]", "1"
+  end
+
+  test "show renders no pending indicator for the owner without pending requests" do
+    @club = book_clubs(:one)
+    @club.update!(is_private: true)
+    sign_in @user
+
+    get book_club_url(@club)
+
+    # Wrapper stays present for turbo stream updates but renders no badge
+    assert_select "[data-pending-requests-badge] span", count: 0
+  end
+
+  test "show renders no pending indicator for non-owners" do
+    @club = book_clubs(:one)
+    @club.update!(is_private: true)
+    @club.membership_requests.create!(user: users(:two), status: :pending)
+    sign_in users(:two)
+
+    get book_club_url(@club)
+
+    assert_select "[data-pending-requests-badge]", count: 0
+  end
 end

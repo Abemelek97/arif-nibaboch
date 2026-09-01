@@ -1,0 +1,13 @@
+<h2 style="margin-top: 0; font-weight: 800; font-size: 24px;">Join Request <%= @membership_request.approved? ? "Approved" : "Rejected" %></h2>
+<p>Hi <%= @requesting_user.name %>,</p>
+<% if @membership_request.approved? %>
+  <p>Your request to join <strong><%= @book_club.name %></strong> has been approved. Welcome to the club!</p>
+<% else %>
+  <p>Your request to join <strong><%= @book_club.name %></strong> was not approved this time.</p>
+<% end %>
+
+<div style="text-align: center; margin-top: 40px;">
+  <%= link_to @membership_request.approved? ? "Visit the Club" : "View the Club",
+      book_club_url(@book_club),
+      class: "btn-primary" %>
+</div>

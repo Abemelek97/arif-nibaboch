@@ -2,6 +2,7 @@ class UserMailer < ApplicationMailer
   default from: "#{Rails.configuration.x.app_name} <noreply@#{Rails.configuration.x.mail_from_domain}>" # this domain must be verified with Resend
 
   before_action :set_rsvp_params, only: [ :rsvp_confirmation, :book_read_updated_invite, :book_read_reminder_email ]
+  before_action :set_membership_request_params, only: [ :membership_request_notification, :membership_request_decision ]
 
   def rsvp_confirmation
     attach_calendar_invite!
@@ -17,6 +18,20 @@ class UserMailer < ApplicationMailer
     mail(to: @user.email, subject: "Reminder: Upcoming Book Read for #{@book_read.book&.title || 'Discussion'}")
   end
 
+  def membership_request_notification
+    mail(to: @owner.email, subject: "New Join Request: #{@book_club.name}")
+  end
+
+  def membership_request_decision
+    subject =
+      if @membership_request.approved?
+        "Join Request Approved: #{@book_club.name}"
+      else
+        "Join Request Rejected: #{@book_club.name}"
+      end
+    mail(to: @requesting_user.email, subject: subject)
+  end
+
   private
 
   def set_rsvp_params
@@ -24,6 +39,13 @@ class UserMailer < ApplicationMailer
     @user = @rsvp.user
     @book_read = @rsvp.book_read
     @time_zone = params[:time_zone] || "Taipei"
+  end
+
+  def set_membership_request_params
+    @membership_request = params[:membership_request]
+    @book_club = @membership_request.book_club
+    @owner = @book_club.owner
+    @requesting_user = @membership_request.user
   end
 
   def attach_calendar_invite!(description_suffix: nil)

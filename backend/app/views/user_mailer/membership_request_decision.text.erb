@@ -1,0 +1,11 @@
+Join Request <%= @membership_request.approved? ? "Approved" : "Rejected" %>
+
+Hi <%= @requesting_user.name %>,
+
+<% if @membership_request.approved? -%>
+Your request to join <%= @book_club.name %> has been approved. Welcome to the club!
+<% else -%>
+Your request to join <%= @book_club.name %> was not approved this time.
+<% end -%>
+
+Visit the club at: <%= book_club_url(@book_club) %>

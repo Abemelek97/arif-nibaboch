@@ -1,0 +1,9 @@
+<h2 style="margin-top: 0; font-weight: 800; font-size: 24px;">New Join Request</h2>
+<p>Hi <%= @owner.name %>,</p>
+<p><strong><%= @requesting_user %></strong> has requested to join <strong><%= @book_club.name %></strong>.</p>
+
+<div style="text-align: center; margin-top: 40px;">
+  <%= link_to "Review Request",
+      book_club_url(@book_club),
+      class: "btn-primary" %>
+</div>

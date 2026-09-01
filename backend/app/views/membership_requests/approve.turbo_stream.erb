@@ -1,0 +1,32 @@
+<%= turbo_stream.remove dom_id(@membership_request) %>
+
+<% if @book_club.pending_membership_requests.none? %>
+  <%= turbo_stream.update "pending_requests_section" do %>
+    <div id="pending_requests_section"></div>
+  <% end %>
+<% end %>
+
+<%= turbo_stream.append "members_tbody" do %>
+  <%= render "book_club_members/member_row",
+  membership: @membership,
+  club: @book_club,
+  is_last: true,
+  current_user_is_admin: true %>
+<% end %>
+
+<%= turbo_stream.update_all "[data-members-count]" do %>
+  <%= @book_club.members.size %>
+<% end %>
+
+<%# Keep the owner's pending indicator badge and the dialog header count in sync %>
+<%= turbo_stream.update_all "[data-pending-requests-badge]" do %>
+  <%= render "book_clubs/pending_requests_badge", club: @book_club %>
+<% end %>
+
+<%= turbo_stream.update_all "[data-pending-requests-count]" do %>
+  <%= @book_club.pending_membership_requests.count %>
+<% end %>
+
+<%= turbo_stream.append "toast_triggers" do %>
+  <div data-controller="flash-toast" data-flash-toast-message-value="<%= flash.now[:notice] %>" data-flash-toast-type-value="success"></div>
+<% end %>

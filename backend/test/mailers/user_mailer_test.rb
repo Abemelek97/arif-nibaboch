@@ -77,4 +77,46 @@ class UserMailerTest < ActionMailer::TestCase
     assert_match book_read.meetup_location, email.text_part.body.to_s
     assert_equal 0, email.attachments.size
   end
+
+  test "membership_request_decision approved notifies the requester" do
+    book_club = book_clubs(:one)
+    requester = users(:three)
+    request = book_club.membership_requests.create!(user: requester, status: :pending)
+    request.approve!
+
+    email = UserMailer.with(membership_request: request).membership_request_decision
+
+    assert_emails 1 do
+      email.deliver_now
+    end
+
+    assert_equal [ requester.email ], email.to
+    assert_equal "Join Request Approved: #{book_club.name}", email.subject
+    assert_match "has been approved", email.html_part.body.to_s
+    assert_match "has been approved", email.text_part.body.to_s
+    assert_match "Welcome to the club", email.html_part.body.to_s
+    assert_match "Welcome to the club", email.text_part.body.to_s
+    assert_match "/book_clubs/#{book_club.id}", email.text_part.body.to_s
+    assert_equal 0, email.attachments.size
+  end
+
+  test "membership_request_decision rejected notifies the requester" do
+    book_club = book_clubs(:one)
+    requester = users(:three)
+    request = book_club.membership_requests.create!(user: requester, status: :pending)
+    request.reject!
+
+    email = UserMailer.with(membership_request: request).membership_request_decision
+
+    assert_emails 1 do
+      email.deliver_now
+    end
+
+    assert_equal [ requester.email ], email.to
+    assert_equal "Join Request Rejected: #{book_club.name}", email.subject
+    assert_match "was not approved", email.html_part.body.to_s
+    assert_match "was not approved", email.text_part.body.to_s
+    assert_no_match /Welcome/, email.text_part.body.to_s
+    assert_equal 0, email.attachments.size
+  end
 end

@@ -1,0 +1,25 @@
+<%# Replace the card in carousels/lists if present %>
+<%= turbo_stream.replace dom_id(@book_club) do %>
+  <%= render "book_clubs/card", club: @book_club %>
+<% end %>
+
+<%# Replace the join button on the show page if present %>
+<%= turbo_stream.replace "book_club_show_join_button" do %>
+  <%= render "components/button",
+  label: "Cancel Join Request",
+  type: "link",
+  url: cancel_book_club_membership_request_path(@book_club, @membership_request),
+  variant: "negative",
+  full_width: false,
+  data: { turbo_submits_with: "Cancelling...", turbo_confirm: "Are you sure you want to cancel your join request?", turbo_method: :delete },
+  id: "book_club_show_join_button" %>
+<% end %>
+
+<%# Empty the show-page apply dialog container (pending state has no use for it) %>
+<%= turbo_stream.replace "apply_dialog_container" do %>
+  <div id="apply_dialog_container"></div>
+<% end %>
+
+<%= turbo_stream.append "toast_triggers" do %>
+  <div data-controller="flash-toast" data-flash-toast-message-value="<%= flash.now[:notice] %>" data-flash-toast-type-value="success"></div>
+<% end %>

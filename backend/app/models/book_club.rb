@@ -12,6 +12,7 @@ class BookClub < ApplicationRecord
   has_many :books, through: :book_reads
   has_many :book_club_members, dependent: :destroy
   has_many :members, through: :book_club_members, source: :user
+  has_many :membership_requests, dependent: :destroy
 
   MAX_PHOTO_SIZE = 5.megabytes
   ALLOWED_PHOTO_TYPES = %w[image/jpeg image/jpg image/png image/webp image/gif].freeze
@@ -30,6 +31,16 @@ class BookClub < ApplicationRecord
 
   def private_info_visible_to?(user)
     !is_private || has_member?(user)
+  end
+
+  def pending_request_from?(user)
+    return false unless user
+
+    membership_requests.exists?(user: user, status: :pending)
+  end
+
+  def pending_membership_requests
+    membership_requests.where(status: :pending).includes(:user)
   end
 
   private

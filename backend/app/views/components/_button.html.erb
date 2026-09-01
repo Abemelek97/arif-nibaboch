@@ -4,7 +4,7 @@
     - label: String (text on button)
     - type: String ("submit", "button", "link", "a", default: "submit")
     - url: String (destination URL if type is "link" or "a")
-    - variant: String ("primary", "secondary", "accent", "neutral", "ghost", "outline", "error", "success", "warning", default: "primary")
+    - variant: String ("primary", "secondary", "accent", "neutral", "ghost", "outline", "negative", "error", "success", "warning", default: "primary")
     - size: String ("xs", "sm", "md", "lg", default: "md")
     - full_width: Boolean (default: true)
     - icon: String / HTML (optional SVG icon)
@@ -36,6 +36,7 @@
   when "neutral" then "btn-neutral"
   when "ghost" then "btn-ghost"
   when "outline" then "btn-outline"
+  when "negative" then "btn-outline border-error/30 text-error hover:bg-error/10 hover:border-error/50"
   when "error" then "btn-error"
   when "success" then "btn-success"
   when "warning" then "btn-warning"

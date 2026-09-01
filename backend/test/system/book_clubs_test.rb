@@ -27,16 +27,122 @@ class BookClubsTest < ApplicationSystemTestCase
     assert_equal "https://docs.google.com/forms/d/abc123", @club.application_form_url
   end
 
+  test "private club card in discover carousel renders apply dialog outside anchors" do
+    private_club = BookClub.create!(
+      name: "Secret Readers",
+      description: "A private club",
+      is_private: true,
+      owner: users(:two)
+    )
+
+    visit root_path
+
+    card = find("#book_club_#{private_club.id}")
+
+    # The dialog must live inside the card wrapper and never inside an anchor.
+    # A nested <a> (dialog link inside the carousel link) is invalid HTML and
+    # makes the browser parser mangle the whole card DOM.
+    assert_selector "#book_club_#{private_club.id} #apply_dialog_#{private_club.id}", visible: :all
+    assert_no_selector "a #apply_dialog_#{private_club.id}", visible: :all
+
+    within card do
+      click_button "Apply to Join"
+    end
+
+    assert_selector "#apply_dialog_#{private_club.id}[open]"
+    assert_text "This is a private book club"
+  end
+
+  test "member can leave a joined private club and request to join again" do
+    @club.update!(is_private: true)
+    request = @club.membership_requests.create!(user: users(:two), status: :pending)
+    request.approve!
+    assert @club.has_member?(users(:two))
+
+    login_as users(:two)
+    visit book_club_path(@club)
+
+    # Leave via the show page button
+    assert_selector "button#book_club_show_join_button", text: /Leave Club/
+    click_on "Leave Club"
+
+    # Button swaps straight to Apply to Join, never Join Club
+    assert_selector "button#book_club_show_join_button", text: /Apply to Join/
+    assert_no_selector "button", text: /Join Club/
+    assert_not @club.has_member?(users(:two))
+
+    # Re-apply through the restored dialog
+    click_button "Apply to Join"
+    assert_selector "#apply_dialog_#{@club.id}[open]"
+
+    check "I understand my request will be reviewed by the club admin"
+    click_button "Send Request"
+
+    # The request goes through: button swaps to Cancel Join Request and the
+    # stale approved record is reset to pending for the owner to review
+    assert_selector "#book_club_show_join_button", text: /Cancel Join Request/
+    assert request.reload.pending?
+    assert @club.pending_membership_requests.exists?(user: users(:two))
+  end
+
+  test "member can leave a private club from the discover carousel and apply again" do
+    @club.update!(is_private: true)
+    request = @club.membership_requests.create!(user: users(:two), status: :pending)
+    request.approve!
+
+    login_as users(:two)
+    visit root_path
+
+    # Leave from the card in the discover carousel
+    within "#book_club_#{@club.id}" do
+      assert_selector "button", text: "Joined"
+      click_on "Joined"
+    end
+
+    # Card swaps straight to the apply state, never a direct Join
+    within "#book_club_#{@club.id}" do
+      assert_selector "button", text: /Apply to Join/
+      assert_no_selector "button", text: /Join Club/
+    end
+    assert_not @club.has_member?(users(:two))
+
+    # Exactly one apply dialog on the page - the one inside the replaced
+    # card. No duplicate appended to the toast triggers.
+    assert_selector "#apply_dialog_#{@club.id}", visible: :all, count: 1
+
+    # Re-apply through the card dialog
+    within "#book_club_#{@club.id}" do
+      click_button "Apply to Join"
+    end
+    assert_selector "#apply_dialog_#{@club.id}[open]"
+
+    check "I understand my request will be reviewed by the club admin"
+    click_button "Send Request"
+
+    # The request goes through: card swaps to Cancel Join Request and the
+    # stale approved record is reset to pending for the owner to review
+    assert_selector "#book_club_#{@club.id} button", text: /Cancel Join Request/
+    assert request.reload.pending?
+    assert @club.pending_membership_requests.exists?(user: users(:two))
+  end
+
   private
 
   def login_as(user)
     visit profile_path
     if page.has_button?("Sign out")
       click_on "Sign out"
+      # Turbo drives the sign-out with an async fetch; wait for the
+      # navigation to settle so it can't override the next visit
+      assert_no_button "Sign out"
     end
     visit new_user_session_path
     fill_in "Email", with: user.email
     fill_in "Password", with: "password123"
     click_on "Log in"
+    # Turbo drives the form submission with an async fetch; wait for the
+    # post-login navigation to settle, otherwise the pending redirect can
+    # race and override the test's next visit (landing on the wrong page)
+    assert_no_button "Log in"
   end
 end

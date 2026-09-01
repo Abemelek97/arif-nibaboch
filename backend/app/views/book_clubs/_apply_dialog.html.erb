@@ -1,0 +1,58 @@
+<%#
+  Apply to Join dialog for private book clubs
+  Locals:
+    - club: BookClub %>
+
+<%= render layout: "shared/dialog",
+  locals: {
+    id: "apply_dialog_#{club.id}",
+    title: "Apply to Join",
+    box_class: "bg-surface border border-border shadow-xl rounded-2xl max-w-md p-6 relative",
+    box_attributes: {
+      data: { controller: "apply-dialog" }
+    }
+  } do %>
+  <div class="space-y-4">
+    <p class="text-content-subtle text-sm">
+      This is a private book club. To join, you'll need to fill out a short application form first. Your join request will be reviewed by the club admin.
+    </p>
+
+    <% if club.application_form_url.present? %>
+      <div>
+        <a href="<%= club.application_form_url %>" target="_blank" rel="noopener"
+           class="link link-primary text-sm font-medium inline-flex items-center gap-1">
+          Open Application Form
+          <svg class="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10 6H6a2 2 0 00-2 2v10a2 2 0 002 2h10a2 2 0 002-2v-4M14 4h6m0 0v6m0-6L10 14" />
+          </svg>
+        </a>
+      </div>
+
+      <label class="flex items-start gap-3 cursor-pointer">
+        <input type="checkbox"
+               data-apply-dialog-target="checkbox"
+               data-action="change->apply-dialog#toggle"
+               class="checkbox checkbox-sm mt-0.5" />
+        <span class="text-sm text-content">I've filled out the application form</span>
+      </label>
+    <% else %>
+      <label class="flex items-start gap-3 cursor-pointer">
+        <input type="checkbox"
+               data-apply-dialog-target="checkbox"
+               data-action="change->apply-dialog#toggle"
+               class="checkbox checkbox-sm mt-0.5" />
+        <span class="text-sm text-content">I understand my request will be reviewed by the club admin</span>
+      </label>
+    <% end %>
+
+    <div class="pt-2">
+      <%= button_to club.application_form_url.present? ? "Send Request" : "Send Request",
+      book_club_membership_requests_path(club),
+      method: :post,
+      form: { data: { turbo_frame: "_top", action: "turbo:submit-end->apply-dialog#close" } },
+      data: { turbo_submits_with: "Sending...", apply_dialog_target: "submit" },
+      disabled: true,
+      class: "w-full btn btn-primary disabled:opacity-50 disabled:cursor-not-allowed" %>
+    </div>
+  </div>
+<% end %>

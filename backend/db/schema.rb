@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema[8.0].define(version: 2026_08_29_024113) do
+ActiveRecord::Schema[8.0].define(version: 2026_08_29_042005) do
   create_table "active_storage_attachments", force: :cascade do |t|
     t.string "name", null: false
     t.string "record_type", null: false
@@ -134,6 +134,18 @@ ActiveRecord::Schema[8.0].define(version: 2026_08_29_024113) do
     t.boolean "edited"
     t.index ["book_read_id"], name: "index_discussion_questions_on_book_read_id"
     t.index ["user_id"], name: "index_discussion_questions_on_user_id"
+  end
+
+  create_table "membership_requests", force: :cascade do |t|
+    t.integer "user_id", null: false
+    t.integer "book_club_id", null: false
+    t.integer "status", default: 0, null: false
+    t.text "note"
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
+    t.index ["book_club_id"], name: "index_membership_requests_on_book_club_id"
+    t.index ["user_id", "book_club_id"], name: "index_membership_requests_on_user_id_and_book_club_id", unique: true
+    t.index ["user_id"], name: "index_membership_requests_on_user_id"
   end
 
   create_table "poll_options", force: :cascade do |t|
@@ -378,6 +390,8 @@ ActiveRecord::Schema[8.0].define(version: 2026_08_29_024113) do
   add_foreign_key "book_tags", "tags"
   add_foreign_key "discussion_questions", "book_reads"
   add_foreign_key "discussion_questions", "users"
+  add_foreign_key "membership_requests", "book_clubs"
+  add_foreign_key "membership_requests", "users"
   add_foreign_key "poll_options", "books"
   add_foreign_key "poll_options", "polls"
   add_foreign_key "poll_options", "users", column: "suggested_by_id"
