@@ -21,8 +21,7 @@
     - id: String
 %>
 
-<%
-  form ||= nil
+  <% form ||= nil
   field_type ||= :text
   name ||= :text
   label = nil if local_assigns[:label] == false
@@ -35,25 +34,27 @@
   hint ||= nil
   error ||= nil
   icon ||= nil
-  toggle_password = (field_type.to_sym == :password && local_assigns[:toggle_password] != false)
+  toggle_password =
+    (field_type.to_sym == :password && local_assigns[:toggle_password] != false)
   classes ||= ""
   input_classes ||= ""
   data ||= {}
   id ||= nil
 
-  input_id = id.presence || (form ? "#{form.object_name}_#{name}" : "field_#{name}")
+  input_id =
+    id.presence || (form ? "#{form.object_name}_#{name}" : "field_#{name}")
 
   input_box_classes = [
     "input input-bordered flex items-center gap-2 w-full focus-within:outline-none focus-within:border-primary focus-within:ring-2 focus-within:ring-primary/20 transition-all",
     (error.present? ? "input-error" : ""),
-    input_classes
+    input_classes,
   ].reject(&:empty?).join(" ")
 
   input_options = {
     placeholder: placeholder.presence,
     autocomplete: autocomplete.presence,
     id: input_id,
-    data: data.dup
+    data: data.dup,
   }.compact
   input_options[:value] = value if value.present?
   input_options[:required] = true if required
@@ -67,8 +68,12 @@
   raw_attrs = []
   raw_attrs << "id=\"#{ERB::Util.html_escape(input_id)}\"" if input_id.present?
   raw_attrs << "value=\"#{ERB::Util.html_escape(value)}\"" if value.present?
-  raw_attrs << "placeholder=\"#{ERB::Util.html_escape(placeholder)}\"" if placeholder.present?
-  raw_attrs << "autocomplete=\"#{ERB::Util.html_escape(autocomplete)}\"" if autocomplete.present?
+  if placeholder.present?
+    raw_attrs << "placeholder=\"#{ERB::Util.html_escape(placeholder)}\""
+  end
+  if autocomplete.present?
+    raw_attrs << "autocomplete=\"#{ERB::Util.html_escape(autocomplete)}\""
+  end
   raw_attrs << "required" if required
   raw_attrs << "autofocus" if autofocus
 
@@ -77,72 +82,121 @@
       raw_attrs << "data-#{dk.to_s.dasherize}=\"#{ERB::Util.html_escape(dv)}\""
     end
   end
-  raw_attr_str = raw_attrs.join(" ")
-%>
+  raw_attr_str = raw_attrs.join(" ") %>
 
-<fieldset class="group/field fieldset w-full <%= classes %>" <% if toggle_password %> data-controller="password" <% end %>>
-  <% if label.present? %>
-    <legend class="fieldset-legend font-medium text-sm text-content flex items-center justify-between w-full mb-1">
-      <label for="<%= input_id %>" class="flex items-center justify-between w-full cursor-pointer">
-        <span><%= label %></span>
-        <% if required %>
-          <span class="text-xs text-error font-normal group-has-[input:not(:placeholder-shown)]/field:hidden"">*Required</span>
+  <fieldset
+    class="group/field fieldset w-full <%= classes %>"
+    <% if toggle_password %>
+    data-controller="password"
+    <% end %>>
+    <% if label.present? %>
+      <legend
+        class="
+          fieldset-legend font-medium text-sm text-content flex items-center
+          justify-between w-full mb-1
+        ">
+        <label
+          for="<%= input_id %>"
+          class="flex items-center justify-between w-full cursor-pointer">
+          <span><%= label %></span>
+          <% if required %>
+            <span
+              class="
+                text-xs text-error font-normal
+                group-has-[input:not(:placeholder-shown)]/field:hidden
+              ">*Required</span>
+          <% end %>
+        </label>
+      </legend>
+    <% end %>
+
+    <% if icon.present? || toggle_password %>
+      <label for="<%= input_id %>" class="<%= input_box_classes %>">
+        <% if icon.present? %>
+          <span class="opacity-70 flex items-center shrink-0">
+            <%= icon.html_safe %>
+          </span>
+        <% end %>
+
+        <% if form.present? %>
+          <%= form.send(
+            :"#{field_type}_field",
+            name,
+            input_options.merge(
+              class:
+                "grow bg-transparent border-none outline-none focus:outline-none focus:ring-0 ring-0 shadow-none p-0 text-base sm:text-sm",
+            ),
+          ) %>
+        <% else %>
+          <input
+            type="<%= field_type %>"
+            name="<%= name %>"
+            <%= raw_attr_str.html_safe %>
+            class="
+              grow bg-transparent border-none outline-none focus:outline-none focus:ring-0
+              ring-0 shadow-none p-0 text-base sm:text-sm
+            ">
+        <% end %>
+
+        <% if toggle_password %>
+          <button
+            type="button"
+            class="
+              opacity-70 hover:opacity-100 transition-opacity p-1 cursor-pointer flex
+              items-center shrink-0
+            "
+            data-action="click->password#toggle"
+            aria-label="Toggle password visibility">
+            <span data-password-target="toggleIcon">
+              <svg
+                xmlns="http://www.w3.org/2000/svg"
+                class="h-4 w-4"
+                fill="none"
+                viewBox="0 0 24 24"
+                stroke="currentColor"
+                stroke-width="1.5">
+                <path
+                  stroke-linecap="round"
+                  stroke-linejoin="round"
+                  d="M2.036 12.322a1.012 1.012 0 010-.639C3.423 7.51 7.36 4.5 12 4.5c4.638 0 8.573 3.007 9.963 7.178.07.207.07.431 0 .639C20.577 16.49 16.64 19.5 12 19.5c-4.638 0-8.573-3.007-9.963-7.178z" />
+                <path
+                  stroke-linecap="round"
+                  stroke-linejoin="round"
+                  d="M15 12a3 3 0 11-6 0 3 3 0 016 0z" />
+              </svg>
+            </span>
+          </button>
         <% end %>
       </label>
-    </legend>
-  <% end %>
-
-  <% if icon.present? || toggle_password %>
-    <label for="<%= input_id %>" class="<%= input_box_classes %>">
-      <% if icon.present? %>
-        <span class="opacity-70 flex items-center shrink-0">
-          <%= icon.html_safe %>
-        </span>
-      <% end %>
-
-      <% if form.present? %>
-        <%= form.send(:"#{field_type}_field", name, input_options.merge(class: "grow bg-transparent border-none outline-none focus:outline-none focus:ring-0 ring-0 shadow-none p-0 text-base sm:text-sm")) %>
-      <% else %>
-        <input type="<%= field_type %>" name="<%= name %>" <%= raw_attr_str.html_safe %> class="grow bg-transparent border-none outline-none focus:outline-none focus:ring-0 ring-0 shadow-none p-0 text-base sm:text-sm" />
-      <% end %>
-
-      <% if toggle_password %>
-        <button type="button"
-                class="opacity-70 hover:opacity-100 transition-opacity p-1 cursor-pointer flex items-center shrink-0"
-                data-action="click->password#toggle"
-                aria-label="Toggle password visibility">
-          <span data-password-target="toggleIcon">
-            <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="1.5">
-              <path stroke-linecap="round" stroke-linejoin="round" d="M2.036 12.322a1.012 1.012 0 010-.639C3.423 7.51 7.36 4.5 12 4.5c4.638 0 8.573 3.007 9.963 7.178.07.207.07.431 0 .639C20.577 16.49 16.64 19.5 12 19.5c-4.638 0-8.573-3.007-9.963-7.178z" />
-              <path stroke-linecap="round" stroke-linejoin="round" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z" />
-            </svg>
-          </span>
-        </button>
-      <% end %>
-    </label>
-  <% else %>
-    <%
-      single_input_classes = [
+    <% else %>
+      <% single_input_classes = [
         "input input-bordered w-full text-base sm:text-sm focus:outline-none focus:border-primary focus:ring-2 focus:ring-primary/20 transition-all",
         (error.present? ? "input-error" : ""),
-        input_classes
-      ].reject(&:empty?).join(" ")
-    %>
+        input_classes,
+      ].reject(&:empty?).join(" ") %>
 
-    <% if form.present? %>
-      <%= form.send(:"#{field_type}_field", name, input_options.merge(class: single_input_classes)) %>
-    <% else %>
-      <input type="<%= field_type %>" name="<%= name %>" <%= raw_attr_str.html_safe %> class="<%= single_input_classes %>" />
+      <% if form.present? %>
+        <%= form.send(
+          :"#{field_type}_field",
+          name,
+          input_options.merge(class: single_input_classes),
+        ) %>
+      <% else %>
+        <input
+          type="<%= field_type %>"
+          name="<%= name %>"
+          <%= raw_attr_str.html_safe %>
+          class="<%= single_input_classes %>">
+      <% end %>
     <% end %>
-  <% end %>
 
-  <% if hint.present? %>
-    <p class="fieldset-label text-xs text-content-muted mt-1"><%= hint %></p>
-  <% end %>
+    <% if hint.present? %>
+      <p class="fieldset-label text-xs text-content-muted mt-1"><%= hint %></p>
+    <% end %>
 
-  <% if error.present? %>
-    <p class="fieldset-label text-xs text-error font-medium mt-1">
-      <%= error.is_a?(Array) ? error.join(", ") : error %>
-    </p>
-  <% end %>
-</fieldset>
+    <% if error.present? %>
+      <p class="fieldset-label text-xs text-error font-medium mt-1">
+        <%= error.is_a?(Array) ? error.join(", ") : error %>
+      </p>
+    <% end %>
+  </fieldset>

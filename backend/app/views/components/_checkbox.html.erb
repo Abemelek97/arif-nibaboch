@@ -37,7 +37,7 @@
     <% if form.present? %>
       <%= form.check_box name, { class: checkbox_classes, checked: checked, data: data, id: id } %>
     <% else %>
-      <input type="checkbox" name="<%= name %>" class="<%= checkbox_classes %>" <%= "checked" if checked %><% if id.present? %> id="<%= id %>"<% end %><% data.each do |k, v| %> data-<%= k.to_s.dasherize %>="<%= v %>"<% end %> />
+      <input type="checkbox" name="<%= name %>" class="<%= checkbox_classes %>" <%= "checked" if checked %> <% if id.present? %> id="<%= id %>"<% end %><% data.each do |k, v| %> data-<%= k.to_s.dasherize %>="<%= v %>"<% end %>>
     <% end %>
     <span class="label-text text-sm font-medium text-content group-hover:text-primary transition-colors"><%= label %></span>
   </label>
