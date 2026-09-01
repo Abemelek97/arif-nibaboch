@@ -1,0 +1,9 @@
+---
+EnableDefaultLinters: true
+linters:
+  TagBalance:
+    enabled: true
+  Rubocop:
+    enabled: false
+  ErbSafety:
+    enabled: false
