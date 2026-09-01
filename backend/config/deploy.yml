@@ -52,6 +52,7 @@ env:
     - APP_DOMAIN
     - APP_PROTOCOL
     - APP_NAME
+    - REDIS_URL
 
   clear:
     # Run the Solid Queue Supervisor inside the web server's Puma process to do jobs.
@@ -108,25 +109,25 @@ ssh:
   user: netale
 
 # Use accessory services (secrets come from .kamal/secrets).
-# accessories:
-#   db:
-#     image: mysql:8.0
-#     host: 192.168.0.2
-#     # Change to 3306 to expose port to the world instead of just local network.
-#     port: "127.0.0.1:3306:3306"
-#     env:
-#       clear:
-#         MYSQL_ROOT_HOST: '%'
-#       secret:
-#         - MYSQL_ROOT_PASSWORD
-#     files:
-#       - config/mysql/production.cnf:/etc/mysql/my.cnf
-#       - db/production.sql:/docker-entrypoint-initdb.d/setup.sql
-#     directories:
-#       - data:/var/lib/mysql
-#   redis:
-#     image: redis:7.0
-#     host: 192.168.0.2
-#     port: 6379
-#     directories:
-#       - data:/data
+accessories:
+  #   db:
+  #     image: mysql:8.0
+  #     host: 192.168.0.2
+  #     # Change to 3306 to expose port to the world instead of just local network.
+  #     port: "127.0.0.1:3306:3306"
+  #     env:
+  #       clear:
+  #         MYSQL_ROOT_HOST: '%'
+  #       secret:
+  #         - MYSQL_ROOT_PASSWORD
+  #     files:
+  #       - config/mysql/production.cnf:/etc/mysql/my.cnf
+  #       - db/production.sql:/docker-entrypoint-initdb.d/setup.sql
+  #     directories:
+  #       - data:/var/lib/mysql
+  redis:
+    image: redis:7.0
+    host: 127.0.0.1
+    port: "127.0.0.1:6379:6379"
+    directories:
+      - data:/data

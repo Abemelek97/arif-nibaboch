@@ -3,8 +3,8 @@ on:
   push:
     branches: [main]
     paths:
-      - 'backend/**'
-      - '.github/workflows/deploy-staging.yml'
+      - "backend/**"
+      - ".github/workflows/deploy-staging.yml"
   workflow_dispatch:
 
 jobs:
@@ -55,7 +55,8 @@ jobs:
       SENTRY_DSN: ${{ secrets.SENTRY_DSN }}
       APP_DOMAIN: ${{ vars.APP_DOMAIN }}
       APP_PROTOCOL: ${{ vars.APP_PROTOCOL }}
-      APP_NAME: ${{ VARS.APP_NAME }}
+      APP_NAME: ${{ vars.APP_NAME }}
+      REDIS_URL: ${{ secrets.REDIS_URL }}
 
     permissions:
       contents: read
@@ -71,6 +72,9 @@ jobs:
 
       - name: Release Kamal lock
         run: kamal lock release || true
+
+      - name: Kamal start redis accessory
+        run: kamal accessory start redis || true
 
       - name: Kamal Deploy
         run: kamal deploy

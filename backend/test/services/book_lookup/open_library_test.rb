@@ -54,4 +54,16 @@ class OpenLibraryTest < ActiveSupport::TestCase
       assert_equal "https://openlibrary.org/works/OL262758W", result.source_url
     end
   end
+
+  test "returns empty array when circuit is open" do
+    provider = BookLookup::Providers::OpenLibrary.new(title: "Dune", author: "Frank Herbert", max_candidates: 1)
+    fake_stoplight = Object.new
+    fake_stoplight.define_singleton_method(:run) do |fallback, &_block|
+      fallback.call(nil)
+    end
+
+    provider.stub(:stoplight, fake_stoplight) do
+      assert_equal [], provider.search
+    end
+  end
 end

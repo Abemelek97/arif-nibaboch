@@ -1,0 +1,45 @@
+<%#
+  Collapsible Text Component
+  Renders formatted text (auto-linked URLs, preserved newlines) with a
+  "Show more" / "Show less" toggle that appears only when content overflows
+  the max_lines limit.
+
+  Locals:
+    - text: String (raw text to render)
+    - max_lines: Integer (lines before truncation, default: 4)
+    - show_more_text: String (default: "Show more")
+    - show_less_text: String (default: "Show less")
+    - classes: String (additional classes for the content wrapper)
+%>
+<%
+  max_lines ||= 4
+  show_more_text ||= t("show_more")
+  show_less_text ||= t("show_less")
+  classes ||= ""
+
+  clamp_class = case max_lines
+  when 1 then "line-clamp-1"
+  when 2 then "line-clamp-2"
+  when 3 then "line-clamp-3"
+  when 4 then "line-clamp-4"
+  when 5 then "line-clamp-5"
+  when 6 then "line-clamp-6"
+  else "line-clamp-4"
+  end
+%>
+
+<div data-controller="collapsible-text"
+     data-collapsible-text-clamp-class-value="<%= clamp_class %>"
+     data-collapsible-text-show-more-text-value="<%= show_more_text %>"
+     data-collapsible-text-show-less-text-value="<%= show_less_text %>">
+  <div data-collapsible-text-target="content"
+       class="<%= clamp_class %> overflow-hidden <%= classes %>">
+    <%= formatted_text(text) %>
+  </div>
+  <button type="button"
+          data-collapsible-text-target="toggle"
+          data-action="click->collapsible-text#toggle"
+          class="text-primary hover:text-accent text-sm font-medium mt-2 cursor-pointer bg-transparent border-0 p-0 underline decoration-accent/40 underline-offset-2 hidden">
+    <%= show_more_text %>
+  </button>
+</div>

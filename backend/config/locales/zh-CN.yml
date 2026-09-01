@@ -85,15 +85,13 @@ zh-CN:
   you_are_waitlisted: "你在候补名单中"
   waitlisted: "候补中"
   updating_rsvp: "更新中..."
-  people_going:
-    other: "%{count} 人参加"
-  people_waitlisted:
-    other: "%{count} 人候补"
+  people_going: "%{count} 人参加"
+  people_waitlisted: "%{count} 人候补"
   waitlisted_count: "(%{count} 候补)"
-  spots_remaining:
-    other: "剩 %{count} 个名额"
-  member_count:
-    other: "%{count} 个成员"
+  spots_remaining: "剩 %{count} 个名额"
+  member_count: "%{count} 个成员"
+  show_more: "显示更多"
+  show_less: "收起"
 
   time:
     formats:

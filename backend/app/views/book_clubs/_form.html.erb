@@ -1,56 +1,62 @@
-<%= form_with(model: @club, local: true, class: "space-y-6") do |form| %> 
+<%= form_with(model: @club, local: true, class: "space-y-6") do |form| %>
   <% if @club.errors.any? %>
     <%= render "devise/shared/error_messages", resource: @club %>
   <% end %>
 
   <%= render "components/input",
-    form: form,
-    name: :name,
-    label: "Club Name",
-    placeholder: "e.g., Sci-Fi Enthusiasts",
-    required: true,
-    error: @club.errors[:name] %>
+  form: form,
+  name: :name,
+  label: "Club Name",
+  placeholder: "e.g., Sci-Fi Enthusiasts",
+  required: true,
+  error: @club.errors[:name] %>
 
   <%= render "components/textarea",
-    form: form,
-    name: :description,
-    label: "Description",
-    placeholder: "What is this club about?",
-    rows: 4,
-    error: @club.errors[:description] %>
+  form: form,
+  name: :description,
+  label: "Description",
+  placeholder: "What is this club about?",
+  rows: 4,
+  error: @club.errors[:description] %>
 
   <%= render "components/file_input",
-    form: form,
-    name: :photo,
-    label: "Club Avatar Photo",
-    accept: "image/*",
-    hint: "Square avatar image for the club profile",
-    error: @club.errors[:photo] %>
+  form: form,
+  name: :photo,
+  label: "Club Avatar Photo",
+  accept: "image/*",
+  hint: "Square avatar image for the club profile",
+  error: @club.errors[:photo] %>
 
   <%= render "components/file_input",
-    form: form,
-    name: :cover_photo,
-    label: "Cover Banner Photo",
-    accept: "image/*",
-    hint: "Wide banner image for the club header",
-    error: @club.errors[:cover_photo] %>
+  form: form,
+  name: :cover_photo,
+  label: "Cover Banner Photo",
+  accept: "image/*",
+  hint: "Wide banner image for the club header",
+  error: @club.errors[:cover_photo] %>
 
-  <%= render "components/checkbox",
-    form: form,
-    name: :is_private,
-    label: "Make this club private (only invited members can join)" %>
+  <%# TODO: Add private club functionality %>
+  <%# <%= render "components/checkbox", %>
+  <%#   form: form, %>
+  <%#   name: :is_private, %>
+  <%#   label: "Make this club private (only invited members can join)" %>
 
-  <div class="flex flex-col-reverse sm:flex-row items-center justify-end gap-3 pt-6 border-t border-border/60">
+  <div
+    class="
+      flex flex-col-reverse sm:flex-row items-center justify-end gap-3 pt-6 border-t
+      border-border/60
+    "
+  >
     <%= render "components/button",
-      label: "Cancel",
-      type: "link",
-      url: book_clubs_path,
-      variant: "ghost",
-      classes: "w-full sm:w-auto text-content-subtle hover:text-content" %>
+    label: "Cancel",
+    type: "link",
+    url: book_clubs_path,
+    variant: "ghost",
+    classes: "w-full sm:w-auto text-content-subtle hover:text-content" %>
     <%= render "components/button",
-      label: (@club.persisted? ? "Update Club" : "Create Club"),
-      type: "submit",
-      variant: "primary",
-      classes: "w-full sm:w-auto" %>
+    label: (@club.persisted? ? "Update Club" : "Create Club"),
+    type: "submit",
+    variant: "primary",
+    classes: "w-full sm:w-auto" %>
   </div>
 <% end %>

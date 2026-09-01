@@ -95,3 +95,10 @@ gem "mission_control-jobs", "~> 1.1"
 gem "icalendar", "~> 2.12"
 
 gem "premailer-rails", "~> 1.12"
+
+gem "rails_autolink", "~> 1.1"
+
+gem "stoplight", "~> 5.8"
+gem "redis", "~> 5.0"
+gem "sinatra", "~> 4.0"
+gem "sinatra-contrib", "~> 4.0", require: false
