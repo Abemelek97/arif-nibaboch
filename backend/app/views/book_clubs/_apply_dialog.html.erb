@@ -1,7 +1,8 @@
 <%#
   Apply to Join dialog for private book clubs
   Locals:
-    - club: BookClub %>
+    - club: BookClub
+%>
 
 <%= render layout: "shared/dialog",
   locals: {
@@ -32,7 +33,7 @@
         <input type="checkbox"
                data-apply-dialog-target="checkbox"
                data-action="change->apply-dialog#toggle"
-               class="checkbox checkbox-sm mt-0.5" />
+               class="checkbox checkbox-sm mt-0.5">
         <span class="text-sm text-content">I've filled out the application form</span>
       </label>
     <% else %>
@@ -40,7 +41,7 @@
         <input type="checkbox"
                data-apply-dialog-target="checkbox"
                data-action="change->apply-dialog#toggle"
-               class="checkbox checkbox-sm mt-0.5" />
+               class="checkbox checkbox-sm mt-0.5">
         <span class="text-sm text-content">I understand my request will be reviewed by the club admin</span>
       </label>
     <% end %>

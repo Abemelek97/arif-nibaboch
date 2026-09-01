@@ -42,8 +42,7 @@
                 class="
                   w-10 h-10 rounded-full bg-accent/15 text-accent font-bold text-base flex
                   items-center justify-center shrink-0
-                "
-              >
+                ">
                 <%= @club.name_initial %>
               </div>
             <% end %>
@@ -54,8 +53,7 @@
               class="
                 inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium
                 <%= @club.is_private ? 'bg-error/10 text-error border border-error/30' : 'bg-background text-primary border border-primary/30' %>
-              "
-            >
+              ">
               <%= @club.is_private ? "Private Club" : "Public Club" %>
             </span>
             <span class="text-sm text-content-subtle">

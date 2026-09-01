@@ -6,7 +6,8 @@
   when the approve/reject turbo streams swap its content.
 
   Locals:
-    - club: BookClub %>
+    - club: BookClub
+%>
 <% count = club.pending_membership_requests.count %>
 <% if count.positive? %>
 <%# Same violet pill styling as the RSVP waitlist indicator %>
