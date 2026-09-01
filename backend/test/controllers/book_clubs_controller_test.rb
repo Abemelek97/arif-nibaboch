@@ -220,7 +220,7 @@ class BookClubsControllerTest < ActionDispatch::IntegrationTest
     assert_select "span.text-sm.text-content-subtle.font-medium", count: 0
   end
 
-  test "discover carousel hides member count on club card for non-member of private club" do
+  test "discover carousel shows member count on club card for non-member of private club" do
     @club = book_clubs(:one)
     @club.update!(is_private: true)
     sign_in users(:two)
@@ -228,7 +228,8 @@ class BookClubsControllerTest < ActionDispatch::IntegrationTest
     get discover_book_clubs_path
     assert_response :success
 
-    assert_select "#book_club_#{@club.id} span.text-xs", count: 0
+    # Count is public on cards; avatars stay gated
+    assert_select "#book_club_#{@club.id} span.text-xs", /\d+ members?/
   end
 
   test "discover carousel shows member count on club card for member of private club" do
