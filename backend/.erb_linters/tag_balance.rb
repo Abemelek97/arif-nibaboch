@@ -15,19 +15,14 @@ module ERBLint
         parser = processed_source.parser
 
         parser.ast.descendants(:tag).each do |tag_node|
-          solidus = tag_node.children[0]
-          name_node = tag_node.children[1]
-          next unless name_node && name_node.type == :tag_name
-          tag_name = name_node.children[0].to_s.downcase
+          tag = BetterHtml::Tree::Tag.from_node(tag_node)
+          tag_name = tag.name&.downcase
+          next unless tag_name
 
           next if VOID_ELEMENTS.include?(tag_name)
+          next if tag.self_closing?
 
-          is_closing = solidus && tag_node.loc.source.start_with?("</")
-          is_self_closing = solidus && (tag_node.loc.source.end_with?("/>") || tag_node.loc.source.end_with?("/ >"))
-
-          next if is_self_closing
-
-          if is_closing
+          if tag.closing?
             if stack.empty?
               add_offense(tag_node.loc, "Unexpected closing tag </#{tag_name}> with no matching opening tag")
             else

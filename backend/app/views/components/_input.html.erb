@@ -50,8 +50,10 @@
     input_classes,
   ].reject(&:empty?).join(" ")
 
+  display_placeholder = placeholder.presence || " "
+
   input_options = {
-    placeholder: placeholder.presence,
+    placeholder: display_placeholder,
     autocomplete: autocomplete.presence,
     id: input_id,
     data: data.dup,
@@ -68,9 +70,7 @@
   raw_attrs = []
   raw_attrs << "id=\"#{ERB::Util.html_escape(input_id)}\"" if input_id.present?
   raw_attrs << "value=\"#{ERB::Util.html_escape(value)}\"" if value.present?
-  if placeholder.present?
-    raw_attrs << "placeholder=\"#{ERB::Util.html_escape(placeholder)}\""
-  end
+  raw_attrs << "placeholder=\"#{ERB::Util.html_escape(display_placeholder)}\""
   if autocomplete.present?
     raw_attrs << "autocomplete=\"#{ERB::Util.html_escape(autocomplete)}\""
   end
