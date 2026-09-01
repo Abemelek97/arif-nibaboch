@@ -1,4 +1,11 @@
 ---
+glob: "app/views/**/*.html{+*,}.erb"
+exclude:
+  - "vendor/**/*"
+  - "vendor/bundle/**/*"
+  - "node_modules/**/*"
+  - "tmp/**/*"
+
 EnableDefaultLinters: true
 linters:
   TagBalance:
