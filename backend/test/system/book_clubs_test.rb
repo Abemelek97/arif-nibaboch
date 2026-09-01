@@ -125,24 +125,4 @@ class BookClubsTest < ApplicationSystemTestCase
     assert request.reload.pending?
     assert @club.pending_membership_requests.exists?(user: users(:two))
   end
-
-  private
-
-  def login_as(user)
-    visit profile_path
-    if page.has_button?("Sign out")
-      click_on "Sign out"
-      # Turbo drives the sign-out with an async fetch; wait for the
-      # navigation to settle so it can't override the next visit
-      assert_no_button "Sign out"
-    end
-    visit new_user_session_path
-    fill_in "Email", with: user.email
-    fill_in "Password", with: "password123"
-    click_on "Log in"
-    # Turbo drives the form submission with an async fetch; wait for the
-    # post-login navigation to settle, otherwise the pending redirect can
-    # race and override the test's next visit (landing on the wrong page)
-    assert_no_button "Log in"
-  end
 end
