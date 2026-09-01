@@ -1,14 +1,14 @@
-<div class="poll-option-field flex items-center gap-3 mb-3" 
-     data-dynamic-nested-fields-wrapper 
+<div class="poll-option-field flex items-center gap-3 mb-3"
+     data-dynamic-nested-fields-wrapper
      data-new-record="<%= form.object.new_record? %>">
-  
-  <div class="flex-1 relative" 
-       data-controller="book-autocomplete" 
+
+  <div class="flex-1 relative"
+       data-controller="book-autocomplete"
        data-book-autocomplete-url-value="<%= books_search_path(format: :json) %>">
-    
-    <%= form.text_field :content, 
-        placeholder: "Enter book title or search...", 
-        data: { 
+
+    <%= form.text_field :content,
+        placeholder: "Enter book title or search...",
+        data: {
           book_autocomplete_target: "input",
           action: "keyup->book-autocomplete#performSearch click->book-autocomplete#performSearch focus->book-autocomplete#performSearch"
         },
@@ -17,15 +17,15 @@
 
     <%= form.hidden_field :book_id, data: { book_autocomplete_target: "hidden" } %>
 
-    <div data-book-autocomplete-target="results" 
+    <div data-book-autocomplete-target="results"
          class="hidden absolute z-50 mt-1 w-full bg-surface shadow-xl max-h-48 rounded-md overflow-y-auto border border-border">
     </div>
   </div>
 
   <%= form.hidden_field :_destroy %>
-  
-  <button type="button" 
-          data-action="click->dynamic-nested-fields#remove" 
+
+  <button type="button"
+          data-action="click->dynamic-nested-fields#remove"
           class="p-2 text-content-muted hover:text-red-500 transition-colors"
           title="Remove option">
     <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" class="w-4 h-4">

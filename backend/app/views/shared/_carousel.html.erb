@@ -3,7 +3,8 @@
   Required locals:
     - title: String - Title of the carousel section
   Optional locals:
-    - see_all_path: String - Path for the "See All" link %>
+    - see_all_path: String - Path for the "See All" link
+%>
   <div class="mb-2">
     <div class="flex items-baseline justify-between mb-4">
       <div class="title title-sm font-bold text-content">
@@ -30,14 +31,12 @@
           md:flex opacity-0 group-hover:opacity-100 transition-opacity bg-surface/95
           border border-primary/20 text-primary hover:bg-primary hover:text-white
           shadow-md
-        "
-      >❮</button>
+        ">❮</button>
 
       <div
         class="carousel carousel-center w-full gap-3.5 pt-0.5 pb-2 mb-[30px]"
         data-carousel-target="container"
-        data-action="scroll->carousel#toggleButtons"
-      >
+        data-action="scroll->carousel#toggleButtons">
         <%= yield %>
       </div>
       <!-- Right Scroll Button -->
@@ -50,7 +49,6 @@
           md:flex opacity-0 group-hover:opacity-100 transition-opacity bg-surface/95
           border border-primary/20 text-primary hover:bg-primary hover:text-white
           shadow-md
-        "
-      >❯</button>
+        ">❯</button>
     </div>
   </div>

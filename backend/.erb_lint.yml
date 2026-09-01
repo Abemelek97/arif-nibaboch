@@ -1,0 +1,16 @@
+---
+glob: "app/views/**/*.html{+*,}.erb"
+exclude:
+  - "vendor/**/*"
+  - "vendor/bundle/**/*"
+  - "node_modules/**/*"
+  - "tmp/**/*"
+
+EnableDefaultLinters: true
+linters:
+  TagBalance:
+    enabled: true
+  Rubocop:
+    enabled: false
+  ErbSafety:
+    enabled: false

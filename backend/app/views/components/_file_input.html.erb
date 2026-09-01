@@ -72,7 +72,7 @@
   <% if form.present? %>
     <%= form.file_field name, input_options.merge(class: box_classes) %>
   <% else %>
-    <input type="file" name="<%= name %>" <%= raw_attr_str.html_safe %> class="<%= box_classes %>" />
+    <input type="file" name="<%= name %>" <%= raw_attr_str.html_safe %> class="<%= box_classes %>">
   <% end %>
 
   <% if hint.present? %>
