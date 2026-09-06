@@ -77,7 +77,7 @@ en:
   link_copied_success: "Link copied to clipboard!"
   link_share_error: "Failed to share link."
   share_flyer_title: "Book Club Meetup Flyer"
-  share_flyer_text: "Join us at %{club} for a discussion on \"%{title}\"!"
+  share_flyer_text: 'Join us at %{club} for a discussion on "%{title}"!'
   book_club_meetup: "Book Club Meetup"
   active_poll: "Active Poll"
   voting_in_progress: "Voting in Progress"
@@ -143,3 +143,4 @@ en:
   time:
     formats:
       flyer: "%b %d, %Y - %H:%M"
+  page_count: "Page count"

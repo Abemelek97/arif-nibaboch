@@ -48,7 +48,7 @@ am:
   link_copied_success: "ሊንኩ ኮፒ ተደርጓል!"
   link_share_error: "ሊንክ ማጋራት አልተቻለም።"
   share_flyer_title: "የመጽሐፍ ክለብ ስብሰባ ፍላየር"
-  share_flyer_text: "በ \"%{title}\" ላይ ለመወያየት %{club} ጋር ይቀላቀሉን!"
+  share_flyer_text: 'በ "%{title}" ላይ ለመወያየት %{club} ጋር ይቀላቀሉን!'
   book_club_meetup: "የመጽሐፍ ክለብ ስብሰባ"
   active_poll: "ገባሪ የድምፅ አሰጣጥ"
   voting_in_progress: "ድምፅ መስጠት በመካሄድ ላይ"
@@ -114,3 +114,4 @@ am:
   time:
     formats:
       flyer: "%b %d, %Y - %H:%M"
+  page_count: "የገጽ ብዛት"
