@@ -7,6 +7,12 @@ pre-commit:
       run: bundle exec rubocop -A --force-exclusion {staged_files}
       stage_fixed: true
 
+    - name: erb-formatter
+      root: "backend/"
+      glob: "app/views/**/*.html.erb"
+      run: bundle exec erb-formatter --write {staged_files}
+      stage_fixed: true
+
     - name: erblint
       root: "backend/"
       glob: "**/*.erb"
