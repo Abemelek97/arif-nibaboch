@@ -96,3 +96,4 @@ zh-TW:
   time:
     formats:
       flyer: "%Y年%m月%d日 %H:%M"
+  page_count: "頁數"
