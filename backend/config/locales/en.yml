@@ -130,6 +130,15 @@ en:
     other: "%{count} members"
   show_more: "Show more"
   show_less: "Show less"
+  poll: "Poll"
+  book_club: "Book Club"
+  new_reading_session: "New Reading Session"
+  unknown_author: "Unknown Author"
+  private_reading_session: "Private Reading Session"
+  join_club_to_view_details: "Join club to view meetup details"
+  members_only: "Members only"
+  view_reading_session: "View reading session"
+  rsvp: "RSVP"
 
   time:
     formats:

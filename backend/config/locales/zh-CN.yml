@@ -92,6 +92,15 @@ zh-CN:
   member_count: "%{count} 个成员"
   show_more: "显示更多"
   show_less: "收起"
+  poll: "投票"
+  book_club: "读书俱乐部"
+  new_reading_session: "新阅读活动"
+  unknown_author: "未知作者"
+  private_reading_session: "私密阅读活动"
+  join_club_to_view_details: "加入俱乐部以查看聚会详情"
+  members_only: "仅限成员"
+  view_reading_session: "查看阅读活动"
+  rsvp: "报名"
 
   time:
     formats:

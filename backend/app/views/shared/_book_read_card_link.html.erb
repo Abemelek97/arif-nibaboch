@@ -10,7 +10,7 @@
   <%= link_to book_club_book_read_path(club, book_read),
        data: { turbo_frame: "_top" },
        class: "absolute inset-0 z-10",
-       aria: { label: "View reading session" } do %>
-    <span class="sr-only">View reading session</span>
+       aria: { label: t("view_reading_session", default: "View reading session") } do %>
+    <span class="sr-only"><%= t("view_reading_session", default: "View reading session") %></span>
   <% end %>
 </div>

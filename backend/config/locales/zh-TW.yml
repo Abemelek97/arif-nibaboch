@@ -92,6 +92,15 @@ zh-TW:
   member_count: "%{count} 個成員"
   show_more: "顯示更多"
   show_less: "收起"
+  poll: "投票"
+  book_club: "讀書俱樂部"
+  new_reading_session: "新閱讀活動"
+  unknown_author: "未知作者"
+  private_reading_session: "私密閱讀活動"
+  join_club_to_view_details: "加入俱樂部以查看聚會詳情"
+  members_only: "僅限成員"
+  view_reading_session: "查看閱讀活動"
+  rsvp: "報名"
 
   time:
     formats:

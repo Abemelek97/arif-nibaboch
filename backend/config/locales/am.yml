@@ -101,6 +101,15 @@ am:
     other: "%{count} አባላት"
   show_more: "ተጨማሪ አሳይ"
   show_less: "ዝሉ"
+  poll: "የድምፅ አሰጣጥ"
+  book_club: "የመጽሐፍ ክለብ"
+  new_reading_session: "አዲስ የንባብ ክፍለ ጊዜ"
+  unknown_author: "ያልታወቀ ደራሲ"
+  private_reading_session: "የግል የንባብ ክፍለ ጊዜ"
+  join_club_to_view_details: "የስብሰባ ዝርዝሮችን ለማየት ክለቡን ይቀላቀሉ"
+  members_only: "ለአባላት ብቻ"
+  view_reading_session: "የንባብ ክፍለ ጊዜን ይመልከቱ"
+  rsvp: "ይመዝገቡ"
 
   time:
     formats:
