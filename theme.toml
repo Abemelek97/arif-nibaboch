@@ -1,0 +1,21 @@
+# LitLoop design tokens — single source of truth for web (Tailwind), Android, and iOS.
+#
+# Edit colors here, then regenerate the platform files:
+#   cd backend && bundle exec rake theme:generate
+#
+# Generated files (do not edit by hand):
+#   backend/app/assets/tailwind/theme.css
+#   android/app/src/main/res/values/colors.xml
+#   ios/App/Resources/Assets.xcassets/Colors/*.colorset
+
+[light]
+primary = "#22324a"
+primary_contrast = "#ffffff"
+accent = "#d39a3e"
+accent_contrast = "#1a202c"
+background = "#f7f3ee"
+surface = "#ffffff"
+content = "#1f2430"
+content_subtle = "#4b5563"
+content_muted = "#6b7280"
+border = "#e4ded6"

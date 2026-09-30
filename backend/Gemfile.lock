@@ -496,6 +496,7 @@ GEM
     thruster (0.1.26-x86_64-linux)
     tilt (2.9.0)
     timeout (0.6.1)
+    tomlrb (2.0.4)
     tsort (0.2.0)
     turbo-rails (2.0.23)
       actionpack (>= 7.1.0)
@@ -577,6 +578,7 @@ DEPENDENCIES
   stoplight (~> 5.8)
   tailwindcss-rails
   thruster
+  tomlrb
   turbo-rails
   tzinfo-data
   web-console

@@ -1,4 +1,5 @@
 @import "tailwindcss";
+@import "./theme.css"; /* brand colors — generated from root theme.toml */
 
 @source not "./daisyui{,*}.mjs";
 
@@ -30,12 +31,7 @@
 
 @theme {
   /*-------color-------*/
-  --color-primary: #22324a;
-  --color-primary-contrast: #ffffff;
-  --color-accent: #d39a3e;
-  --color-accent-contrast: #1a202c;
-  --color-background: #f7f3ee;
-  --color-surface: #ffffff;
+  /* Brand colors live in theme.css (generated from root theme.toml) */
 
   /*-------font-------*/
   --font-serif: "Playfair Display", serif;
@@ -50,9 +46,7 @@
   --radius-card: 1rem;
 
   /* Text Colors */
-  --color-content: #1f2430; /* Dark Charcoal */
-  --color-content-subtle: #4b5563; /* Soft Gray */
-  --color-content-muted: #6b7280; /* Lighter Gray */
+  /* --color-content / subtle / muted — in theme.css (generated from theme.toml) */
 
   /* Font Sizes */
   --text-title-sm: 1rem; /* 16px */
@@ -65,7 +59,7 @@
   --tracking-title: -0.01em;
 
   /*-------UI elemens-------*/
-  --color-border: #e4ded6;
+  /* --color-border — in theme.css (generated from theme.toml) */
 }
 /* Buttons (primary / secondary) - hierarchical */
 

@@ -1,6 +1,14 @@
 <?xml version="1.0" encoding="utf-8"?>
+<!-- GENERATED from theme.toml by `bundle exec rake theme:generate` — do not edit. -->
 <resources>
-    <color name="black">#FF000000</color>
-    <color name="white">#FFFFFFFF</color>
-    <color name="splash_bg">#FFFFFFFF</color>
+    <color name="primary">#FF22324A</color>
+    <color name="primary_contrast">#FFFFFFFF</color>
+    <color name="accent">#FFD39A3E</color>
+    <color name="accent_contrast">#FF1A202C</color>
+    <color name="background">#FFF7F3EE</color>
+    <color name="surface">#FFFFFFFF</color>
+    <color name="content">#FF1F2430</color>
+    <color name="content_subtle">#FF4B5563</color>
+    <color name="content_muted">#FF6B7280</color>
+    <color name="border">#FFE4DED6</color>
 </resources>
