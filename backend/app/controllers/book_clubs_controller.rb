@@ -65,7 +65,7 @@ class BookClubsController < ApplicationController
   def set_book_clubs
     # TODO: Filter by city or have search by city, by name, topic mechanism
     @joined_club_ids = current_user ? BookClubMember.where(user_id: current_user.id).pluck(:book_club_id) : []
-    @clubs = BookClub.all.order(created_at: :desc)
+    @clubs = BookClub.by_relevance
   end
 
   def club_params
