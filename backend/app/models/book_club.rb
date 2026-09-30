@@ -16,6 +16,20 @@ class BookClub < ApplicationRecord
   has_many :members, through: :book_club_members, source: :user
   has_many :membership_requests, dependent: :destroy
 
+  scope :by_relevance, -> {
+    now = connection.quote(Time.current)
+    order(Arel.sql(<<~SQL.squish))
+      (
+        book_clubs.book_club_members_count
+        + 3 * (
+          SELECT COUNT(*) FROM book_reads
+          WHERE book_reads.book_club_id = book_clubs.id
+            AND book_reads.meetup_time >= #{now}
+        )
+      ) DESC, book_clubs.created_at DESC
+    SQL
+  }
+
   MAX_PHOTO_SIZE = 5.megabytes
   ALLOWED_PHOTO_TYPES = %w[image/jpeg image/jpg image/png image/webp image/gif].freeze
 
