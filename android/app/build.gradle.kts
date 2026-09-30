@@ -20,8 +20,22 @@ android {
         testInstrumentationRunner = "androidx.test.runner.AndroidJUnitRunner"
     }
 
+    val uploadKeystore = System.getenv("LITLOOP_UPLOAD_KEYSTORE")
+
+    signingConfigs {
+        create("release") {
+            storeFile = uploadKeystore?.let { file(it) }
+            storePassword = System.getenv("LITLOOP_UPLOAD_KEYSTORE_PASSWORD")
+            keyAlias = System.getenv("LITLOOP_UPLOAD_KEY_ALIAS")
+            keyPassword = System.getenv("LITLOOP_UPLOAD_KEY_PASSWORD")
+        }
+    }
+
     buildTypes {
         release {
+            if (uploadKeystore != null) {
+                signingConfig = signingConfigs.getByName("release")
+            }
             isMinifyEnabled = false
             proguardFiles(
                 getDefaultProguardFile("proguard-android-optimize.txt"),
@@ -41,6 +55,7 @@ dependencies {
     implementation(libs.androidx.constraintlayout)
     implementation("dev.hotwire:core:1.2.0")
     implementation("dev.hotwire:navigation-fragments:1.2.0")
+    implementation("androidx.core:core-splashscreen:1.0.1")
     implementation(libs.androidx.core.ktx)
     implementation(libs.material)
     testImplementation(libs.junit)
