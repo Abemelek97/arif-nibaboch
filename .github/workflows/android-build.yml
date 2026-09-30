@@ -45,6 +45,7 @@ jobs:
     name: Release AAB
     if: github.event_name == 'workflow_dispatch'
     runs-on: ubuntu-latest
+    environment: staging
     defaults:
       run:
         working-directory: ./android
