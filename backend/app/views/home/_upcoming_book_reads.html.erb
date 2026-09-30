@@ -7,8 +7,37 @@
     </div>
 
     <div id="upcoming_book_reads_list" class="flex flex-col gap-3">
-      <% @page.records.each do |book_read| %>
-        <%= render "shared/book_read_card_link", book_read: book_read %>
+      <% if @page.records.any? %>
+        <% @page.records.each do |book_read| %>
+          <%= render "shared/book_read_card_link", book_read: book_read %>
+        <% end %>
+      <% else %>
+        <div
+          class="
+            bg-surface rounded-lg shadow-sm p-8 text-center border border-dashed
+            border-border
+          ">
+          <svg
+            class="mx-auto h-12 w-12 text-content-muted mb-4"
+            fill="none"
+            viewBox="0 0 24 24"
+            stroke="currentColor">
+            <path
+              stroke-linecap="round"
+              stroke-linejoin="round"
+              stroke-width="2"
+              d="M12 6.253v13m0-13C10.832 5.477 9.246 5 7.5 5S4.168 5.477 3 6.253v13C4.168 18.477 5.754 18 7.5 18s3.332.477 4.5 1.253m0-13C13.168 5.477 14.754 5 16.5 5c1.747 0 3.332.477 4.5 1.253v13C19.832 18.477 18.247 18 16.5 18c-1.746 0-3.332.477-4.5 1.253" />
+          </svg>
+          <h3 class="text-lg font-medium text-content mb-1"><%= t("no_upcoming_reads") %></h3>
+          <p class="text-content-subtle mb-4"><%= t("no_upcoming_reads_hint") %></p>
+          <%= link_to t("create_book_club_cta"),
+          user_signed_in? ? new_book_club_path : new_user_session_path,
+          data: {
+            turbo_frame: "_top",
+          },
+          class:
+            "inline-flex items-center justify-center bg-primary text-primary-contrast hover:bg-primary px-6 py-2 rounded-md text-sm font-medium transition-colors cursor-pointer" %>
+        </div>
       <% end %>
     </div>
     <%= render partial: "home/pagination_placeholder" %>
