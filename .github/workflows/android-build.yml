@@ -16,6 +16,8 @@ jobs:
   debug-apk:
     name: Debug APK
     runs-on: ubuntu-latest
+    env:
+      LITLOOP_VERSION_CODE: ${{ github.run_number }}
     defaults:
       run:
         working-directory: ./android
@@ -38,7 +40,7 @@ jobs:
       - name: Upload APK
         uses: actions/upload-artifact@v4
         with:
-          name: litloop-debug-apk
+          name: litloop-debug-apk-v${{ github.run_number }}
           path: android/app/build/outputs/apk/debug/app-debug.apk
 
   release-aab:
@@ -46,6 +48,8 @@ jobs:
     if: github.event_name == 'workflow_dispatch'
     runs-on: ubuntu-latest
     environment: staging
+    env:
+      LITLOOP_VERSION_CODE: ${{ github.run_number }}
     defaults:
       run:
         working-directory: ./android
@@ -78,5 +82,5 @@ jobs:
       - name: Upload AAB
         uses: actions/upload-artifact@v4
         with:
-          name: litloop-release-aab
+          name: litloop-release-aab-v${{ github.run_number }}
           path: android/app/build/outputs/bundle/release/app-release.aab

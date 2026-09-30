@@ -10,12 +10,14 @@ android {
         }
     }
 
+    val buildVersionCode = System.getenv("LITLOOP_VERSION_CODE")?.toIntOrNull()
+
     defaultConfig {
         applicationId = "et.netale.litloop"
         minSdk = 28
         targetSdk = 36
-        versionCode = 1
-        versionName = "1.0"
+        versionCode = buildVersionCode ?: 1
+        versionName = "1.0" + (buildVersionCode?.let { ".$it" } ?: "")
 
         testInstrumentationRunner = "androidx.test.runner.AndroidJUnitRunner"
     }
