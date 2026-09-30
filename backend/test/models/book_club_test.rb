@@ -148,6 +148,32 @@ class BookClubTest < ActiveSupport::TestCase
                  BookClub.by_relevance.where(id: [ older_club.id, newer_club.id ]).map(&:id)
   end
 
+  test "by_relevance credits a club that met recently even with nothing scheduled" do
+    recently_active_club = BookClub.create!(name: "Recently Active Club", owner: users(:one))
+    travel_to 3.weeks.ago do
+      recently_active_club.book_reads.create!(host: users(:one), book: books(:one), meetup_time: 1.week.from_now, meetup_location: "Old Cafe")
+    end
+    idle_club = BookClub.create!(name: "Idle Club", owner: users(:two))
+
+    ranked_ids = BookClub.by_relevance.map(&:id)
+
+    assert ranked_ids.index(recently_active_club.id) < ranked_ids.index(idle_club.id),
+           "Club that met within the last 90 days should outrank a newer idle club with the same member count"
+  end
+
+  test "by_relevance does not credit meetups older than 90 days" do
+    ancient_club = BookClub.create!(name: "Ancient Club", owner: users(:one))
+    travel_to 6.months.ago do
+      ancient_club.book_reads.create!(host: users(:one), book: books(:one), meetup_time: 1.week.from_now, meetup_location: "Very Old Cafe")
+    end
+    idle_club = BookClub.create!(name: "Idle Club", owner: users(:two))
+
+    ranked_ids = BookClub.by_relevance.map(&:id)
+
+    assert ranked_ids.index(idle_club.id) < ranked_ids.index(ancient_club.id),
+           "Meetups older than 90 days should earn no credit, so the newer idle club should win the tiebreak"
+  end
+
   test "member can see private info and non-member or anonymous user cannot" do
     club = book_clubs(:one)
     club.update!(is_private: true, application_form_url: "https://example.com/form")

@@ -18,13 +18,22 @@ class BookClub < ApplicationRecord
 
   scope :by_relevance, -> {
     now = connection.quote(Time.current)
+    recent_window_start = connection.quote(90.days.ago)
     order(Arel.sql(<<~SQL.squish))
       (
         book_clubs.book_club_members_count
+        /* Use higher weight for upcoming reads */
         + 3 * (
           SELECT COUNT(*) FROM book_reads
           WHERE book_reads.book_club_id = book_clubs.id
             AND book_reads.meetup_time >= #{now}
+        )
+        /* Past book reads are a good signal but lower weight */
+        + 1 * (
+          SELECT COUNT(*) FROM book_reads
+          WHERE book_reads.book_club_id = book_clubs.id
+            AND book_reads.meetup_time >= #{recent_window_start}
+            AND book_reads.meetup_time < #{now}
         )
       ) DESC, book_clubs.created_at DESC
     SQL
