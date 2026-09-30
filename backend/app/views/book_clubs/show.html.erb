@@ -52,7 +52,7 @@
             <span
               class="
                 inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium
-                <%= @club.is_private ? 'bg-error/10 text-error border border-error/30' : 'bg-background text-primary border border-primary/30' %>
+                <%= @club.is_private ? 'bg-error/10 text-error border border-error/30' : 'bg-background border-primary/30' %>
               ">
               <%= @club.is_private ? "Private Club" : "Public Club" %>
             </span>
@@ -80,8 +80,7 @@
                 limit: 5,
                 container_classes: "cursor-pointer" %>
                 <span class="text-sm text-content-subtle font-medium"><%= pluralize(@club.members.size, "member") %></span>
-                <%# Owner-only pending requests indicator; kept in sync by the
-                    approve/reject turbo streams via [data-pending-requests-badge] %>
+                <%# Owner-only pending requests indicator; kept in sync by the approve/reject turbo streams via [data-pending-requests-badge] %>
                 <% if user_signed_in? && @club.owner == current_user %>
                   <span data-pending-requests-badge>
                     <%= render "book_clubs/pending_requests_badge", club: @club %>
@@ -104,22 +103,35 @@
           <%= link_to "Apply to Join",
           new_user_session_path,
           id: "book_club_show_join_button",
-          class: "bg-primary text-primary-contrast hover:bg-primary px-6 py-2 rounded-md text-sm font-medium transition-colors cursor-pointer" %>
+          class:
+            "bg-primary text-primary-contrast hover:bg-primary px-6 py-2 rounded-md text-sm font-medium transition-colors cursor-pointer" %>
         <% elsif @club.is_private && !@club.has_member?(current_user) %>
           <% if @club.pending_request_from?(current_user) %>
             <%= render "components/button",
             label: "Cancel Join Request",
             type: "link",
-            url: cancel_book_club_membership_request_path(@club, @club.membership_requests.find_by(user: current_user, status: :pending)),
+            url:
+              cancel_book_club_membership_request_path(
+                @club,
+                @club.membership_requests.find_by(user: current_user, status: :pending),
+              ),
             variant: "negative",
             full_width: false,
-            data: { turbo_submits_with: "Cancelling...", turbo_confirm: "Are you sure you want to cancel your join request?", turbo_method: :delete },
+            data: {
+              turbo_submits_with: "Cancelling...",
+              turbo_confirm: "Are you sure you want to cancel your join request?",
+              turbo_method: :delete,
+            },
             id: "book_club_show_join_button" %>
           <% else %>
-            <button type="button"
-            id="book_club_show_join_button"
-            onclick="document.getElementById('apply_dialog_<%= @club.id %>').showModal()"
-            class="bg-primary text-primary-contrast hover:bg-primary px-6 py-2 rounded-md text-sm font-medium transition-colors cursor-pointer">
+            <button
+              type="button"
+              id="book_club_show_join_button"
+              onclick="document.getElementById('apply_dialog_<%= @club.id %>').showModal()"
+              class="
+                bg-primary text-primary-contrast hover:bg-primary px-6 py-2 rounded-md text-sm
+                font-medium transition-colors cursor-pointer
+              ">
               Apply to Join
             </button>
           <% end %>
@@ -136,6 +148,8 @@
           data: {
             turbo_submits_with:
               @club.has_member?(current_user) ? "Leaving..." : "Joining...",
+            turbo_confirm:
+              @club.has_member?(current_user) ? t("leave_club_confirm") : nil,
           },
           class:
             "bg-primary text-primary-contrast hover:bg-primary px-6 py-2 rounded-md text-sm font-medium transition-colors cursor-pointer disabled:opacity-50 disabled:cursor-not-allowed" %>
@@ -193,9 +207,7 @@
   <% end %>
 </div>
 
-<%# Swapped by the join/leave/request turbo streams. The container exists only
-    on this page, so stream updates are no-ops on carousels where the replaced
-    card already carries its own dialog - no duplicate IDs. %>
+<%# Swapped by the join/leave/request turbo streams. The container exists only on this page, so stream updates are no-ops on carousels where the replaced card already carries its own dialog - no duplicate IDs. %>
 <% if user_signed_in? && @club.is_private %>
   <div id="apply_dialog_container">
     <% unless @club.has_member?(current_user) || @club.pending_request_from?(current_user) %>
@@ -223,23 +235,33 @@
             <% @club.pending_membership_requests.each do |request| %>
               <div id="<%= dom_id(request) %>" class="flex items-center justify-between">
                 <div class="flex items-center gap-3">
-                  <%= render "shared/avatar", user: request.user, classes: "w-8 h-8 bg-blue-600 text-white text-xs font-semibold ring-2 ring-white" %>
+                  <%= render "shared/avatar",
+                  user: request.user,
+                  classes:
+                    "w-8 h-8 bg-blue-600 text-white text-xs font-semibold ring-2 ring-white" %>
                   <span class="text-sm text-content"><%= request.user %></span>
                 </div>
                 <div class="flex gap-2">
                   <%= button_to "Approve",
                   approve_book_club_membership_request_path(@club, request),
                   method: :patch,
-                  form: { data: { turbo_frame: "_top" } },
+                  form: {
+                    data: {
+                      turbo_frame: "_top",
+                    },
+                  },
                   class: "btn btn-primary btn-sm" %>
-                <%= render "components/button",
-                label: "Reject",
-                type: "link",
-                url: reject_book_club_membership_request_path(@club, request),
-                variant: "negative",
-                size: "sm",
-                full_width: false,
-                data: { turbo_submits_with: "Rejecting...", turbo_method: :patch } %>
+                  <%= render "components/button",
+                  label: "Reject",
+                  type: "link",
+                  url: reject_book_club_membership_request_path(@club, request),
+                  variant: "negative",
+                  size: "sm",
+                  full_width: false,
+                  data: {
+                    turbo_submits_with: "Rejecting...",
+                    turbo_method: :patch,
+                  } %>
                 </div>
               </div>
             <% end %>

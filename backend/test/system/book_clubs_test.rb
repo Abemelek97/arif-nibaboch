@@ -53,6 +53,30 @@ class BookClubsTest < ApplicationSystemTestCase
     assert_text "This is a private book club"
   end
 
+  test "leaving a club prompts for confirmation first" do
+    @club.book_club_members.create!(user: users(:two))
+    login_as users(:two)
+    visit book_club_path(@club)
+
+    assert_selector "button#book_club_show_join_button", text: /Leave Club/
+
+    # Dismissing the confirmation keeps the membership
+    dismiss_confirm do
+      click_on "Leave Club"
+    end
+
+    assert_selector "button#book_club_show_join_button", text: /Leave Club/
+    assert @club.has_member?(users(:two))
+
+    # Accepting the confirmation leaves the club
+    accept_confirm do
+      click_on "Leave Club"
+    end
+
+    assert_selector "button#book_club_show_join_button", text: /Join Club/
+    assert_not @club.has_member?(users(:two))
+  end
+
   test "member can leave a joined private club and request to join again" do
     @club.update!(is_private: true, application_form_url: "https://test-form.com")
     request = @club.membership_requests.create!(user: users(:two), status: :pending)
@@ -64,7 +88,9 @@ class BookClubsTest < ApplicationSystemTestCase
 
     # Leave via the show page button
     assert_selector "button#book_club_show_join_button", text: /Leave Club/
-    click_on "Leave Club"
+    accept_confirm do
+      click_on "Leave Club"
+    end
 
     # Button swaps straight to Apply to Join, never Join Club
     assert_selector "button#book_club_show_join_button", text: /Apply to Join/
@@ -75,7 +101,7 @@ class BookClubsTest < ApplicationSystemTestCase
     click_button "Apply to Join"
     assert_selector "#apply_dialog_#{@club.id}[open]"
 
-    check "I understand my request will be reviewed by the club admin"
+    check "I've filled out the application form"
     click_button "Send Request"
 
     # The request goes through: button swaps to Cancel Join Request and the
@@ -96,7 +122,9 @@ class BookClubsTest < ApplicationSystemTestCase
     # Leave from the card in the discover carousel
     within "#book_club_#{@club.id}" do
       assert_selector "button", text: "Joined"
-      click_on "Joined"
+      accept_confirm do
+        click_on "Joined"
+      end
     end
 
     # Card swaps straight to the apply state, never a direct Join
@@ -116,7 +144,7 @@ class BookClubsTest < ApplicationSystemTestCase
     end
     assert_selector "#apply_dialog_#{@club.id}[open]"
 
-    check "I understand my request will be reviewed by the club admin"
+    check "I've filled out the application form"
     click_button "Send Request"
 
     # The request goes through: card swaps to Cancel Join Request and the
