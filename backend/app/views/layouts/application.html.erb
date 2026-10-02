@@ -11,16 +11,26 @@
     <%# Open Graph / Social Link Preview Meta Tags %>
     <meta property="og:site_name" content="<%= app_name %>">
     <meta property="og:type" content="<%= content_for(:og_type) || 'website' %>">
-    <meta property="og:title" content="<%= content_for(:og_title) || content_for(:title) || app_name %>">
-    <meta property="og:description" content="<%= content_for(:og_description) || "Join us on #{app_name} for book reads and discussions!" %>">
-    <meta property="og:url" content="<%= content_for(:og_url) || request.original_url %>">
+    <meta
+      property="og:title"
+      content="<%= content_for(:og_title) || content_for(:title) || app_name %>">
+    <meta
+      property="og:description"
+      content="<%= content_for(:og_description) || "Join us on #{app_name} for book reads and discussions!" %>">
+    <meta
+      property="og:url"
+      content="<%= content_for(:og_url) || request.original_url %>">
     <% if content_for?(:og_image) %>
       <meta property="og:image" content="<%= content_for(:og_image) %>">
       <meta name="twitter:image" content="<%= content_for(:og_image) %>">
     <% end %>
     <meta name="twitter:card" content="summary_large_image">
-    <meta name="twitter:title" content="<%= content_for(:og_title) || content_for(:title) || app_name %>">
-    <meta name="twitter:description" content="<%= content_for(:og_description) || "Join us on #{app_name} for book reads and discussions!" %>">
+    <meta
+      name="twitter:title"
+      content="<%= content_for(:og_title) || content_for(:title) || app_name %>">
+    <meta
+      name="twitter:description"
+      content="<%= content_for(:og_description) || "Join us on #{app_name} for book reads and discussions!" %>">
 
     <%= tag.meta name: "current-user-id", content: current_user&.id %>
 
@@ -35,7 +45,8 @@
 
     <%# Automatically trigger toast notifications from Rails flash messages %>
     <% if flash[:toast].present? %>
-      <% toast_data = flash[:toast].is_a?(Hash) ? flash[:toast].with_indifferent_access : {} %>
+      <% toast_data =
+        flash[:toast].is_a?(Hash) ? flash[:toast].with_indifferent_access : {} %>
       <script>
         document.addEventListener('turbo:load', function() {
           toast('<%= j toast_data[:message] %>', {
@@ -68,7 +79,9 @@
 
     <%= stylesheet_link_tag "application", "data-turbo-track": "reload" %>
     <%= stylesheet_link_tag "tailwind", "data-turbo-track": "reload" %>
-    <%= stylesheet_link_tag "native", "data-turbo-track": "reload" if hotwire_native_app? %>
+    <%= if hotwire_native_app?
+      stylesheet_link_tag "native", "data-turbo-track": "reload"
+    end %>
     <script src="https://telegram.org/js/telegram-web-app.js"></script>
     <script>
       document.addEventListener('DOMContentLoaded', function() {
@@ -85,10 +98,12 @@
     <%= javascript_importmap_tags %>
   </head>
 
-  <body class="bg-background min-h-screen text-content flex flex-col font-sans" data-controller="timezone">
+  <body
+    class="bg-background min-h-screen text-content flex flex-col font-sans"
+    data-controller="timezone">
     <%= render "shared/navbar" %>
 
-    <main class="flex-1 w-full">
+    <main class="flex-1 w-full pb-16 sm:pb-0 hotwire-native:pb-0">
       <%= render "shared/toast_container" %>
       <div class="container mx-auto px-4 sm:px-6 lg:px-8 py-6">
         <%= yield %>
@@ -96,5 +111,6 @@
     </main>
 
     <%= render "shared/footer" %>
+    <%= render "shared/bottom_nav" %>
   </body>
 </html>

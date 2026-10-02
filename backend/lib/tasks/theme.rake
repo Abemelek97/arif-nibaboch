@@ -1,7 +1,7 @@
 require "tomlrb"
 
 namespace :theme do
-  desc "Generate web/Android/iOS theme files from the root theme.toml"
+  desc "Generate web/Android/iOS theme files from the root theme.toml and icons/"
   task :generate do
     backend_root = File.expand_path("../..", __dir__)
     repo_root = File.expand_path("..", backend_root)
@@ -18,7 +18,129 @@ namespace :theme do
     write_android_colors(backend_root, header, rgba)
     write_ios_colorsets(backend_root, rgba)
 
-    puts "Generated theme files for web, Android, and iOS from theme.toml"
+    icons = Dir[File.join(repo_root, "icons", "*.svg")].sort
+    write_web_icon_partials(backend_root, icons)
+    write_android_icon_drawables(backend_root, icons)
+    write_ios_icon_imagesets(backend_root, icons)
+
+    puts "Generated theme files for web, Android, and iOS from theme.toml and icons/"
+  end
+
+  def parse_icon(svg_path)
+    svg = File.read(svg_path)
+    viewbox = svg[/viewBox="([^"]+)"/, 1]
+    abort("icons/#{File.basename(svg_path)}: missing viewBox") unless viewbox
+
+    width, height = viewbox.split(/\s+/)[2, 2]
+    is_outline = svg.include?('fill="none"') || svg.include?('stroke="currentColor"')
+    stroke_width = svg[/stroke-width="([^"]+)"/, 1] || "1.5"
+
+    paths = svg.scan(/<path\b([^>]*)>/).map do |(attrs)|
+      {
+        d: attrs[/\bd="([^"]*)"/, 1],
+        fill_rule: attrs[/\bfill-rule="([^"]*)"/, 1]
+      }
+    end.compact
+    { width: width, height: height, paths: paths, is_outline: is_outline, stroke_width: stroke_width }
+  end
+
+  def write_web_icon_partials(backend_root, icons)
+    return if icons.empty?
+
+    partials_dir = File.join(backend_root, "app/views/shared/icons")
+    FileUtils.rm_rf(partials_dir)
+    FileUtils.mkdir_p(partials_dir)
+
+    icons.each do |icon|
+      name = File.basename(icon, ".svg").tr("-", "_")
+      svg = File.read(icon)
+      svg = svg.sub("<svg ", "<svg class=\"<%= local_assigns[:classes] %>\" ")
+      svg = svg.gsub('"/>', '" />') # satisfy erb_lint's self-closing-tag spacing
+      File.write(File.join(partials_dir, "_#{name}.html.erb"), svg)
+    end
+  end
+
+  def write_android_icon_drawables(backend_root, icons)
+    return if icons.empty?
+
+    drawable_dir = File.join(backend_root, "../android/app/src/main/res/drawable")
+
+    icons.each do |icon|
+      name = File.basename(icon, ".svg").tr("-", "_")
+      icon_data = parse_icon(icon)
+
+      xml = +<<~XML
+        <?xml version="1.0" encoding="utf-8"?>
+        <!-- GENERATED from icons/#{File.basename(icon)} by `bundle exec rake theme:generate` — do not edit. -->
+        <vector xmlns:android="http://schemas.android.com/apk/res/android"
+            android:width="#{icon_data[:width]}dp"
+            android:height="#{icon_data[:height]}dp"
+            android:viewportWidth="#{icon_data[:width]}"
+            android:viewportHeight="#{icon_data[:height]}">
+      XML
+      icon_data[:paths].each do |path|
+        if icon_data[:is_outline]
+          xml << "    <path\n"
+          xml << "        android:strokeColor=\"#FF000000\"\n"
+          xml << "        android:strokeWidth=\"#{icon_data[:stroke_width]}\"\n"
+          xml << "        android:strokeLineCap=\"round\"\n"
+          xml << "        android:strokeLineJoin=\"round\"\n"
+          xml << "        android:pathData=\"#{path[:d]}\" />\n"
+        else
+          xml << "    <path\n        android:fillColor=\"#FF000000\"\n"
+          xml << "        android:fillType=\"evenOdd\"\n" if path[:fill_rule] == "evenodd"
+          xml << "        android:pathData=\"#{path[:d]}\" />\n"
+        end
+      end
+      xml << "</vector>\n"
+
+      File.write(File.join(drawable_dir, "ic_#{name}.xml"), xml)
+    end
+
+    # Generate state-list tab selectors for icons that have a corresponding _solid variant
+    clean_names = icons.map { |i| File.basename(i, ".svg").tr("-", "_") }
+    clean_names.grep(/_solid\z/).each do |solid_name|
+      base_name = solid_name.sub(/_solid\z/, "")
+      next unless clean_names.include?(base_name)
+
+      selector_xml = +<<~XML
+        <?xml version="1.0" encoding="utf-8"?>
+        <!-- GENERATED from icons/#{base_name}.svg and icons/#{solid_name}.svg by `bundle exec rake theme:generate` — do not edit. -->
+        <selector xmlns:android="http://schemas.android.com/apk/res/android">
+            <item android:state_checked="true" android:drawable="@drawable/ic_#{solid_name}" />
+            <item android:drawable="@drawable/ic_#{base_name}" />
+        </selector>
+      XML
+      File.write(File.join(drawable_dir, "ic_tab_#{base_name}.xml"), selector_xml)
+    end
+  end
+
+  def write_ios_icon_imagesets(backend_root, icons)
+    return if icons.empty?
+
+    icons_dir = File.join(backend_root, "../ios/App/Resources/Assets.xcassets/Icons")
+    FileUtils.rm_rf(icons_dir)
+    FileUtils.mkdir_p(icons_dir)
+
+    folder_json = { info: { author: "xcode", version: 1 }, properties: { "provides-namespace": true } }
+    File.write(File.join(icons_dir, "Contents.json"), JSON.pretty_generate(folder_json) << "\n")
+
+    icons.each do |icon|
+      name = File.basename(icon, ".svg").tr("-", "_").split("_").map(&:capitalize).join
+      imageset = File.join(icons_dir, "#{name}.imageset")
+      FileUtils.mkdir_p(imageset)
+      FileUtils.cp(icon, File.join(imageset, "icon.svg"))
+
+      json = {
+        images: [ { filename: "icon.svg", idiom: "universal" } ],
+        info: { author: "xcode", version: 1 },
+        properties: {
+          "preserves-vector-representation": true,
+          "template-rendering-intent": "template"
+        }
+      }
+      File.write(File.join(imageset, "Contents.json"), JSON.pretty_generate(json) << "\n")
+    end
   end
 
   def parse_hex(hex)

@@ -1,9 +1,13 @@
-<header class="bg-background border-b border-primary sticky top-0 z-50 hotwire-native:hidden">
+<header
+  class="
+    bg-background border-b border-primary sticky top-0 z-50 hotwire-native:hidden
+  ">
   <nav class="container mx-auto px-4 sm:px-6 lg:px-8" aria-label="Top">
     <div class="flex h-16 items-center justify-between">
       <div class="flex items-center">
         <%= link_to root_path, class: "flex items-center gap-2 group" do %>
-          <%= render "shared/logo", class: "h-8 w-auto text-primary group-hover:text-accent transition-colors" %>
+          <%= render "shared/logo",
+          class: "h-8 w-auto text-primary group-hover:text-accent transition-colors" %>
           <!--
           <span class="title title-sm font-bold tracking-tight text-primary"><%= app_name %></span>
           -->
@@ -17,50 +21,108 @@
           </div>
         <% else %>
           <div class="hidden sm:flex items-center gap-3">
-            <%= link_to t("sign_in"), new_user_session_path, data: { turbo: false }, class: "btn-secondary text-primary" %>
-            <%= link_to t("sign_up"), new_user_registration_path, data: { turbo: false }, class: "btn-primary" %>
+            <%= link_to t("sign_in"),
+            new_user_session_path,
+            data: {
+              turbo: false,
+            },
+            class: "btn-secondary text-primary" %>
+            <%= link_to t("sign_up"),
+            new_user_registration_path,
+            data: {
+              turbo: false,
+            },
+            class: "btn-primary" %>
           </div>
         <% end %>
-
         <!-- Language Switcher Dropdown (DaisyUI) -->
         <div class="dropdown dropdown-end ml-2">
-          <div tabindex="0" role="button" class="btn btn-ghost btn-circle flex items-center justify-center focus:outline-none">
-            <svg class="w-6 h-6 animate-pulse-slow text-primary" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
-              <path stroke-linecap="round" stroke-linejoin="round" d="M21 12a9 9 0 01-9 9m9-9a9 9 0 00-9-9m9 9H3m9 9a9 9 0 01-9-9m9 9c1.657 0 3-4.03 3-9s-1.343-9-3-9m0 18c-1.657 0-3-4.03-3-9s1.343-9 3-9m-9 9a9 9 0 019-9" />
+          <div
+            tabindex="0"
+            role="button"
+            class="
+              btn btn-ghost btn-circle flex items-center justify-center focus:outline-none
+            ">
+            <svg
+              class="w-6 h-6 animate-pulse-slow text-primary"
+              fill="none"
+              viewBox="0 0 24 24"
+              stroke="currentColor"
+              stroke-width="2">
+              <path
+                stroke-linecap="round"
+                stroke-linejoin="round"
+                d="M21 12a9 9 0 01-9 9m9-9a9 9 0 00-9-9m9 9H3m9 9a9 9 0 01-9-9m9 9c1.657 0 3-4.03 3-9s-1.343-9-3-9m0 18c-1.657 0-3-4.03-3-9s1.343-9 3-9m-9 9a9 9 0 019-9" />
             </svg>
           </div>
-          <ul tabindex="0" class="menu dropdown-content bg-surface border border-primary rounded-box z-50 w-40 p-2 shadow-xl">
+          <ul
+            tabindex="0"
+            class="
+              menu dropdown-content bg-surface border border-primary rounded-box z-50 w-40 p-2
+              shadow-xl
+            ">
             <li>
-              <%= link_to "English", url_for(locale: :en), class: "text-primary hover:text-accent #{I18n.locale == :en ? 'active font-bold' : ''}" %>
+              <%= link_to "English",
+              url_for(locale: :en),
+              class:
+                "text-primary hover:text-accent #{I18n.locale == :en ? "active font-bold" : ""}" %>
             </li>
             <li>
-              <%= link_to "አማርኛ", url_for(locale: :am), class: "text-primary hover:text-accent #{I18n.locale == :am ? 'active font-bold' : ''}" %>
+              <%= link_to "አማርኛ",
+              url_for(locale: :am),
+              class:
+                "text-primary hover:text-accent #{I18n.locale == :am ? "active font-bold" : ""}" %>
             </li>
             <li>
-              <%= link_to "简体中文", url_for(locale: :"zh-CN"), class: "text-primary hover:text-accent #{I18n.locale == :"zh-CN" ? 'active font-bold' : ''}" %>
+              <%= link_to "简体中文",
+              url_for(locale: :"zh-CN"),
+              class:
+                "text-primary hover:text-accent #{I18n.locale == :"zh-CN" ? "active font-bold" : ""}" %>
             </li>
             <li>
-              <%= link_to "繁體中文", url_for(locale: :"zh-TW"), class: "text-primary hover:text-accent #{I18n.locale == :"zh-TW" ? 'active font-bold' : ''}" %>
+              <%= link_to "繁體中文",
+              url_for(locale: :"zh-TW"),
+              class:
+                "text-primary hover:text-accent #{I18n.locale == :"zh-TW" ? "active font-bold" : ""}" %>
             </li>
           </ul>
         </div>
 
         <div class="hidden sm:block ml-2">
           <div class="dropdown dropdown-end">
-            <div tabindex="0" role="button" class="btn btn-ghost btn-circle flex items-center justify-center focus:outline-none">
-              <svg class="w-6 h-6 text-primary" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6h16M4 12h16M4 18h16" />
+            <div
+              tabindex="0"
+              role="button"
+              class="
+                btn btn-ghost btn-circle flex items-center justify-center focus:outline-none
+              ">
+              <svg
+                class="w-6 h-6 text-primary"
+                fill="none"
+                viewBox="0 0 24 24"
+                stroke="currentColor">
+                <path
+                  stroke-linecap="round"
+                  stroke-linejoin="round"
+                  stroke-width="2"
+                  d="M4 6h16M4 12h16M4 18h16" />
               </svg>
             </div>
 
-            <ul tabindex="0" class="menu dropdown-content bg-surface border border-primary rounded-box z-50 w-56 p-2 shadow-xl">
+            <ul
+              tabindex="0"
+              class="
+                menu dropdown-content bg-surface border border-primary rounded-box z-50 w-56 p-2
+                shadow-xl
+              ">
               <% main_navigation_items.each do |item| %>
                 <% is_active = is_active_nav_item?(item) %>
                 <li>
                   <%= link_to item[:path], class: "flex items-center gap-3 transition-colors group/link #{is_active ? 'active font-bold text-primary' : 'text-primary'}" do %>
-                    <svg class="w-5 h-5 transition-colors <%= is_active ? 'text-primary' : 'text-primary group-hover/link:text-accent' %>" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                      <%= item[:icon].html_safe %>
-                    </svg>
+                    <% icon_name = is_active ? "#{item[:icon]}_solid" : item[:icon] %>
+                    <%= render "shared/icons/#{icon_name}",
+                    classes:
+                      "w-5 h-5 transition-colors #{is_active ? "text-primary" : "text-primary group-hover/link:text-accent"}" %>
                     <%= item[:name] %>
                   <% end %>
                 </li>
@@ -72,7 +134,12 @@
         <%# Mobile Menu Button Placeholder - simple pure CSS or JS toggle needed for real implementation %>
         <div class="sm:hidden">
           <% unless user_signed_in? %>
-            <%= link_to t("sign_in"), new_user_session_path, data: { turbo: false }, class: "btn-secondary text-primary" %>
+            <%= link_to t("sign_in"),
+            new_user_session_path,
+            data: {
+              turbo: false,
+            },
+            class: "btn-secondary text-primary" %>
           <% end %>
         </div>
       </div>

@@ -7,7 +7,7 @@ import et.netale.litloop.activities.baseURL
 
 private val home = HotwireBottomTab(
     title = "Home",
-    iconResId = R.drawable.ic_home,
+    iconResId = R.drawable.ic_tab_home,
     configuration = NavigatorConfiguration(
         name = "home",
         navigatorHostId = R.id.home_nav_host,
@@ -17,7 +17,7 @@ private val home = HotwireBottomTab(
 
 private val library = HotwireBottomTab(
     title = "Library",
-    iconResId = R.drawable.ic_library,
+    iconResId = R.drawable.ic_tab_library,
     configuration = NavigatorConfiguration(
         name = "library",
         navigatorHostId = R.id.library_nav_host,
@@ -27,7 +27,7 @@ private val library = HotwireBottomTab(
 
 private val clubs = HotwireBottomTab(
     title = "Clubs",
-    iconResId = R.drawable.ic_clubs,
+    iconResId = R.drawable.ic_tab_clubs,
     configuration = NavigatorConfiguration(
         name = "clubs",
         navigatorHostId = R.id.clubs_nav_host,
@@ -37,7 +37,7 @@ private val clubs = HotwireBottomTab(
 
 private val profile = HotwireBottomTab(
     title = "Profile",
-    iconResId = R.drawable.ic_profile,
+    iconResId = R.drawable.ic_tab_profile,
     configuration = NavigatorConfiguration(
         name = "profile",
         navigatorHostId = R.id.profile_nav_host,

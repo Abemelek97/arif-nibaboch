@@ -3,6 +3,7 @@ package et.netale.litloop.activities
 import android.os.Bundle
 import android.view.View
 import androidx.activity.enableEdgeToEdge
+import androidx.appcompat.app.AppCompatDelegate
 import com.google.android.material.bottomnavigation.BottomNavigationView
 import dev.hotwire.core.config.Hotwire
 import dev.hotwire.core.turbo.config.PathConfiguration
@@ -21,6 +22,7 @@ class MainActivity : HotwireActivity() {
     override fun navigatorConfigurations() = mainTabs.navigatorConfigurations
 
     override fun onCreate(savedInstanceState: Bundle?) {
+        AppCompatDelegate.setDefaultNightMode(AppCompatDelegate.MODE_NIGHT_NO)
         super.onCreate(savedInstanceState)
         enableEdgeToEdge()
         setContentView(R.layout.activity_main)
