@@ -1,12 +1,17 @@
 # LitLoop design tokens — single source of truth for web (Tailwind), Android, and iOS.
 #
-# Edit colors here, then regenerate the platform files:
+# Colors: edit this file. Tab bar icons: edit icons/*.svg.
+# Then regenerate the platform files:
 #   cd backend && bundle exec rake theme:generate
+# (The pre-commit hook does this automatically.)
 #
 # Generated files (do not edit by hand):
 #   backend/app/assets/tailwind/theme.css
 #   android/app/src/main/res/values/colors.xml
 #   ios/App/Resources/Assets.xcassets/Colors/*.colorset
+#   backend/app/views/shared/icons/_*.html.erb          (from icons/*.svg)
+#   android/app/src/main/res/drawable/ic_*.xml           (from icons/*.svg)
+#   ios/App/Resources/Assets.xcassets/Icons/*.imageset   (from icons/*.svg)
 
 [light]
 primary = "#22324a"

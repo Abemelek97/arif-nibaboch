@@ -1,8 +1,54 @@
 <resources xmlns:tools="http://schemas.android.com/tools">
     <!-- Base application theme. -->
-    <style name="Base.Theme.LitLoop" parent="Theme.Material3.DayNight.NoActionBar">
+    <style name="Base.Theme.LitLoop" parent="Theme.Material3.Light.NoActionBar">
+        <!-- Primary Brand -->
         <item name="colorPrimary">@color/primary</item>
         <item name="colorOnPrimary">@color/primary_contrast</item>
+        <item name="colorPrimaryContainer">@color/background</item>
+        <item name="colorOnPrimaryContainer">@color/content</item>
+
+        <!-- Secondary & Tertiary (Accent) -->
+        <item name="colorSecondary">@color/accent</item>
+        <item name="colorOnSecondary">@color/accent_contrast</item>
+        <item name="colorSecondaryContainer">@color/background</item>
+        <item name="colorOnSecondaryContainer">@color/primary</item>
+        <item name="colorTertiary">@color/accent</item>
+        <item name="colorOnTertiary">@color/accent_contrast</item>
+
+        <!-- Background & Surface -->
+        <item name="android:windowBackground">@color/background</item>
+        <item name="android:colorBackground">@color/background</item>
+        <item name="colorSurface">@color/surface</item>
+        <item name="colorSurfaceContainer">@color/surface</item>
+        <item name="colorSurfaceContainerLow">@color/surface</item>
+        <item name="colorSurfaceContainerLowest">@color/surface</item>
+        <item name="colorSurfaceContainerHigh">@color/surface</item>
+        <item name="colorSurfaceContainerHighest">@color/surface</item>
+
+        <!-- Content & Text -->
+        <item name="colorOnSurface">@color/content</item>
+        <item name="colorOnSurfaceVariant">@color/content_subtle</item>
+        <item name="android:textColorPrimary">@color/content</item>
+        <item name="android:textColorSecondary">@color/content_subtle</item>
+
+        <!-- Outlines & Borders -->
+        <item name="colorOutline">@color/content_muted</item>
+        <item name="colorOutlineVariant">@color/border</item>
+
+        <!-- Top AppBar & Toolbar -->
+        <item name="appBarLayoutStyle">@style/Widget.App.AppBarLayout</item>
+        <item name="toolbarStyle">@style/Widget.App.Toolbar</item>
+    </style>
+
+    <style name="Widget.App.AppBarLayout" parent="Widget.Material3.AppBarLayout">
+        <item name="android:background">@color/background</item>
+        <item name="elevation">0dp</item>
+    </style>
+
+    <style name="Widget.App.Toolbar" parent="Widget.Material3.Toolbar">
+        <item name="android:background">@color/background</item>
+        <item name="titleTextColor">@color/content</item>
+        <item name="navigationIconTint">@color/primary</item>
     </style>
 
     <style name="Theme.LitLoop" parent="Base.Theme.LitLoop" />

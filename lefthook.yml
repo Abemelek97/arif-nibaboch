@@ -19,5 +19,5 @@ pre-commit:
       stage_fixed: true
 
     theme:
-      glob: "theme.toml"
-      run: "(cd backend && bundle exec rake theme:generate) && git add backend/app/assets/tailwind/theme.css android/app/src/main/res/values/colors.xml ios/App/Resources/Assets.xcassets/Colors ios/App/Resources/Assets.xcassets/AccentColor.colorset"
+      glob: "{theme.toml,icons/**}"
+      run: "(cd backend && bundle exec rake theme:generate) && bin/stage_theme_assets.sh"
