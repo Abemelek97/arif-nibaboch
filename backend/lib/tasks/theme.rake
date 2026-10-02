@@ -31,7 +31,11 @@ namespace :theme do
     viewbox = svg[/viewBox="([^"]+)"/, 1]
     abort("icons/#{File.basename(svg_path)}: missing viewBox") unless viewbox
 
-    width, height = viewbox.split(/\s+/)[2, 2]
+    min_x, min_y, width, height = viewbox.split(/\s+/)
+    if min_x.to_f != 0 || min_y.to_f != 0
+      abort("icons/#{File.basename(svg_path)}: non-zero viewBox origin (#{min_x}, #{min_y}) is not supported")
+    end
+
     is_outline = svg.include?('fill="none"') || svg.include?('stroke="currentColor"')
     stroke_width = svg[/stroke-width="([^"]+)"/, 1] || "1.5"
 
@@ -41,15 +45,16 @@ namespace :theme do
         fill_rule: attrs[/\bfill-rule="([^"]*)"/, 1]
       }
     end.compact
+    abort("icons/#{File.basename(svg_path)}: no <path> elements found") if paths.empty?
+
     { width: width, height: height, paths: paths, is_outline: is_outline, stroke_width: stroke_width }
   end
 
   def write_web_icon_partials(backend_root, icons)
-    return if icons.empty?
-
     partials_dir = File.join(backend_root, "app/views/shared/icons")
     FileUtils.rm_rf(partials_dir)
     FileUtils.mkdir_p(partials_dir)
+    return if icons.empty?
 
     icons.each do |icon|
       name = File.basename(icon, ".svg").tr("-", "_")
@@ -61,9 +66,12 @@ namespace :theme do
   end
 
   def write_android_icon_drawables(backend_root, icons)
-    return if icons.empty?
-
     drawable_dir = File.join(backend_root, "../android/app/src/main/res/drawable")
+    FileUtils.mkdir_p(drawable_dir)
+    Dir[File.join(drawable_dir, "ic_*.xml")].each do |path|
+      FileUtils.rm(path) if File.read(path).include?("GENERATED from icons/")
+    end
+    return if icons.empty?
 
     icons.each do |icon|
       name = File.basename(icon, ".svg").tr("-", "_")
@@ -116,14 +124,13 @@ namespace :theme do
   end
 
   def write_ios_icon_imagesets(backend_root, icons)
-    return if icons.empty?
-
     icons_dir = File.join(backend_root, "../ios/App/Resources/Assets.xcassets/Icons")
     FileUtils.rm_rf(icons_dir)
     FileUtils.mkdir_p(icons_dir)
 
     folder_json = { info: { author: "xcode", version: 1 }, properties: { "provides-namespace": true } }
     File.write(File.join(icons_dir, "Contents.json"), JSON.pretty_generate(folder_json) << "\n")
+    return if icons.empty?
 
     icons.each do |icon|
       name = File.basename(icon, ".svg").tr("-", "_").split("_").map(&:capitalize).join

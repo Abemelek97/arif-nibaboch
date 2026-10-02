@@ -1,4 +1,5 @@
 <nav
+  aria-label="<%= t("bottom_navigation", default: "Bottom") %>"
   class="
     fixed bottom-0 left-0 z-50 w-full h-16 bg-surface border-t border-border
     sm:hidden pb-safe hotwire-native:hidden
@@ -6,7 +7,9 @@
   <div class="grid h-full max-w-lg grid-cols-4 mx-auto font-medium">
     <% main_navigation_items.each do |item| %>
       <% is_active = is_active_nav_item?(item) %>
-      <%= link_to item[:path], class: "inline-flex flex-col items-center justify-center px-5 hover:bg-background group" do %>
+      <%= link_to item[:path],
+                  aria: { current: (is_active ? "page" : nil) },
+                  class: "inline-flex flex-col items-center justify-center px-5 hover:bg-background group" do %>
         <% icon_name = is_active ? "#{item[:icon]}_solid" : item[:icon] %>
         <%= render "shared/icons/#{icon_name}",
         classes:
